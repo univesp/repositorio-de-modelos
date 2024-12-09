@@ -6,48 +6,38 @@
   <div class="footer__contato">
     <span class="titulo-footer">Contato</span>
     <br>
-    <span class="info-footer">Av. Paulista, nº 352, 14º andar</span>
-    <span class="info-footer">Bela Vista, São Paulo - SP</span>
-    <span class="info-footer">01310-000</span>
+    <span class="info-footer"> {{ footer.endereco | endereco }} </span>
+    <span class="info-footer"> {{ footer.endereco | regiao }} </span>
+    <span class="info-footer"> {{ footer.endereco | cep }} </span>
     <br>
     <span class="titulo-footer">Email:</span>
-    <span class="info-footer">univesp&#64;univesp.br</span>
+    <span class="info-footer"> {{ footer.email }} </span>
     <br>
     <span class="titulo-footer">Telefone:</span>
-    <span class="info-footer">+55 11 3188-6700</span>
+    <span class="info-footer"> {{ footer.telefone | telefone }} </span>
   </div>
 
   <div class="footer__links">
     <span class="titulo-footer">Links Rápidos</span>
     <br>
-    <a class="link-footer" href="#">Vestibular</a>
-    <br>
-    <a class="link-footer" href="#">Cursos</a>
-    <br>
-    <a class="link-footer" href="#">Polos</a>
-    <br>
-    <a class="link-footer" href="#">Institucional</a>
-    <br>
-    <a class="link-footer" href="#">Transparência</a>
+    <div>
+      <a class="link-footer"
+       *ngFor="let linkInfo of footer.linksRapidos"
+       href="{{ linkInfo.link }}"
+       target="_blank"
+       > 
+       {{ linkInfo.titulo }} 
+      </a>
+    </div>
   </div>
 
   <div class="footer__redes-sociais">
     <span class="titulo-footer">Univesp nas redes</span>
     <br>
     <div class="redes-sociais-icons">
-      <span>
-        <a href="#">
-          <img src="https://img.icons8.com/?size=42&id=118467&format=png&color=ffffff" alt="">
-        </a>
-      </span>
-      <span>
-        <a href="#">
-          <img src="https://img.icons8.com/?size=42&id=32309&format=png&color=ffffff" alt="">
-        </a>
-      </span>
-      <span>
-        <a href="#">
-          <img src="https://img.icons8.com/?size=42&id=37326&format=png&color=ffffff" alt="">
+      <span *ngFor="let redeSocial of footer.redesSociais">
+        <a href="{{ redeSocial.link }}" target="_blank">
+          <img src="{{ redeSocial.icone }}" alt="{{ redeSocial.alt }}">
         </a>
       </span>
     </div>

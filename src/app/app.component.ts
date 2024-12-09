@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { IFooter } from './interfaces/footer/footer.interface';
+import { UserFooter } from './data/footer-list'; 
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  title = 'repositorio-modelos';
+  footer: IFooter = UserFooter[0];
 }

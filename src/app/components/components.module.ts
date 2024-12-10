@@ -2,22 +2,30 @@ import { NgModule } from "@angular/core";
 
 import { CommonModule } from "@angular/common";
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { PipesModule } from "../pipes/pipes.module";
+import { AngularMaterialModule } from "../angular-material/angular-material.module";
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    LoginComponent
   ],
   imports: [
     CommonModule,
-    PipesModule
+    PipesModule,
+    AngularMaterialModule,
+    BrowserAnimationsModule
   ],
   exports: [
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    LoginComponent
   ],
 })
 export class ComponentsModule { }

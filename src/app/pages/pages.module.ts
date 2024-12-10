@@ -1,19 +1,20 @@
 import { NgModule } from "@angular/core";
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './home/home.component';
 import { ComponentsModule } from "../components/components.module";
-import { LoginComponent } from './login/login.component';
+import { AngularMaterialModule } from "../angular-material/angular-material.module";
 
 @NgModule({
   declarations: [
     HomeComponent,
-    LoginComponent
   ],
   imports: [
-    ComponentsModule
+    ComponentsModule,
+    AngularMaterialModule,
+    BrowserAnimationsModule
   ],
   exports: [
     HomeComponent,
-    LoginComponent
   ],
 })
 

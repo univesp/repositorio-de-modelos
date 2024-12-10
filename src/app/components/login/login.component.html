@@ -1,0 +1,37 @@
+<div class="login">
+  <span>Email</span>
+  <mat-form-field style="width: 500px;">
+    <mat-label>E-mail cadastrado</mat-label>
+    <input type="email" matInput>
+  </mat-form-field>
+
+  <br>
+
+  <span>Senha</span>
+  <mat-form-field style="width: 500px;">
+    <mat-label>Senha</mat-label>
+    <input matInput [type]="hide() ? 'password' : 'text'" />
+    <button
+      mat-icon-button
+      matSuffix
+      (click)="clickEvent($event)"
+      [attr.aria-label]="'Hide password'"
+      [attr.aria-pressed]="hide()"
+    >
+      <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <br>
+
+  <div class="check-remember">
+    <input type="checkbox"> 
+    <span>Lembrar</span>
+  </div>
+
+  <div class="submit-button">
+    <button>Entrar</button>
+  </div>
+  
+</div>
+

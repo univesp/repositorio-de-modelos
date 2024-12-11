@@ -3,10 +3,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './home/home.component';
 import { ComponentsModule } from "../components/components.module";
 import { AngularMaterialModule } from "../angular-material/angular-material.module";
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
     HomeComponent,
+    LoginComponent,
   ],
   imports: [
     ComponentsModule,
@@ -15,6 +17,7 @@ import { AngularMaterialModule } from "../angular-material/angular-material.modu
   ],
   exports: [
     HomeComponent,
+    LoginComponent
   ],
 })
 

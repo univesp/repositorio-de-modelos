@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IFooter } from './interfaces/footer/footer.interface';
 import { UserFooter } from './data/footer-list'; 
 
@@ -7,6 +7,12 @@ import { UserFooter } from './data/footer-list';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   footer: IFooter = UserFooter[0];
+
+  ngOnInit() {
+    if(!localStorage.getItem('isSignedIn')) {
+      localStorage.setItem('isSignedIn', 'false');
+    }
+  }
 }

@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-login-component',
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

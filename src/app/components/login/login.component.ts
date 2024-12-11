@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, EventEmitter, Output, signal } from '@angular/core';
 
 @Component({
   selector: 'app-login-component',
@@ -6,9 +6,16 @@ import { Component, signal } from '@angular/core';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
+
   hide = signal(true);
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
+  }
+
+  @Output('onLogin') onLoginEmitt = new EventEmitter<boolean>();
+
+  onLogin() {
+    this.onLoginEmitt.emit(true);
   }
 }

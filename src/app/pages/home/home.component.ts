@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { isSignedIn } from '../../utils/get-signedin'; 
 
 @Component({
   selector: 'app-home',
@@ -7,12 +8,10 @@ import { Router } from '@angular/router';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {
-  getIsSignedIn: any = localStorage.getItem('isSignedIn');
-  isSignedIn: boolean = false;
   isPrivate: boolean = false;
 
   ngOnInit() {
-    if(this.isPrivate) {
+    if(this.isPrivate && !isSignedIn()) {
       this.router.navigate(['login']);
     }
   }
@@ -21,12 +20,12 @@ export class HomeComponent implements OnInit {
   }
   
   redirectToLoginOrDashboard() {
-    this.getIsSignedIn === "false" ? this.isSignedIn = false : this.isSignedIn = true;
-    
-    if(this.isSignedIn) {
+
+    if(isSignedIn()) {
       this.router.navigate(['dashboard']);
     } else {
       this.router.navigate(['login']);
     }
   }
+  
 }

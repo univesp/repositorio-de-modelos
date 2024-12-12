@@ -9,12 +9,16 @@ import { FooterComponent } from './footer/footer.component';
 import { PipesModule } from "../pipes/pipes.module";
 import { AngularMaterialModule } from "../angular-material/angular-material.module";
 import { LoginComponent } from './login/login.component';
+import { FilterComponent } from './filter/filter.component';
+import { CarouselComponent } from './carousel/carousel.component';
 
 @NgModule({
   declarations: [
     HeaderComponent,
     FooterComponent,
-    LoginComponent
+    LoginComponent,
+    FilterComponent,
+    CarouselComponent
   ],
   imports: [
     CommonModule,
@@ -25,7 +29,9 @@ import { LoginComponent } from './login/login.component';
   exports: [
     HeaderComponent,
     FooterComponent,
-    LoginComponent
+    LoginComponent,
+    FilterComponent,
+    CarouselComponent
   ],
 })
 export class ComponentsModule { }

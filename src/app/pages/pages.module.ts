@@ -5,12 +5,14 @@ import { ComponentsModule } from "../components/components.module";
 import { AngularMaterialModule } from "../angular-material/angular-material.module";
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
   declarations: [
     HomeComponent,
     LoginComponent,
     DashboardComponent,
+    NotFoundComponent,
   ],
   imports: [
     ComponentsModule,

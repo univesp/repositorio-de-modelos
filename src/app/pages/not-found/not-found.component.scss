@@ -1,0 +1,26 @@
+.not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;  
+  margin-top: 50px;
+}
+
+.not-found > h1 {
+  font-size: 200px;
+  color: #7155d8;
+  margin-bottom: 20px;
+}
+
+.not-found > h2 {
+  font-size: 36px;
+  color: #7155d8;
+  margin-bottom: 30px;
+}
+
+.not-found > p {
+  font-size: 20px;
+}
+.not-found > p:nth-last-child(2) {
+  margin-bottom: 10px;
+}

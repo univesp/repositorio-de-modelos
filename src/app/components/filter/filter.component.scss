@@ -1,0 +1,47 @@
+.filter-elements {
+  display: flex;
+  gap: 0 40px;
+  justify-content: center;
+  color: #FFF;
+  margin-top: 40px;
+  align-items: flex-end;
+}
+
+.explorar-tags {
+  display: flex;
+  gap: 0 20px;
+}
+
+.explorar-tags > span {
+  font-size: 30px;
+}
+.explorar-tags > span:nth-child(1), .explorar-tags > span:nth-child(3) {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.button-adicionar > button {
+  outline: none;
+  border: none;
+  padding: 15px;
+  background-color: #FFF;
+  border-radius: 50px;
+  width: 150px;
+  font-size: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0 15px;
+}
+.button-adicionar > button > span:nth-child(1) {
+  font-size: 40px;
+}
+
+.barra-pesquisa > input {
+  border-radius: 50px;
+  width: 900px;
+  padding: 25px;
+  outline: none;
+  font-size: 18px;
+}
+

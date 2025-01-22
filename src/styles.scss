@@ -22,3 +22,7 @@ body {
 a {
   text-decoration: none;
 }
+
+.slick-prev:before, .slick-next:before {
+  color: #000 !important;
+}

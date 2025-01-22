@@ -10,7 +10,7 @@ import { PipesModule } from "../pipes/pipes.module";
 import { AngularMaterialModule } from "../angular-material/angular-material.module";
 import { LoginComponent } from './login/login.component';
 import { FilterComponent } from './filter/filter.component';
-import { CarouselComponent } from './carousel/carousel.component';
+import { CarouselComponent } from "./carousel/carousel.component";
 
 @NgModule({
   declarations: [

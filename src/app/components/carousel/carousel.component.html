@@ -1,1 +1,23 @@
-<p>carousel works!</p>
+<div class="carousel-container">
+  <ngx-slick-carousel class="carousel"
+  #slickModal="slick-carousel"
+  [config]="slideConfig">
+
+    <div ngxSlickItem *ngFor="let slide of slides" class="slide">
+      <img src="{{ slide.img }}" alt="" class="img-style">
+      <div class="info-modelo-carousel">
+        <h1>{{ slide.titulo }}</h1>
+        <p>{{ slide.texto }}</p>
+        <div class="tags-carousel">
+          <span *ngFor="let tag of slide.tags">
+            {{ tag }}
+          </span>
+          
+        </div>
+      </div>
+      
+    </div>
+
+  </ngx-slick-carousel>
+</div>
+

@@ -4,6 +4,7 @@ import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { SlickCarouselModule } from 'ngx-slick-carousel';
 
 
 @NgModule({
@@ -12,14 +13,16 @@ import { MatButtonModule } from '@angular/material/button';
     MatInputModule, 
     MatSelectModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    SlickCarouselModule
   ],
   exports: [
     MatFormFieldModule, 
     MatInputModule, 
     MatSelectModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    SlickCarouselModule
   ],
 })
 

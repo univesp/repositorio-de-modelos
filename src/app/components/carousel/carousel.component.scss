@@ -1,0 +1,43 @@
+.carousel-container {
+  margin-top: 50px;
+}
+
+.slide {
+  display: flex;
+}
+
+.img-style{
+  margin-left: 30px;
+}
+
+.info-modelo-carousel {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin-left: 80px;
+  color: #FFF;
+}
+.info-modelo-carousel > h1 {
+  font-size: 42px;
+  margin-bottom: 30px;
+}
+.info-modelo-carousel > p {
+  font-size: 30px;
+  line-height: 1.5;
+  font-weight: lighter;
+  margin-bottom: 100px;
+}
+
+.tags-carousel {
+  display: flex;
+  gap: 0 20px;
+}
+.tags-carousel > span {
+  background-color: #FFF;
+  color: #000;
+  min-width: 90px;
+  width: auto;
+  padding: 15px;
+  border-radius: 15px;
+  text-align: center;
+}

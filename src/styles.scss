@@ -26,3 +26,16 @@ a {
 .slick-prev:before, .slick-next:before {
   color: #000 !important;
 }
+
+.novidades-cards > button.slick-next::before, .novidades-cards > button.slick-prev::before {
+  color: #7155d8 !important;
+  font-size: 45px;
+  position: absolute;
+  bottom: 110px;
+}
+.novidades-cards > button.slick-prev::before {
+  left: 1620px;
+}
+.novidades-cards > button.slick-next::before {
+  right: 50px;
+}

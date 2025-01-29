@@ -1,0 +1,13 @@
+<div class="carousel-container">
+  <h1>Novidades</h1>
+  <ngx-slick-carousel class="carousel"
+  #slickModal="slick-carousel"
+  [config]="slideConfig">
+
+    <div ngxSlickItem *ngFor="let card of cards" class="cards">
+      <img src="{{ card.img }}" alt="" class="img-style">
+      
+    </div>
+
+  </ngx-slick-carousel>
+</div>

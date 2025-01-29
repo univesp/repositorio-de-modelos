@@ -11,6 +11,7 @@ import { AngularMaterialModule } from "../angular-material/angular-material.modu
 import { LoginComponent } from './login/login.component';
 import { FilterComponent } from './filter/filter.component';
 import { CarouselComponent } from "./carousel/carousel.component";
+import { NovidadesComponent } from './novidades/novidades.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { CarouselComponent } from "./carousel/carousel.component";
     FooterComponent,
     LoginComponent,
     FilterComponent,
-    CarouselComponent
+    CarouselComponent,
+    NovidadesComponent
   ],
   imports: [
     CommonModule,
@@ -31,7 +33,8 @@ import { CarouselComponent } from "./carousel/carousel.component";
     FooterComponent,
     LoginComponent,
     FilterComponent,
-    CarouselComponent
+    CarouselComponent,
+    NovidadesComponent
   ]
 })
 export class ComponentsModule { }

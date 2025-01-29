@@ -32,6 +32,6 @@ import { CarouselComponent } from "./carousel/carousel.component";
     LoginComponent,
     FilterComponent,
     CarouselComponent
-  ],
+  ]
 })
 export class ComponentsModule { }

@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './home/home.component';
 import { ComponentsModule } from "../components/components.module";
@@ -6,6 +6,8 @@ import { AngularMaterialModule } from "../angular-material/angular-material.modu
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -17,13 +19,16 @@ import { NotFoundComponent } from './not-found/not-found.component';
   imports: [
     ComponentsModule,
     AngularMaterialModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    BrowserModule,
+    CommonModule
   ],
   exports: [
     HomeComponent,
     LoginComponent,
     DashboardComponent
   ],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 
 export class PagesModule { }

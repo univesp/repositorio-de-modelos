@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-carousel',
@@ -6,12 +6,12 @@ import { Component } from '@angular/core';
   styleUrl: './carousel.component.scss',
 })
 export class CarouselComponent {
-  slides= [
+  slides = [
     {
       titulo: "Titulo do Modelo 1",
-      texto: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus non voluptates qui odit sapiente molestiae. Odit incidunt, exercitationem nemo qui assumenda recusandae unde sunt itaque facilis dolorem quas voluptates cum.",
-      img: "https://assets.univesp.br/repositorio-de-modelos/image1.png",
-      tags: ["Lorem", "Ipsum", "Dolor", "Sit"]
+        texto: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus non voluptates qui odit sapiente molestiae. Odit incidunt, exercitationem nemo qui assumenda recusandae unde sunt itaque facilis dolorem quas voluptates cum.",
+        img: "https://assets.univesp.br/repositorio-de-modelos/image1.png",
+        tags: ["Lorem", "Ipsum", "Dolor", "Sit"]
     },
     {
       titulo: "Titulo do Modelo 2",
@@ -19,8 +19,8 @@ export class CarouselComponent {
       img: "https://assets.univesp.br/repositorio-de-modelos/image2.png",
       tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"]
     }
-  ];
-
+  ]
+  
   slideConfig = {
     "slidesToShow": 1,
     "slidesToScroll": 1,

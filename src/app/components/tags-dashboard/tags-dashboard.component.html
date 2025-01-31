@@ -1,0 +1,8 @@
+<div class="tags-populares-container">
+  <h1>Tags Populares</h1>
+  <div class="tags-items-container" *ngFor="let tag of tagsPopulares">
+    <span class="tag-item" *ngFor="let tag of tag.tags">
+      {{ tag }}
+    </span>
+  </div>
+</div>

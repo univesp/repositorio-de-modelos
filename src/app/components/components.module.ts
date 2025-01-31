@@ -12,6 +12,7 @@ import { LoginComponent } from './login/login.component';
 import { FilterComponent } from './filter/filter.component';
 import { CarouselComponent } from "./carousel/carousel.component";
 import { NovidadesComponent } from './novidades/novidades.component';
+import { TagsDashboardComponent } from './tags-dashboard/tags-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { NovidadesComponent } from './novidades/novidades.component';
     LoginComponent,
     FilterComponent,
     CarouselComponent,
-    NovidadesComponent
+    NovidadesComponent,
+    TagsDashboardComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +36,8 @@ import { NovidadesComponent } from './novidades/novidades.component';
     LoginComponent,
     FilterComponent,
     CarouselComponent,
-    NovidadesComponent
+    NovidadesComponent,
+    TagsDashboardComponent
   ]
 })
 export class ComponentsModule { }

@@ -1,0 +1,30 @@
+<div class="destaques-container">
+  <h1>Destaques</h1>
+
+  <ngx-slick-carousel class="modelos-cards"
+  #slickModal="slick-carousel"
+  [config]="modelosConfig">
+
+    <div ngxSlickItem *ngFor="let modelo of modelos" class="modelo-items-container">
+      
+      <h2>{{ modelo.titulo }}</h2>
+
+      <div class="modelo-detalhes">
+        <span>{{ modelo.date }}</span> 
+        <span> | </span> 
+        <span>{{ modelo.disciplina }}, </span> 
+        <span>{{ modelo.categorias }}</span>
+      </div>
+
+      <div class="modelo-imagem">
+        <img src="{{ modelo.imagem }}" alt="">
+      </div>
+
+      <p class="modelo-descricao">{{ modelo.descricao }}</p>
+
+      <p class="modelo-autor">Enviado por: <b>{{ modelo.autor }}</b></p>
+      
+    </div>
+
+  </ngx-slick-carousel>
+</div>

@@ -40,3 +40,16 @@ a {
 .novidades-cards > button.slick-next::before {
   right: 50px;
 }
+
+.modelos-cards > button.slick-next::before, .modelos-cards > button.slick-prev::before {
+  color: #7155d8 !important;
+  font-size: 45px;
+  position: absolute;
+  bottom: 320px;
+}
+.modelos-cards > button.slick-prev::before {
+  left: 1605px;
+}
+.modelos-cards > button.slick-next::before {
+  right: 60px;
+}

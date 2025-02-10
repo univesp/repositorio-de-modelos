@@ -8,6 +8,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from "@angular/common";
+import { ExplorarComponent } from './explorar/explorar.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { CommonModule } from "@angular/common";
     LoginComponent,
     DashboardComponent,
     NotFoundComponent,
+    ExplorarComponent,
   ],
   imports: [
     ComponentsModule,
@@ -26,7 +28,8 @@ import { CommonModule } from "@angular/common";
   exports: [
     HomeComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    ExplorarComponent
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })

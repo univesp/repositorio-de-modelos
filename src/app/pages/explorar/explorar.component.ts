@@ -14,8 +14,4 @@ export class ExplorarComponent implements OnInit {
     console.log(Modeloslist)
     this.modelos = Modeloslist;
   }
-
-  testeBotao() {
-    console.log(Modeloslist)
-  }
 }

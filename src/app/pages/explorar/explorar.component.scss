@@ -13,4 +13,20 @@
     box-shadow: 0px 7px 5px #49378c;
     z-index: 10;
   }
+
+  &__switch-view-buttons {
+    margin-top: 50px;
+    display: flex;
+    gap: 0 10px;
+  }
+  &__switch-view-buttons > button {
+    background-color: #cecece;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  &__resultados-container {
+    margin-top: 20px;
+  }
 }

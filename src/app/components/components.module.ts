@@ -14,6 +14,8 @@ import { CarouselComponent } from "./carousel/carousel.component";
 import { NovidadesComponent } from './novidades/novidades.component';
 import { TagsDashboardComponent } from './tags-dashboard/tags-dashboard.component';
 import { DestaquesComponent } from './destaques/destaques.component';
+import { ExplorarGridComponent } from "./explorar-grid/explorar-grid.component";
+import { ExplorarListComponent } from "./explorar-list/explorar-list.component";
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { DestaquesComponent } from './destaques/destaques.component';
     CarouselComponent,
     NovidadesComponent,
     TagsDashboardComponent,
-    DestaquesComponent
+    DestaquesComponent,
+    ExplorarGridComponent,
+    ExplorarListComponent
   ],
   imports: [
     CommonModule,
@@ -40,7 +44,9 @@ import { DestaquesComponent } from './destaques/destaques.component';
     CarouselComponent,
     NovidadesComponent,
     TagsDashboardComponent,
-    DestaquesComponent
+    DestaquesComponent,
+    ExplorarGridComponent,
+    ExplorarListComponent
   ]
 })
 export class ComponentsModule { }

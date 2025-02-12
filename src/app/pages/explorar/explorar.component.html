@@ -1,8 +1,15 @@
 <div class="explorar">
   <app-filter class="explorar__filter"></app-filter>
 
-  <div class="explorar-resultados-container">
-    <p>Explorar works! {{ modelos[0].titulo }}</p>
+  <div class="explorar__switch-view-buttons">
+    <button (click)="switchViewType('list')">Lista</button>
+    <button (click)="switchViewType('grid')">Grid</button>
   </div>
+
+  <div class="explorar__resultados-container">
+    <app-explorar-grid *ngIf=" viewType === 'grid' "></app-explorar-grid>
+    <app-explorar-list *ngIf=" viewType === 'list' "></app-explorar-list>  
+  </div>
+  
 </div>
 

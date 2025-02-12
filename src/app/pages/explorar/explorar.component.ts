@@ -8,10 +8,14 @@ import { Modeloslist } from '../../data/modelos-list';
 })
 export class ExplorarComponent implements OnInit {
 
-  modelos: any = [];
+  viewType: string = "grid";
   
   ngOnInit() {
     console.log(Modeloslist)
-    this.modelos = Modeloslist;
+    
+  }
+
+  switchViewType(type: string) {
+    this.viewType = type;
   }
 }

@@ -1,3 +1,45 @@
-div {
+.explorarGrid {
     display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
+    gap: 100px 30px;
+    margin-left: 20px;
+
+    &__item {
+        width: 600px;
+        height: 550px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__item> h2 {
+        font-size: 28px;
+        margin-left: 20px;
+    }
+
+    &__detalhes {
+        margin-top: 5px;
+        font-size: 17px;
+        margin-left: 20px;
+    }
+
+    &__imagem {
+        margin-top: 15px;
+    }
+    &__imagem > img {
+        width: 590px;
+    }
+
+    &__descricao {
+        margin-top: 20px;
+        font-size: 18px;
+        width: 85%;
+        margin-left: 25px;
+    }
+
+    &__autor {
+        margin-top: 20px;
+        margin-left: 25px;
+        font-size: 18px;
+    }
 }

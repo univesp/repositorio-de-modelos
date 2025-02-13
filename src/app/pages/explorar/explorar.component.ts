@@ -9,9 +9,11 @@ import { Modeloslist } from '../../data/modelos-list';
 export class ExplorarComponent implements OnInit {
 
   viewType: string = "grid";
+  opacityClicked: number = 1;
+  modelosList: any = Modeloslist;
   
   ngOnInit() {
-    console.log(Modeloslist)
+    console.log('olá')
     
   }
 

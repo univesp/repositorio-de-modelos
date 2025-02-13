@@ -1,3 +1,20 @@
-<div>
-    <p *ngFor="let item of modelosList"> {{ item.titulo }} </p>
+<div class="explorarGrid">
+    <div *ngFor="let item of modelosList" class="explorarGrid__item"> 
+        <h2> {{ item.titulo }} </h2>
+
+        <div class="explorarGrid__detalhes">
+            <span> {{ item.date }} </span>
+            <span> | </span>
+            <span> {{ item.disciplina }} - </span>
+            <span> {{ item.categorias }} </span>
+        </div> 
+
+        <div class="explorarGrid__imagem">
+            <img src="{{ item.img_lg }}" alt="">
+        </div>
+
+        <p class="explorarGrid__descricao"> {{ item.descricao }} </p>
+
+        <p class="explorarGrid__autor">Enviado por:  <b>{{ item.autor }}</b> </p>
+    </div>
 </div>

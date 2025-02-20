@@ -1,1 +1,27 @@
-<p>Explorar List Works!</p>
+<div class="explorarList">
+
+  <div *ngFor="let item of modelosList" class="explorarList__item-container">
+
+    <div class="explorarList__item">
+      <div class="explorarList__imagem">
+        <img src="{{ item.img_lg }}" alt="">
+      </div>
+  
+      <div class="explorarList__titulo">
+        <h2> {{ item.titulo }} </h2>
+      </div>
+  
+      <div class="explorarList__data">
+        <span> {{ item.date }} </span>
+      </div>
+  
+      <div class="explorarList__descricao">
+        <p> {{ item.descricao }} </p>
+      </div>
+    </div>
+    
+    <hr>
+
+  </div>
+
+</div>

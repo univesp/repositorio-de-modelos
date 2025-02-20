@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Modeloslist } from '../../data/modelos-list';
 
 @Component({
   selector: 'app-explorar-list',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './explorar-list.component.scss'
 })
 export class ExplorarListComponent {
-  
+  @Input({required: true}) modelosList: any = Modeloslist;
 }

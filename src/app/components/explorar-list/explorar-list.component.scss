@@ -1,0 +1,54 @@
+.explorarList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px 0;
+  width: 90%;
+  margin-left: 70px;
+
+  &__item-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+  }
+
+  &__imagem {
+    width: 305px;
+  }
+
+  &__imagem > img {
+    width: 200px;
+  }
+
+  &__titulo {
+    width: 700px;
+    margin-left: 25px;
+  }
+
+  &__titulo > h2 {
+    width: 370px;
+  }
+
+  &__data {
+    width: 500px;
+    font-size: 18px;
+  }
+
+  &__data > span {
+    width: 300px;
+  }
+
+  &__descricao {
+    width: 70%;
+    font-size: 18px;
+  }
+
+  hr {
+    width: 100%;
+    border: 1px solid rgba($color: #000000, $alpha: .3);
+    margin-top: 20px;
+  }
+}

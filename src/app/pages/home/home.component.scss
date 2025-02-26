@@ -35,3 +35,19 @@
     border-radius: 15px;
   }
 }
+
+@media (max-width: 1300px) {
+  .home {
+
+    &__login {
+      height: 100vh;
+    }
+
+    .ilustra-home-item {
+      width: 240px;
+      height: 125px;
+    }
+
+  }
+ 
+}

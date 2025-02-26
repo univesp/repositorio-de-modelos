@@ -19,3 +19,10 @@
 .u-button-default > button:hover {
   transform: scale(1.1);
 }
+
+@media (max-width: 1300px) {
+  .u-button-default > button {
+    padding: 15px;
+    width: 200px;
+  }
+}

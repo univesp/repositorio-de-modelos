@@ -21,3 +21,22 @@
   color: #7155d8;
   font-size: 3.5em;
 }
+
+@media (max-width: 1300px) {
+  .header__image-container {
+    width: 220px;
+    height: 100px;
+    bottom: 24px;
+    right: 70px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .header__image-container > img {
+    width: 90%;
+  }
+
+  .header > h1 {
+    font-size: 2.8em;
+  }
+}

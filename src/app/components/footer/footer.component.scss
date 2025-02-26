@@ -40,3 +40,29 @@
   gap: 0 35px;
   margin-top: 10px;
 }
+
+@media (max-width: 1300px) {
+  .footer__logo > img{
+    width: 85%;
+  }
+
+  .titulo-footer {
+    font-size: 18px;
+  }
+
+  .info-footer {
+    font-size: 14px;
+  }
+
+  .link-footer {
+    font-size: 16px;
+  }
+
+  .redes-sociais-icons {
+    gap: 0 25px;
+  }
+
+  .each-icon {
+    width: 35px;
+  }
+}

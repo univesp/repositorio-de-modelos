@@ -52,3 +52,16 @@
     margin-top: 20px;
   }
 }
+
+@media (max-width: 1300px){
+  .explorarList{
+
+    &__titulo > h2 {
+      font-size: 20px;
+    }
+
+    &__descricao, &__data {
+      font-size: 14px;
+    }
+  }
+}

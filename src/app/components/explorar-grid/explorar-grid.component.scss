@@ -43,3 +43,30 @@
         font-size: 18px;
     }
 }
+
+@media (max-width: 1300px){
+    .explorarGrid {
+        gap: 50px 50px;
+
+        &__item {
+            width: 370px;
+            height: 450px;
+        }
+
+        &__item> h2 {
+            font-size: 24px;
+        }
+
+        &__imagem > img {
+            width: 360px;
+        }
+
+        &__detalhes, &__descricao {
+            font-size: 14px;
+        }
+
+        &__autor {
+            font-size: 15px;
+        }
+    }
+}

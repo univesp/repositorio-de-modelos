@@ -8,16 +8,24 @@ import { Modeloslist } from '../../data/modelos-list';
 })
 export class ExplorarComponent implements OnInit {
 
-  viewType: string = "grid";
+  viewType: any = "grid";
   opacityClicked: number = 1;
   modelosList: any = Modeloslist;
   
   ngOnInit() {
-    console.log('olá')
+
+    if(!localStorage.getItem('viewType')){
+      localStorage.setItem('viewType', this.viewType);
+    } else {
+      
+      this.viewType =  localStorage.getItem('viewType')?.toString();
+    }
+    
     
   }
 
   switchViewType(type: string) {
     this.viewType = type;
+    localStorage.setItem('viewType', type)
   }
 }

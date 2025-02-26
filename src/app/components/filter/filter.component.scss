@@ -45,3 +45,27 @@
   font-size: 18px;
 }
 
+@media (max-width: 1300px) {
+  .filter-elements {
+    margin-bottom: 20px;
+  }
+
+  .explorar-tags {
+    gap: 0 12px;
+  }
+
+  .explorar-tags > span {
+    font-size: 23px;
+  }
+
+  .barra-pesquisa > input {
+    width: 570px;
+    padding: 20px;
+  }
+
+  .button-adicionar > button {
+    padding: 7px;
+    font-size: 25px;
+    width: 130px;
+  }
+}

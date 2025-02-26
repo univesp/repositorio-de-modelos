@@ -41,3 +41,27 @@
   border-radius: 15px;
   text-align: center;
 }
+
+@media (max-width: 1300px) {
+  .img-style {
+    width: 500px;
+    height: 300px;
+  }
+
+  .info-modelo-carousel > h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+
+  .info-modelo-carousel > p {
+    font-size: 18px;
+    width: 90%;
+  }
+
+  .tags-carousel > span {
+    min-width: 50px;
+    padding: 10px;
+    margin-bottom: 45px;
+    font-size: 14px;
+  }
+}

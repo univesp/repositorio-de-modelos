@@ -27,3 +27,33 @@
   margin-left: 20px;
   font-size: 18px;
 }
+
+@media (max-width: 1300px) {
+  .destaques-container {
+    margin-top: 50px;
+  }
+
+  .destaques-container > h1 {
+    font-size: 40px;
+  }
+
+  .modelo-descricao {
+    font-size: 14px;
+  }
+
+  .modelo-autor {
+    font-size: 15px;
+  }
+
+  .modelo-items-container > h2 {
+    font-size: 22px;
+  }
+
+  .modelo-detalhes {
+    font-size: 14px;
+  }
+
+  .modelo-imagem > img {
+    width: 350px;
+  }
+}

@@ -54,3 +54,21 @@ a {
 .modelos-cards > button.slick-next::before {
   right: 60px;
 }
+
+@media (max-width: 1300px) {
+  .novidades-cards > button.slick-next::before, .novidades-cards > button.slick-prev::before, .modelos-cards > button.slick-next::before, .modelos-cards > button.slick-prev::before {
+    font-size: 35px;
+  }
+
+  .modelos-cards > button.slick-next::before, .modelos-cards > button.slick-prev::before {
+    bottom: 295px;
+  }
+
+  .novidades-cards > button.slick-prev::before {
+    left: 1060px;
+  }
+
+  .modelos-cards > button.slick-prev::before {
+    left: 1050px;
+  }
+}

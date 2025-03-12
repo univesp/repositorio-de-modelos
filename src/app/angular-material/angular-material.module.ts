@@ -5,7 +5,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SlickCarouselModule } from 'ngx-slick-carousel';
-
+import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
   imports: [
@@ -14,7 +14,8 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
     MatSelectModule,
     MatIconModule,
     MatButtonModule,
-    SlickCarouselModule
+    SlickCarouselModule,
+    MatTabsModule
   ],
   exports: [
     MatFormFieldModule, 
@@ -22,7 +23,8 @@ import { SlickCarouselModule } from 'ngx-slick-carousel';
     MatSelectModule,
     MatIconModule,
     MatButtonModule,
-    SlickCarouselModule
+    SlickCarouselModule,
+    MatTabsModule
   ],
 })
 

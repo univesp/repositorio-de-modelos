@@ -14,6 +14,8 @@ export class ExplorarComponent implements OnInit {
   
   ngOnInit() {
 
+    window.scrollTo(0, 0);
+
     if(!localStorage.getItem('viewType')){
       localStorage.setItem('viewType', this.viewType);
     } else {

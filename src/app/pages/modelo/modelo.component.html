@@ -1,1 +1,32 @@
-<p>Modelo Page Works!</p>
+<div class="modelo">
+
+    <app-filter class="modelo__filter"></app-filter>
+
+    <div class="modelo__container">
+        <div class="modelo__tituloBox">
+            <p> {{ currentModelo[0].date }} | {{ currentModelo[0].categorias }} </p>
+            <h1> {{ currentModelo[0].titulo }} - {{ currentModelo[0].recurso }} </h1>
+        </div>
+
+        <div class="modelo__detailsBox">
+
+            <div class="modelo__col1">
+                <img src="{{ currentModelo[0].img_lg }}" alt="">
+                <a *ngIf="currentModelo[0].hasEquipe" href="{{ currentModelo[0].link }}" target="_blank">
+                    Testar
+                </a>
+            </div>
+
+            <div class="modelo__col2">
+                <mat-tab-group>
+                    <mat-tab label="Descrição"> Content 1 </mat-tab>
+                    <mat-tab label="Equipe"> Content 2 </mat-tab>
+                    <mat-tab label="Detalhes"> Content 3 </mat-tab>
+                  </mat-tab-group>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+

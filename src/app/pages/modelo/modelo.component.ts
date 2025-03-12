@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Modeloslist } from '../../data/modelos-list';
 
@@ -7,7 +7,7 @@ import { Modeloslist } from '../../data/modelos-list';
     templateUrl: './modelo.component.html',
     styleUrl: './modelo.component.scss'
 })
-export class ModeloComponent {
+export class ModeloComponent implements OnInit {
     modelosList: any = Modeloslist;
     possibleIds: any = [];
     
@@ -33,5 +33,19 @@ export class ModeloComponent {
             this.router.navigate([`404`])
         }
 
+    }
+
+    currentModelo: any = [];
+
+    ngOnInit() {
+        window.scrollTo(0, 0);
+
+        for (let i = 0; i < this.modelosList.length; i++) {
+            
+            if(location.pathname === `/modelo/${this.modelosList[i].id}`) {
+                this.currentModelo.push(this.modelosList[i]);
+            }
+            
+        }
     }
 }

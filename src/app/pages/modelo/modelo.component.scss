@@ -1,0 +1,60 @@
+.modelo {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;  
+    margin: auto;
+    margin-bottom: 50px;
+
+    &__filter {
+        width: 100%;
+        height: 17vh;
+        background-color: #7155d8;
+        box-shadow: 0px 7px 5px #49378c;
+        z-index: 10;
+        margin-bottom: 50px;
+    }
+
+    &__container {
+        width: 70%;
+        margin: auto;
+    }
+
+    &__tituloBox > p {
+        font-size: 12px;
+    }
+    &__tituloBox > h1 {
+        font-size: 22px;
+        margin-top: 5px;
+    }
+
+    &__detailsBox {
+        width: 100%;
+        display: flex;
+    }
+
+    &__col1, &__col2 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__col1 > img {
+        width: 80%;
+        border: 1px solid rgba($color: #000000, $alpha: 0.2);
+    }
+    &__col1 > a {
+        cursor: pointer;
+        background-color: #7155d8;
+        color: #fff;
+        width: 23%;
+        padding: 8px;
+        text-align: center;
+        font-weight: 400;
+        border-radius: 8px;
+        margin-top: 10px;
+
+        &:hover {
+            background-color: #49378c;
+        }
+    }
+}

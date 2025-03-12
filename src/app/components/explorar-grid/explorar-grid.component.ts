@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { Modeloslist } from '../../data/modelos-list';
 
 @Component({
@@ -8,4 +9,11 @@ import { Modeloslist } from '../../data/modelos-list';
 })
 export class ExplorarGridComponent {
   @Input({required: true}) modelosList: any = Modeloslist;
+
+  constructor(private router: Router){
+  }
+
+  redirectModeloPage(id: string) {
+    this.router.navigate([`modelo/${id}`])
+  }
 }

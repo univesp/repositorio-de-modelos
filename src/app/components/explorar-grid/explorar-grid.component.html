@@ -1,5 +1,9 @@
 <div class="explorarGrid">
-    <div *ngFor="let item of modelosList" class="explorarGrid__item"> 
+    <div *ngFor="let item of modelosList" 
+         class="explorarGrid__item" 
+         (click)="redirectModeloPage(item.id)"
+         >
+
         <h2> {{ item.titulo }} </h2>
 
         <div class="explorarGrid__detalhes">
@@ -16,5 +20,6 @@
         <p class="explorarGrid__descricao"> {{ item.descricao }} </p>
 
         <p class="explorarGrid__autor">Enviado por:  <b>{{ item.autor }}</b> </p>
+        
     </div>
 </div>

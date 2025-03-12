@@ -9,6 +9,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from "@angular/common";
 import { ExplorarComponent } from './explorar/explorar.component';
+import { ModeloComponent } from "./modelo/modelo.component";
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { ExplorarComponent } from './explorar/explorar.component';
     DashboardComponent,
     NotFoundComponent,
     ExplorarComponent,
+    ModeloComponent
   ],
   imports: [
     ComponentsModule,
@@ -29,7 +31,8 @@ import { ExplorarComponent } from './explorar/explorar.component';
     HomeComponent,
     LoginComponent,
     DashboardComponent,
-    ExplorarComponent
+    ExplorarComponent,
+    ModeloComponent
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })

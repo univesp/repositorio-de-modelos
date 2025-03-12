@@ -1,6 +1,9 @@
 <div class="explorarList">
 
-  <div *ngFor="let item of modelosList" class="explorarList__item-container">
+  <div *ngFor="let item of modelosList" 
+       class="explorarList__item-container" 
+       (click)="redirectModeloPage(item.id)"
+       >
 
     <div class="explorarList__item">
       <div class="explorarList__imagem">

@@ -316,7 +316,7 @@ export const Modeloslist = [
     autor: "Amet Lorem",
     formato: 'Página HTML',
     mobile: true,
-    codigo: false,
+    codigo: true,
     destaque: true,
     hasEquipe: true,
     equipe: {

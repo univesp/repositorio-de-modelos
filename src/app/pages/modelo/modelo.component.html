@@ -5,7 +5,7 @@
     <div class="modelo__container">
         <div class="modelo__tituloBox">
             <p> {{ currentModelo[0].date }} | {{ currentModelo[0].categorias }} </p>
-            <h1> {{ currentModelo[0].titulo }} - {{ currentModelo[0].recurso }} </h1>
+            <h1> {{ currentModelo[0].titulo }} </h1>
         </div>
 
         <div class="modelo__detailsBox">
@@ -19,9 +19,29 @@
 
             <div class="modelo__col2">
                 <mat-tab-group>
-                    <mat-tab label="Descrição"> Content 1 </mat-tab>
-                    <mat-tab label="Equipe"> Content 2 </mat-tab>
-                    <mat-tab label="Detalhes"> Content 3 </mat-tab>
+                    <mat-tab label="Descrição"> <p id="item-descricao"> {{ currentModelo[0].descricao }} </p> </mat-tab>
+                    
+                    <mat-tab *ngIf="currentModelo[0].hasEquipe" label="Equipe">
+                        <div id="item-equipe">
+                            <span><b>Docente responsável:</b> {{ currentModelo[0].equipe.docente }} </span>
+                            <span><b>Coordenação:</b> {{ currentModelo[0].equipe.coordenacao }} </span>
+                            <span><b>Roteirização e Design Instrucional:</b> {{ currentModelo[0].equipe.roteirizacao }} </span>
+                            <span><b>Ilustração:</b> {{ currentModelo[0].equipe.ilustracao }} </span>
+                            <span><b>Layout:</b> {{ currentModelo[0].equipe.layout }} </span>
+                            <span><b>Programação:</b> {{ currentModelo[0].equipe.programacao }} </span>
+                        </div>
+                    </mat-tab>
+
+                    <mat-tab label="Detalhes">
+                        <div id="item-detalhes">
+                            <span><b>Tipo:</b> {{ currentModelo[0].recurso }} </span>
+                            <span><b>Data de adição:</b> {{ currentModelo[0].date }} </span>
+                            <span><b>Formato técnico:</b> {{ currentModelo[0].formato }} </span>
+                            <span><b>Compatibilidade Mobile:</b> {{ currentModelo[0].mobile ? "Sim" : "Não" }} </span>
+                            <span><b>Código-fonte Disponível:</b> {{ currentModelo[0].codigo ? "Sim" : "Não" }} </span>
+                            <span *ngIf="currentModelo[0].codigo && currentModelo[0].hasEquipe"><b>Link Github:</b> <a style="color: #000; text-decoration: underline;" target="_blank" href="{{ currentModelo[0].github }}"> {{ currentModelo[0].github }} </a> </span>
+                        </div>
+                    </mat-tab>
                   </mat-tab-group>
             </div>
 

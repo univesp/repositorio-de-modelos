@@ -4,16 +4,19 @@
   [config]="slideConfig">
 
     <div ngxSlickItem *ngFor="let slide of slides" class="slide">
-      <img src="{{ slide.img }}" alt="" class="img-style">
+      <img src="{{ slide.img_lg }}" alt="" class="img-style">
       <div class="info-modelo-carousel">
         <h1>{{ slide.titulo }}</h1>
-        <p>{{ slide.texto }}</p>
+        <p>{{ slide.descricao }}</p>
         <div class="tags-carousel">
           <span *ngFor="let tag of slide.tags">
             {{ tag }}
           </span>
           
         </div>
+        <button class="button-saibaMais-carousel" (click)="redirectModeloPage(slide.id)">
+          Saiba Mais
+        </button>
       </div>
       
     </div>

@@ -1,25 +1,29 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Modelo } from '../../interfaces/modelo/modelo.interface';
+import { Modeloslist } from '../../data/modelos-list';
 
 @Component({
   selector: 'app-carousel',
   templateUrl: './carousel.component.html',
   styleUrl: './carousel.component.scss',
 })
-export class CarouselComponent {
-  slides = [
-    {
-      titulo: "Titulo do Modelo 1",
-        texto: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus non voluptates qui odit sapiente molestiae. Odit incidunt, exercitationem nemo qui assumenda recusandae unde sunt itaque facilis dolorem quas voluptates cum.",
-        img: "https://assets.univesp.br/repositorio-de-modelos/image1.png",
-        tags: ["Lorem", "Ipsum", "Dolor", "Sit"]
-    },
-    {
-      titulo: "Titulo do Modelo 2",
-      texto: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Delectus non voluptates qui odit sapiente molestiae. Odit incidunt, exercitationem nemo qui assumenda recusandae unde sunt itaque facilis dolorem quas voluptates cum.",
-      img: "https://assets.univesp.br/repositorio-de-modelos/image2.png",
-      tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"]
-    }
-  ]
+export class CarouselComponent implements OnInit {
+  
+  @Input({required: true}) modelosList: Modelo[] = Modeloslist;
+  slides: Modelo[] = [];
+
+  constructor(private router: Router){
+  }
+
+  redirectModeloPage(id: string) {
+    this.router.navigate([`modelo/${id}`])
+  }
+
+  ngOnInit() {
+    this.slides = this.modelosList.slice(0, 2);
+  }
+  
   
   slideConfig = {
     "slidesToShow": 1,

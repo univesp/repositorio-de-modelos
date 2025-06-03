@@ -7,7 +7,10 @@
 }
 
 .img-style{
-  margin-left: 30px;
+  margin-left: 80px;
+  width: 720px;
+  height: 435px;
+  border-radius: 5px;
 }
 
 .info-modelo-carousel {
@@ -22,15 +25,17 @@
   margin-bottom: 30px;
 }
 .info-modelo-carousel > p {
-  font-size: 30px;
+  font-size: 26px;
   line-height: 1.5;
   font-weight: lighter;
-  margin-bottom: 100px;
+  margin-bottom: 30px;
+  width: 85%;
 }
 
 .tags-carousel {
   display: flex;
   gap: 0 20px;
+  margin-bottom: 50px;
 }
 .tags-carousel > span {
   background-color: #FFF;
@@ -40,6 +45,23 @@
   padding: 15px;
   border-radius: 15px;
   text-align: center;
+}
+
+.button-saibaMais-carousel{
+  width: 230px;
+  padding: 18px;
+  font-size: 26px;
+  background-color: transparent;
+  color: #FFF;
+  border: 1px solid #FFF;
+  font-weight: bold;
+  border-radius: 7px;
+  cursor: pointer;
+  &:hover {
+    background-color: #FFF;
+    color: #7155d8;
+    border: 0;
+  }
 }
 
 @media (max-width: 1300px) {

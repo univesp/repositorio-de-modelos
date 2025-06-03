@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { isSignedIn } from '../../utils/get-signedin'; 
-import { ICarousel } from '../../interfaces/carousel/carousel.interface';
-import { SlidesCarousel } from '../../data/carousel-list';
+import { Modelo } from '../../interfaces/modelo/modelo.interface';
+import { Modeloslist } from '../../data/modelos-list';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,7 +10,7 @@ import { SlidesCarousel } from '../../data/carousel-list';
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
-  slides: ICarousel = SlidesCarousel[0];
+  modelos: Modelo[] = Modeloslist;
 
   ngOnInit() {
     if(this.isPrivate && !isSignedIn()) {

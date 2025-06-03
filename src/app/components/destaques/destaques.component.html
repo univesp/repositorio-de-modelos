@@ -5,7 +5,7 @@
   #slickModal="slick-carousel"
   [config]="modelosConfig">
 
-    <div ngxSlickItem *ngFor="let modelo of modelos" class="modelo-items-container">
+    <div ngxSlickItem *ngFor="let modelo of modelosDestaque" class="modelo-items-container">
       
       <h2>{{ modelo.titulo }}</h2>
 
@@ -17,12 +17,14 @@
       </div>
 
       <div class="modelo-imagem">
-        <img src="{{ modelo.imagem }}" alt="">
+        <img src="{{ modelo.img_md }}" alt="">
       </div>
 
       <p class="modelo-descricao">{{ modelo.descricao }}</p>
 
       <p class="modelo-autor">Enviado por: <b>{{ modelo.autor }}</b></p>
+
+      <button class="modelo-button-destaques" (click)="redirectModeloPage(modelo.id)">Saiba Mais</button>
       
     </div>
 

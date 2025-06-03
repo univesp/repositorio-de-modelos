@@ -1,44 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Modelo } from '../../interfaces/modelo/modelo.interface';
+import { Modeloslist } from '../../data/modelos-list';
 
 @Component({
   selector: 'app-novidades',
   templateUrl: './novidades.component.html',
   styleUrl: './novidades.component.scss'
 })
-export class NovidadesComponent {
+export class NovidadesComponent implements OnInit {
 
-  cards = [
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm1.png"
-    },
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm2.png"
-    },
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm3.png"
-    },
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm4.png"
-    },
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm5.png"
-    },
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm3.png"
-    },
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm2.png"
-    },
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm4.png"
-    },
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm5.png"
-    },
-    {
-      img: "https://assets.univesp.br/repositorio-de-modelos/card-sm1.png"
-    }
-  ];
+  @Input({required: true}) modelosList: Modelo[] = Modeloslist;
+  cards: Modelo[] = [];
+
+  constructor(private router: Router){
+  }
+
+  redirectModeloPage(id: string) {
+    this.router.navigate([`modelo/${id}`])
+  }
+
+  ngOnInit() {
+    this.cards = this.modelosList.slice(0, 10);
+  }
+
+  
 
   slideConfig = {
     "slidesToShow": 5,
@@ -46,7 +32,7 @@ export class NovidadesComponent {
     "autoplay": false,
     "autoplaySpeed": 5000,
     "pauseOnHover": true,
-    "infinite": true,
+    "infinite": false,
     "responsive": [
       {
         "breakpoint": 992,

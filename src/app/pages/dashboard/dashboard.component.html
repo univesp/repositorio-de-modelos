@@ -1,7 +1,7 @@
 <div class="dashboard">
   <app-filter class="dashboard__filter"></app-filter>
-  <app-carousel [slides]="slides" class="dashboard__carousel"></app-carousel>
-  <app-novidades class="dashboard__novidades"></app-novidades>
+  <app-carousel [modelosList]="modelos" class="dashboard__carousel"></app-carousel>
+  <app-novidades [modelosList]="modelos" class="dashboard__novidades"></app-novidades>
   <app-tags-dashboard class="dashboard__tags"></app-tags-dashboard>
-  <app-destaques class="dashboard__destaques"></app-destaques>
+  <app-destaques [modelosList]="modelos" class="dashboard__destaques"></app-destaques>
 </div>/

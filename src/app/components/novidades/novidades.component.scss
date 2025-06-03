@@ -4,8 +4,52 @@
   margin-bottom: 30px;
 }
 
+.cards {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
 .cards > img {
   width: 320px;
+  transition: 0.3s ease;
+}
+
+/* Camada escura */
+.cards::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: 0.3s ease;
+  z-index: 1;
+}
+
+.card-title {
+  position: absolute;
+  bottom: 65px;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  color: white;
+  text-align: center;
+  opacity: 0;
+  transition: 0.3s ease;
+  width: 320px;
+  font-size: 28px;
+  font-weight: bold;
+  z-index: 2;
+  pointer-events: auto; /* garante que pode interagir */
+}
+
+/* Hover em todo o card, incluindo quando mouse estiver sobre o título */
+.cards:hover::after {
+  opacity: 1;
+}
+
+.cards:hover .card-title {
+  opacity: 1;
 }
 
 @media (max-width: 1300px) {

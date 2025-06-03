@@ -4,9 +4,9 @@
   #slickModal="slick-carousel"
   [config]="slideConfig">
 
-    <div ngxSlickItem *ngFor="let card of cards" class="cards">
-      <img src="{{ card.img }}" alt="" class="img-style">
-      
+    <div ngxSlickItem *ngFor="let card of cards" class="cards" (click)="redirectModeloPage(card.id)">
+      <img src="{{ card.img_sm }}" alt="" class="img-style">
+      <p class="card-title"> {{ card.titulo }} </p>
     </div>
 
   </ngx-slick-carousel>

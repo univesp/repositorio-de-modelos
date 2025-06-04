@@ -26,7 +26,7 @@ export const Modeloslist = [
     },
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
-    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade"
+    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
   },
   {
     id: '002',
@@ -55,7 +55,7 @@ export const Modeloslist = [
     },
     tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
-    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade"
+    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
   },
   {
     id: '003',
@@ -74,7 +74,7 @@ export const Modeloslist = [
     hasCodigo: true,
     isDestaque: false,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"]
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
   },
   {
     id: '004',
@@ -93,7 +93,7 @@ export const Modeloslist = [
     hasCodigo: true,
     isDestaque: false,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"]
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
   },
   {
     id: '005',
@@ -122,7 +122,7 @@ export const Modeloslist = [
     },
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
-    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade"
+    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
   },
   {
     id: '006',
@@ -141,7 +141,7 @@ export const Modeloslist = [
     hasMobile: true,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"]
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
   },
   {
     id: '007',
@@ -170,7 +170,7 @@ export const Modeloslist = [
     },
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
-    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade"
+    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
   },
   {
     id: '008',
@@ -189,7 +189,7 @@ export const Modeloslist = [
     hasMobile: true,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"]
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
   },
   {
     id: '009',
@@ -218,7 +218,7 @@ export const Modeloslist = [
     },
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
-    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade"
+    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
   },
 
   {
@@ -248,7 +248,7 @@ export const Modeloslist = [
     },
     tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
-    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade"
+    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
   },
   {
     id: '011',
@@ -276,7 +276,7 @@ export const Modeloslist = [
       programacao: 'Gabriel Gallo'
     },
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
-    link: "https://apps.univesp.br/teoricos-da-sociologia/"
+    link: "https://apps.univesp.br/teoricos-da-sociologia/",
   },
   {
     id: '012',
@@ -295,7 +295,7 @@ export const Modeloslist = [
     isDestaque: true,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"]
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
   },
   {
     id: '013',
@@ -314,7 +314,7 @@ export const Modeloslist = [
     isDestaque: true,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"]
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
   },
   {
     id: '014',
@@ -343,6 +343,6 @@ export const Modeloslist = [
     },
     tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
-    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade"
+    github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
   }
 ];

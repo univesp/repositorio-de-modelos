@@ -14,6 +14,14 @@
         <span> | </span> 
         <span>{{ modelo.disciplina }}, </span> 
         <span>{{ modelo.categorias }}</span>
+        <span (click)="toggleBookmark(modelo)">
+          <mat-icon 
+            class="icon-bookmark" 
+            aria-hidden="false" 
+            aria-label="BookMark icon" 
+            [fontIcon]=" modelo.isSalvo ? 'bookmark' : 'bookmark_border' ">
+          </mat-icon>
+        </span>
       </div>
 
       <div class="modelo-imagem">

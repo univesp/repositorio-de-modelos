@@ -20,6 +20,15 @@
   
       <div class="explorarList__descricao">
         <p> {{ item.descricao }} </p>
+
+        <span (click)="toggleBookmark(item, $event)">
+          <mat-icon 
+            class="icon-bookmark" 
+            aria-hidden="false" 
+            aria-label="BookMark icon" 
+            [fontIcon]=" item.isSalvo ? 'bookmark' : 'bookmark_border' ">
+          </mat-icon>
+        </span>
       </div>
     </div>
     

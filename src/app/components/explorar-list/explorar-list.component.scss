@@ -54,6 +54,19 @@
   }
 }
 
+.icon-bookmark {
+  transform: scale(1.3);
+  color: #7155d8;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  position: relative;
+  top: 20px;
+}
+
+.icon-bookmark.filled {
+  color: #7155d8;
+}
+
 @media (max-width: 1300px){
   .explorarList{
 

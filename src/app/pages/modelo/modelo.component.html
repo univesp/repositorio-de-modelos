@@ -4,42 +4,50 @@
 
     <div class="modelo__container">
         <div class="modelo__tituloBox">
-            <p> {{ currentModelo[0].date }} | {{ currentModelo[0].categorias }} </p>
-            <h1> {{ currentModelo[0].titulo }} </h1>
+            <p> {{ currentModelo?.date }} | {{ currentModelo?.categorias }} </p>
+            <h1> {{ currentModelo?.titulo }} </h1>
         </div>
 
         <div class="modelo__detailsBox">
 
             <div class="modelo__col1">
-                <img src="{{ currentModelo[0].img_lg }}" alt="">
-                <a *ngIf="currentModelo[0].hasEquipe" href="{{ currentModelo[0].link }}" target="_blank">
+                <img src="{{ currentModelo.img_lg }}" alt="">
+                <a *ngIf="currentModelo.hasEquipe" href="{{ currentModelo.link }}" target="_blank">
                     Testar
                 </a>
+                <span (click)="toggleBookmark(currentModelo)">
+                    <mat-icon 
+                      class="icon-bookmark" 
+                      aria-hidden="false" 
+                      aria-label="BookMark icon" 
+                      [fontIcon]=" currentModelo.isSalvo ? 'bookmark' : 'bookmark_border' ">
+                    </mat-icon>
+                  </span>
             </div>
 
             <div class="modelo__col2">
                 <mat-tab-group>
-                    <mat-tab label="Descrição"> <p id="item-descricao"> {{ currentModelo[0].descricao }} </p> </mat-tab>
+                    <mat-tab label="Descrição"> <p id="item-descricao"> {{ currentModelo.descricao }} </p> </mat-tab>
                     
-                    <mat-tab *ngIf="currentModelo[0].hasEquipe" label="Equipe">
+                    <mat-tab *ngIf="currentModelo.hasEquipe" label="Equipe">
                         <div id="item-equipe">
-                            <span><b>Docente responsável:</b> {{ currentModelo[0].equipe.docente }} </span>
-                            <span><b>Coordenação:</b> {{ currentModelo[0].equipe.coordenacao }} </span>
-                            <span><b>Roteirização e Design Instrucional:</b> {{ currentModelo[0].equipe.roteirizacao }} </span>
-                            <span><b>Ilustração:</b> {{ currentModelo[0].equipe.ilustracao }} </span>
-                            <span><b>Layout:</b> {{ currentModelo[0].equipe.layout }} </span>
-                            <span><b>Programação:</b> {{ currentModelo[0].equipe.programacao }} </span>
+                            <span><b>Docente responsável:</b> {{ currentModelo.equipe.docente }} </span>
+                            <span><b>Coordenação:</b> {{ currentModelo.equipe.coordenacao }} </span>
+                            <span><b>Roteirização e Design Instrucional:</b> {{ currentModelo.equipe.roteirizacao }} </span>
+                            <span><b>Ilustração:</b> {{ currentModelo.equipe.ilustracao }} </span>
+                            <span><b>Layout:</b> {{ currentModelo.equipe.layout }} </span>
+                            <span><b>Programação:</b> {{ currentModelo.equipe.programacao }} </span>
                         </div>
                     </mat-tab>
 
                     <mat-tab label="Detalhes">
                         <div id="item-detalhes">
-                            <span><b>Tipo:</b> {{ currentModelo[0].recurso }} </span>
-                            <span><b>Data de adição:</b> {{ currentModelo[0].date }} </span>
-                            <span><b>Formato técnico:</b> {{ currentModelo[0].formato }} </span>
-                            <span><b>Compatibilidade Mobile:</b> {{ currentModelo[0].mobile ? "Sim" : "Não" }} </span>
-                            <span><b>Código-fonte Disponível:</b> {{ currentModelo[0].codigo ? "Sim" : "Não" }} </span>
-                            <span *ngIf="currentModelo[0].codigo && currentModelo[0].hasEquipe"><b>Link Github:</b> <a style="color: #000; text-decoration: underline;" target="_blank" href="{{ currentModelo[0].github }}"> {{ currentModelo[0].github }} </a> </span>
+                            <span><b>Tipo:</b> {{ currentModelo.recurso }} </span>
+                            <span><b>Data de adição:</b> {{ currentModelo.date }} </span>
+                            <span><b>Formato técnico:</b> {{ currentModelo.formato }} </span>
+                            <span><b>Compatibilidade Mobile:</b> {{ currentModelo.mobile ? "Sim" : "Não" }} </span>
+                            <span><b>Código-fonte Disponível:</b> {{ currentModelo.codigo ? "Sim" : "Não" }} </span>
+                            <span *ngIf="currentModelo.codigo && currentModelo.hasEquipe"><b>Link Github:</b> <a style="color: #000; text-decoration: underline;" target="_blank" href="{{ currentModelo.github }}"> {{ currentModelo.github }} </a> </span>
                         </div>
                     </mat-tab>
                   </mat-tab-group>

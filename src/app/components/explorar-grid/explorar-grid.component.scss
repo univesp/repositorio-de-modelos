@@ -45,6 +45,18 @@
     }
 }
 
+.icon-bookmark {
+    transform: scale(1.5);
+    color: #7155d8;
+    margin-left: 160px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .icon-bookmark.filled {
+    color: #7155d8;
+  }
+
 @media (max-width: 1300px){
     .explorarGrid {
         gap: 50px 50px;

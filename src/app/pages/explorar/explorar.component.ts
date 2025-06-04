@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Modeloslist } from '../../data/modelos-list'; 
+import { BookmarkService } from '../../services/bookmark.service'; 
+import { Modelo } from '../../interfaces/modelo/modelo.interface'; 
 
 @Component({
   selector: 'app-explorar',
@@ -10,24 +12,33 @@ export class ExplorarComponent implements OnInit {
 
   viewType: any = "grid";
   opacityClicked: number = 1;
-  modelosList: any = Modeloslist;
-  
-  ngOnInit() {
+  modelosList: Modelo[] = [];
 
+  constructor(
+    private bookmarkService: BookmarkService
+  ) { }
+  
+  ngOnInit(): void {
     window.scrollTo(0, 0);
 
-    if(!localStorage.getItem('viewType')){
-      localStorage.setItem('viewType', this.viewType);
-    } else {
-      
-      this.viewType =  localStorage.getItem('viewType')?.toString();
-    }
-    
-    
+    // Pega o tipo de visualização salvo
+    const savedViewType = localStorage.getItem('viewType');
+    this.viewType = savedViewType ?? "grid";
+
+    // Atualiza os modelos com status de bookmark
+    this.atualizarModelosComBookmark();
   }
 
-  switchViewType(type: string) {
+  switchViewType(type: string): void {
     this.viewType = type;
-    localStorage.setItem('viewType', type)
+    localStorage.setItem('viewType', type);
+    this.atualizarModelosComBookmark(); // Atualiza o status de bookmarks ao trocar visualização
+  }
+
+  atualizarModelosComBookmark(): void {
+    this.modelosList = Modeloslist.map(modelo => ({
+      ...modelo,
+      isSalvo: this.bookmarkService.isSalvo(modelo.id)
+    }));
   }
 }

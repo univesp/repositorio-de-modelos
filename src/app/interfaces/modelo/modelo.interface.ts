@@ -26,4 +26,5 @@ export interface Modelo {
   tags: string[];
   link?: string;
   github?: string;
+  isSalvo?: boolean;
 }

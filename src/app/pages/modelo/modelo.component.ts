@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
+import { BookmarkService } from '../../services/bookmark.service';
 
 @Component({
     selector: 'app-modelo',
@@ -8,10 +10,13 @@ import { Modeloslist } from '../../data/modelos-list';
     styleUrl: './modelo.component.scss'
 })
 export class ModeloComponent implements OnInit {
-    modelosList: any = Modeloslist;
+    modelosList: Modelo[] = Modeloslist;
     possibleIds: any = [];
     
-    constructor(private router: Router) {
+    constructor(
+            private router: Router,
+            private bookmarkService: BookmarkService
+        ) {
 
         // Verifica dentro do array modelosList se o id passado na URL existe 
         // Caso exista, adiciona true no array possibleIds
@@ -40,12 +45,20 @@ export class ModeloComponent implements OnInit {
     ngOnInit() {
         window.scrollTo(0, 0);
 
-        for (let i = 0; i < this.modelosList.length; i++) {
-            
-            if(location.pathname === `/modelo/${this.modelosList[i].id}`) {
-                this.currentModelo.push(this.modelosList[i]);
-            }
-            
+        const id = location.pathname.split('/').pop();  // pega o ID da URL
+
+        this.currentModelo = this.modelosList.find(m => m.id === id);
+
+        if(this.currentModelo) {
+            this.currentModelo.isSalvo = this.bookmarkService.isSalvo(this.currentModelo.id);
+        } else {
+            this.router.navigate(['404']);
         }
     }
+
+    toggleBookmark(modelo: Modelo) {
+        modelo.isSalvo = !modelo.isSalvo;
+
+        this.bookmarkService.toggle(modelo.id);  // Alterna no localStorage
+      }
 }

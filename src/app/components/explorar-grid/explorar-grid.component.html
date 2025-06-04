@@ -11,6 +11,14 @@
             <span> | </span>
             <span> {{ item.disciplina }} - </span>
             <span> {{ item.categorias }} </span>
+            <span (click)="toggleBookmark(item, $event)">
+                <mat-icon 
+                  class="icon-bookmark" 
+                  aria-hidden="false" 
+                  aria-label="BookMark icon" 
+                  [fontIcon]=" item.isSalvo ? 'bookmark' : 'bookmark_border' ">
+                </mat-icon>
+              </span>
         </div> 
 
         <div class="explorarGrid__imagem">

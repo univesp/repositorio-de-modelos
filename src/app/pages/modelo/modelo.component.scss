@@ -82,6 +82,20 @@
     gap: 15px 0;
 }
 
+.icon-bookmark {
+    transform: scale(2.0);
+    color: #7155d8;
+    position: relative;
+    left: 450px;
+    bottom: 35px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .icon-bookmark.filled {
+    color: #7155d8;
+  }
+
 @media (max-width: 1300px) {
     .modelo {
         width: 100%;

@@ -64,6 +64,18 @@
   }
 }
 
+.icon-bookmark {
+  transform: scale(1.4);
+  color: #7155d8;
+  margin-left: 100px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.icon-bookmark.filled {
+  color: #7155d8;
+}
+
 @media (max-width: 1300px) {
   .destaques-container {
     margin-top: 50px;

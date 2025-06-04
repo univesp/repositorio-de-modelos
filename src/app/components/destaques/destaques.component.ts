@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
+import { BookmarkService } from '../../services/bookmark.service';
 
 @Component({
   selector: 'app-destaques',
@@ -10,14 +11,25 @@ import { Modeloslist } from '../../data/modelos-list';
 })
 export class DestaquesComponent {
 
-  @Input({required: true}) modelosList: Modelo[] = Modeloslist;
-  modelosDestaque: Modelo[] = Modeloslist.filter(modelo => modelo.isDestaque === true);
+  @Input({required: true}) modelosList: Modelo[] = [];
 
-  constructor(private router: Router){
-  }
+  constructor(
+      private router: Router,
+      private bookmarkService: BookmarkService
+    )
+    { }
 
   redirectModeloPage(id: string) {
     this.router.navigate([`modelo/${id}`])
+  }
+
+  toggleBookmark(modelo: any) {
+    this.bookmarkService.toggle(modelo.id);
+    modelo.isSalvo = this.bookmarkService.isSalvo(modelo.id);
+  }
+
+  get modelosDestaque(): Modelo[] {
+    return this.modelosList.filter(modelo => modelo.isDestaque)
   }
 
   modelosConfig = {

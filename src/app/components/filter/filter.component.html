@@ -1,18 +1,57 @@
 <div class="filter">
   <div class="filter-elements">
 
+    <!-- Navegação -->
     <div class="explorar-tags">
-      <span (click)="goToExplorar()">Explorar</span> <span>|</span> <span>Tags</span>
+      <span (click)="goToExplorar()">Explorar</span>
+      <span>|</span>
+      <span>Tags</span>
     </div>
 
+    <!-- Botão Novo -->
     <div class="button-adicionar">
-      <button><span>+</span><span>Novo</span></button>
+      <button>
+        <span class="plus">+</span>
+        <span>Novo</span>
+      </button>
     </div>
 
+    <!-- Campo de Busca -->
     <div class="barra-pesquisa">
-      <input type="text" placeholder="Explore mais de 200 modelos disponíveis...">
+      <div class="search-wrapper">
+        <div class="icone-circular">
+          <mat-icon class="icon">search</mat-icon>
+        </div>
+
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm"
+          placeholder="Explore mais de 200 modelos disponíveis..."
+        >
+        <button 
+          class="icon-button"
+          *ngIf="searchTerm"
+          (click)="clearSearch()"
+          aria-label="Limpar busca"
+        >
+            <mat-icon>close</mat-icon>
+        </button>
+
+        <button class="icon-button"><mat-icon>tune</mat-icon></button>
+      </div>
     </div>
 
   </div>
-</div>
 
+  <!-- Filtros -->
+  <div class="filtros-selects">
+    <div class="filtro" *ngFor="let filtro of filtrosConfig">
+      <label>{{ filtro.label }}</label>
+      <select [(ngModel)]="filtros[filtro.key]">
+        <option [value]="filtro.placeholder">{{ filtro.placeholder }}</option>
+        <option *ngFor="let opcao of filtro.opcoes" [value]="opcao">{{ opcao }}</option>
+      </select>
+    </div>
+  </div>
+    
+</div>

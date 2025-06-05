@@ -1,4 +1,5 @@
 import { NgModule } from "@angular/core";
+import { FormsModule } from '@angular/forms';
 
 import { CommonModule } from "@angular/common";
 
@@ -34,7 +35,8 @@ import { ExplorarListComponent } from "./explorar-list/explorar-list.component";
     CommonModule,
     PipesModule,
     AngularMaterialModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    FormsModule
   ],
   exports: [
     HeaderComponent,

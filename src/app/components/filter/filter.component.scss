@@ -1,49 +1,175 @@
 .filter-elements {
   display: flex;
-  gap: 0 40px;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
   color: #FFF;
-  margin-top: 40px;
-  align-items: flex-end;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  width: 80%;
+  margin: 25px auto 0 auto;
 }
 
 .explorar-tags {
   display: flex;
-  gap: 0 20px;
+  gap: 10px;
+  font-size: 26px;
 }
 
-.explorar-tags > span {
-  font-size: 30px;
-}
-.explorar-tags > span:nth-child(1), .explorar-tags > span:nth-child(3) {
+.explorar-tags > span:nth-child(1),
+.explorar-tags > span:nth-child(3) {
   font-weight: bold;
   cursor: pointer;
 }
 
 .button-adicionar > button {
-  outline: none;
-  border: none;
-  padding: 15px;
-  background-color: #FFF;
-  border-radius: 50px;
-  width: 150px;
-  font-size: 30px;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0 15px;
-}
-.button-adicionar > button > span:nth-child(1) {
-  font-size: 40px;
+  gap: 8px;
+  background: #FFF;
+  border: none;
+  border-radius: 50px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-.barra-pesquisa > input {
-  border-radius: 50px;
-  width: 900px;
-  padding: 25px;
-  outline: none;
-  font-size: 18px;
+.button-adicionar .plus {
+  font-size: 22px;
 }
+
+.barra-pesquisa {
+  flex: 1;
+  min-width: 300px;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  background: #FFF;
+  border-radius: 50px;
+  padding: 10px 20px;
+  width: 100%;
+  gap: 10px;
+}
+
+.search-wrapper input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 15px;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5c4bc5;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.icon-button mat-icon {
+  font-size: 28px;
+}
+
+.icone-circular {
+  background-color: #5c4bc5; /* Roxo */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icone-circular mat-icon {
+  color: white;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.filtros-selects {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 5px;
+  gap: 15px;
+  background-color: #5c4bc5;
+  padding: 23px;
+}
+
+.filtro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+  position: relative;
+}
+
+.filtro label {
+  margin-bottom: 5px;
+  margin-left: 9px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+
+.filtro select {
+  padding: 6px 32px 6px 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  min-width: 150px;
+  max-width: 150px;
+  background-color: transparent;
+  color: #FFF;
+  font-weight: 500;
+  outline: none;
+  appearance: none;
+  box-shadow: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 25px;
+  text-align: left;
+}
+
+/* Remove qualquer borda ou sombra ao focar ou clicar */
+.filtro select:focus,
+.filtro select:active {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+.filtro select > option {
+  background-color: #5c4bc5;
+  color: #FFF;
+}
+
+/*
+.filtros-selects select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  min-width: 150px;
+  background-color: transparent;
+  color: #FFF;
+  font-weight: bold;
+}
+
+.filtros-selects select > option {
+  background-color: #5c4bc5;
+  font-weight: bold;
+}
+*/
 
 @media (max-width: 1300px) {
   .filter-elements {

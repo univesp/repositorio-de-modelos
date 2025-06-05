@@ -4,11 +4,11 @@
   justify-content: space-between;
 
   &__image-container {
-    background-color: #7155d8;
+    background-color: transparent;
     width: 270px;
     height: 130px;
     position: relative;
-    bottom: 25px;
+    bottom: 65px;
     right: 150px;
   }
   &__image-container > img {
@@ -19,7 +19,9 @@
 .header > h1 {
   text-transform: uppercase;
   color: #7155d8;
-  font-size: 3.5em;
+  font-size: 3.7em;
+  position: relative;
+  right: 80px;
 }
 
 @media (max-width: 1300px) {

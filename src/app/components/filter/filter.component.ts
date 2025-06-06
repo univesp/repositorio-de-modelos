@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { FilterConfigList } from '../../data/filterConfig-list'; 
 import { FiltroConfig } from '../../interfaces/filter/filterConfig.interface';
+import { ModoExplorarService } from '../../services/modo-explorar.service';
 
 @Component({
   selector: 'app-filter',
@@ -18,6 +19,8 @@ export class FilterComponent {
 
   }>();
 
+  @Output() explorarClicked = new EventEmitter<void>();
+
   // Variável que armazena o que o usuário digitou no campo de busca
   searchTerm: string = '';
 
@@ -27,14 +30,25 @@ export class FilterComponent {
   // Array com as configurações dos filtros (rótulo, chave, placeholder e opções)
   filtrosConfig: FiltroConfig[] = FilterConfigList;
 
-  constructor(private router: Router){
-    // Inicializa todos os filtros com o placeholder como valor padrão
-    this.filtrosConfig.forEach(f => {
-      this.filtros[f.key] = f.placeholder;
+  constructor(
+        private router: Router,
+        private modoExplorarService: ModoExplorarService
+      ) {
+    
+    const filtrosSalvos = this.modoExplorarService.getFiltrosAtuais();
+    if (Object.keys(filtrosSalvos).length > 0) {
+      this.filtros = { ...filtrosSalvos };
+    } else {
+      this.filtrosConfig.forEach(f => {
+        this.filtros[f.key] = f.placeholder;
+      });
+    }
+
+    // Escuta reset vindo da dashboard
+    window.addEventListener('resetFiltros', () => {
+     this.resetarFiltros();
     });
   }
-
-  @Output() explorarClicked = new EventEmitter<void>()
 
   handleExplorar() {
     this.searchTerm = '';  // Limpa a busca
@@ -54,10 +68,36 @@ export class FilterComponent {
 
   // Função que emite o evento para o componente pai com os filtros e busca atualizados
   emitirMudancas() {
+    this.voltarParaHomeSeEstiverNoModelo();
+
     this.filtrosChanged.emit({
       filtros: this.filtros,
       searchTerm: this.searchTerm
     });
+
+    this.modoExplorarService.setFiltrosAtuais(this.filtros);
+  }
+
+   // Chame este método ao alterar algum filtro individualmente
+   onFiltroChange() {
+    this.emitirMudancas();
+  }
+
+  // Detecta se estamos na página de um modelo e redireciona para Home ativando modoExplorar
+    private voltarParaHomeSeEstiverNoModelo() {
+      if (this.router.url.startsWith('/modelo/')) {
+        this.modoExplorarService.setModoExplorarAtivo(true); // Ativa modo explorar
+        this.modoExplorarService.setFiltrosAtuais(this.filtros); // Salva filtros
+        this.router.navigate(['/']); // Navega para Home
+      }
+  }
+
+  resetarFiltros() {
+    this.searchTerm = '';
+    this.filtrosConfig.forEach(f => {
+      this.filtros[f.key] = f.placeholder;
+    });
+    this.emitirMudancas();
   }
   
 }

@@ -8,20 +8,104 @@
     width: 270px;
     height: 130px;
     position: relative;
-    bottom: 65px;
+    bottom: 60px;
     right: 150px;
+    
+    > img {
+      width: 100%;
+    }
   }
-  &__image-container > img {
-    width: 100%;
+
+  > h1 {
+    text-transform: uppercase;
+    color: #7155d8;
+    font-size: 3.7em;
+    position: relative;
+    right: 80px;
   }
 }
 
-.header > h1 {
-  text-transform: uppercase;
-  color: #7155d8;
-  font-size: 3.7em;
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
   position: relative;
-  right: 80px;
+  top: 20px;
+  right: 130px;
+  font-size: 18px;
+
+  /* Estilo base para todos os itens */
+  a, span {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+  }
+
+  /* Home - sempre clicável SEM sublinhado */
+  .breadcrumb-home {
+    text-decoration: none !important;
+    color: #2a2a2a;
+    transition: all 0.3s ease;
+    font-weight: normal;
+
+    &:hover {
+      text-decoration: underline !important;
+      text-underline-offset: 4px;
+      text-decoration-color: rgba(113, 85, 216, 0.8);
+    }
+
+    /* Quando Home é o único item */
+    &.breadcrumb-active {
+      text-decoration: underline !important;
+      text-decoration-color: rgba(113, 85, 216, 0.3);
+    }
+  }
+
+  /* Links intermediários */
+  .breadcrumb-link:not(.breadcrumb-home) {
+    text-decoration: none;
+    color: #7155d8;
+    
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+  }
+
+  /* Último item - SEMPRE sublinhado */
+  .breadcrumb-active {
+    text-decoration: underline;
+    text-decoration-color: rgba(113, 85, 216, 0.3);
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1.5px;
+    color: #2a2a2a;
+  }
+
+  /* Ícone Home */
+  .breadcrumb-icon {
+    font-size: 21px;
+    margin-right: 4px;
+    transition: transform 0.2s ease;
+    
+    .breadcrumb-home:hover & {
+      transform: scale(1.05);
+    }
+  }
+
+  /* Separador */
+  .separator {
+    margin: 0 4px;
+    color: #999;
+    font-weight: normal;
+  }
+
+  /* Acessibilidade - foco */
+  a:focus-visible {
+    outline: 2px solid #7155d8;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 @media (max-width: 1300px) {

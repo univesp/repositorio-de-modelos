@@ -4,3 +4,33 @@
   </div>
   <h1>Repositório de Modelos</h1>
 </div>
+
+<div class="breadcrumbs" *ngIf="breadcrumbs.length > 0 && !isLoginPage()">
+  <ng-container *ngFor="let crumb of breadcrumbs; let i = index; let last = last">
+
+    <!-- Home: sempre clicável -->
+    <a 
+      *ngIf="i === 0" 
+      class="breadcrumb-link breadcrumb-home" 
+      [class.breadcrumb-active]="breadcrumbs.length === 1"
+      (click)="onClickHome()" 
+      style="cursor:pointer;">
+        <mat-icon class="breadcrumb-icon" aria-hidden="false" aria-label="Início">home</mat-icon> <!-- Ícone Home -->
+        {{ crumb }}
+    </a>
+
+     <!-- Outros itens -->
+     <ng-container *ngIf="i > 0">
+      <span class="separator"> &gt; </span>
+      <span *ngIf="last; else notLast" class="breadcrumb-active">
+        {{ crumb }}
+      </span>
+      <ng-template #notLast>
+        <a *ngIf="crumb === 'Resultados'" class="breadcrumb-link">
+          {{ crumb }}
+        </a>
+      </ng-template>
+    </ng-container>
+  </ng-container>
+</div>
+

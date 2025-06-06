@@ -1,10 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
+
+// UTILS
 import { isSignedIn } from '../../utils/get-signedin'; 
+
+// IMTERFACES
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
-import { Modeloslist } from '../../data/modelos-list';
-import { BookmarkService } from '../../services/bookmark.service'; 
+
+// DATA
+import { Modeloslist } from '../../data/modelos-list'; 
 import { FilterConfigList } from '../../data/filterConfig-list'; 
+
+// SERVICES
+import { BookmarkService } from '../../services/bookmark.service';
+import { ModoExplorarService } from '../../services/modo-explorar.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,7 +34,8 @@ export class DashboardComponent implements OnInit {
 
   constructor(
       private router: Router,
-      private bookmarkService: BookmarkService
+      private bookmarkService: BookmarkService,
+      private modoExplorarService: ModoExplorarService
     )
   { }
 
@@ -43,27 +54,91 @@ export class DashboardComponent implements OnInit {
     this.viewType = savedViewType === 'list' ? 'list' : 'grid';
 
     this.modelosFiltrados = [...this.modelos]; // inicializa com todos
+
+    // Observa mudanças de estado em tempo real
+    this.modoExplorarService.modoExplorarAtivo$.subscribe(ativo => {
+      this.modoExplorarAtivo = ativo;
+    });
+
+    // Detecta retorno à Home vindo de Resultados ou Modelo via breadcrumb
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe((event) => {
+      const navEnd = event as NavigationEnd;
+      if (navEnd.urlAfterRedirects === '/') {
+        const filtrosAtivos = this.modoExplorarService.getFiltrosAtuais();
+        const searchTerm = filtrosAtivos['search'] || '';
+        const algumSelectAlterado = Object.keys(filtrosAtivos).some(
+          key => key !== 'search' && filtrosAtivos[key] !== this.getFiltroPlaceholder(key)
+        );
+
+        // Ativa modo explorar se houver busca OU select alterado
+        if (searchTerm.trim() !== '' || algumSelectAlterado) {
+          this.modoExplorarAtivo = true;
+          this.modoExplorarService.setModoExplorarAtivo(true);
+          this.modelosFiltrados = [...this.modelos]; // Mostra todos
+        } else {
+          this.resetFiltrosDashboard(); // Só reseta se não houver filtros
+        }
+      }
+    });
+
+    // Se estava em um modelo individual, ativa o modoExplorar
+    const modeloId = this.modoExplorarService.getModeloId();
+    if (modeloId !== null) {
+      this.modoExplorarService.setModoExplorarAtivo(true);
+      this.modoExplorarService.setModeloId(null);
+    }
+
+    // Verifica se há filtros ativos AO INICIAR (ex: voltando de /modelo/id)
+    const filtrosAtivos = this.modoExplorarService.getFiltrosAtuais();
+    const possuiFiltros = Object.values(filtrosAtivos).some(v => v && v.trim() !== '');
+
+    if (possuiFiltros) {
+      this.modoExplorarAtivo = true;
+      this.modoExplorarService.setModoExplorarAtivo(true);
+      this.modelosFiltrados = this.aplicarFiltros(filtrosAtivos); // Filtra os modelos
+    }
   }
 
   // Quando filtros são alterados no <app-filter>, essa função é chamada
   onFiltrosChanged(dados: { filtros: { [key: string]: string }, searchTerm: string }) {
     const { filtros, searchTerm } = dados;
-
+  
     const buscaTemTexto = searchTerm.trim().length > 0;
-
     const filtrosPreenchidos = Object.entries(filtros).some(
       ([key, valor]) => valor && valor.trim() !== '' && valor !== this.getFiltroPlaceholder(key)
     );
-
-    // Ativa ou desativa o modoExplorar com base na presença de conteúdo relevante
-    this.modoExplorarAtivo = buscaTemTexto || filtrosPreenchidos;
-
-    // Por enquanto, mostra todos os modelos mesmo no modoExplorar
-    this.modelosFiltrados = [...this.modelos];
-
+  
+    const deveAtivarModoExplorar = buscaTemTexto || filtrosPreenchidos;
+  
+    // Salva filtros no serviço
+    this.modoExplorarService.setFiltrosAtuais(filtros);
+  
+    if (this.router.url !== '/') {
+      this.router.navigate(['/']).then(() => {
+        this.ativarModoExplorarComFiltros(deveAtivarModoExplorar);
+      });
+    } else {
+      this.ativarModoExplorarComFiltros(deveAtivarModoExplorar);
+    }
+  }
+  
+  
+  // Nova função que centraliza a ativação do modoExplorar e aplica os dados filtrados
+  private ativarModoExplorarComFiltros(ativo: boolean) {
+    this.modoExplorarAtivo = ativo;
+    this.modoExplorarService.setModoExplorarAtivo(ativo);
+    this.modelosFiltrados = [...this.modelos]; // Exibe todos (ou no futuro, aplicar filtros de verdade)
+    this.modoExplorarService.setModeloId(null);
   }
 
-  // 🔍 Recupera o placeholder original de um filtro com base na key
+  private aplicarFiltros(filtros: { [key: string]: string }): Modelo[] {
+    // Apenas retorna TODOS os modelos, independente do filtro (por enquanto)
+    return [...this.modelos]; // Ou this.modelosFiltrados = this.modelos;
+  }
+
+  // Recupera o placeholder original de um filtro com base na key
   getFiltroPlaceholder(key: string): string {
     const filtro = FilterConfigList.find(f => f.key === key);
     return filtro?.placeholder || '';
@@ -76,8 +151,32 @@ export class DashboardComponent implements OnInit {
   }
 
   resetFiltrosDashboard() {
+    this.modoExplorarService.setModoExplorarAtivo(false)
     this.modoExplorarAtivo = false;
     this.modelosFiltrados = [...this.modelos];
+
+    //  Limpa os filtros salvos no serviço (reset lógico)
+    this.modoExplorarService.setFiltrosAtuais({});
+
+    // Força reset visual dos filtros no componente filho
+    setTimeout(() => {
+     const resetEvent = new CustomEvent('resetFiltros');
+     window.dispatchEvent(resetEvent);
+   }, 0);
+  }
+
+  async abrirModelo(id: any) {
+    // 1. Força reset completo
+    this.resetFiltrosDashboard();
+    
+    // 2. Espera o ciclo de detecção de mudanças
+    await new Promise(resolve => setTimeout(resolve, 50));
+    
+    // 3. Navega para o modelo
+    this.router.navigate(['/modelo', id]);
+    
+    // 4. Limpeza adicional (opcional)
+    this.modoExplorarService.setModeloId(null);
   }
 
 }

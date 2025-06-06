@@ -18,6 +18,7 @@
         border-radius: 10px;
         box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
         position: relative;
+        user-select: none; // Evita seleção de texto ao clicar rápido
     }
 
     &__topo {
@@ -64,6 +65,16 @@
         font-size: 18px;
     }
 }
+
+  .explorarGrid__topo,
+  .icon-bookmark {
+    pointer-events: auto; /* Permite eventos apenas nesses elementos */
+  }
+
+  /* Garante que o mat-icon não dispare navegação */
+  mat-icon {
+    pointer-events: auto;
+  }
 
 .icon-bookmark {
     transform: scale(1.5);

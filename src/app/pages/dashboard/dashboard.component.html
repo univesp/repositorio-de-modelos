@@ -33,12 +33,16 @@
         <div class="explorar__resultados-container">
           <app-explorar-grid 
             *ngIf="viewType === 'grid'" 
-            [modelosList]="modelosFiltrados">
+            [modelosList]="modelosFiltrados"
+            (modeloSelecionado)="abrirModelo($event)"
+            >
           </app-explorar-grid>
 
           <app-explorar-list 
             *ngIf="viewType === 'list'" 
-            [modelosList]="modelosFiltrados">
+            [modelosList]="modelosFiltrados"
+             (modoSelecionado)="abrirModelo($event)" 
+            >
           </app-explorar-list>
         </div>
       </div>

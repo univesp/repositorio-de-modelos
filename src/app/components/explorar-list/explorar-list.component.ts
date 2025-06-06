@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
@@ -18,8 +18,11 @@ export class ExplorarListComponent {
     )
   { }
 
+  @Output() modeloSelecionado = new EventEmitter<string>();
+
   redirectModeloPage(id: string) {
-    this.router.navigate([`modelo/${id}`])
+    this.modeloSelecionado.emit(id); // Emite o evento primeiro
+    this.router.navigate(['/modelo', id]); // Depois navega
   }
 
   toggleBookmark(modelo: Modelo, event: MouseEvent): void {
@@ -27,4 +30,5 @@ export class ExplorarListComponent {
     this.bookmarkService.toggle(modelo.id); // salva ou remove do localStorage
     modelo.isSalvo = this.bookmarkService.isSalvo(modelo.id); // atualiza visual
   }
+
 }

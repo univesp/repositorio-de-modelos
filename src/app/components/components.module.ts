@@ -29,7 +29,7 @@ import { ExplorarListComponent } from "./explorar-list/explorar-list.component";
     TagsDashboardComponent,
     DestaquesComponent,
     ExplorarGridComponent,
-    ExplorarListComponent
+    ExplorarListComponent,
   ],
   imports: [
     CommonModule,
@@ -48,7 +48,7 @@ import { ExplorarListComponent } from "./explorar-list/explorar-list.component";
     TagsDashboardComponent,
     DestaquesComponent,
     ExplorarGridComponent,
-    ExplorarListComponent
+    ExplorarListComponent,
   ]
 })
 export class ComponentsModule { }

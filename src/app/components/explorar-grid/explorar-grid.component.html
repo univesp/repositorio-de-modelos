@@ -1,7 +1,7 @@
 <div class="explorarGrid">
     <div *ngFor="let item of modelosList" 
          class="explorarGrid__item" 
-         (click)="redirectModeloPage(item.id)"
+         (click)="redirectModeloPage(item.id, $event)"
          >
 
          <div class="explorarGrid__topo">
@@ -20,7 +20,7 @@
               aria-hidden="false" 
               aria-label="BookMark icon" 
               [fontIcon]="item.isSalvo ? 'bookmark' : 'bookmark_border'" 
-              (click)="toggleBookmark(item, $event)">
+              (click)="toggleBookmark(item, $event); $event.stopImmediatePropagation()">
             </mat-icon>
           </div>
           

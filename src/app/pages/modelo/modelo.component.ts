@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
 import { BookmarkService } from '../../services/bookmark.service';
+import { ModoExplorarService } from '../../services/modo-explorar.service';
 
 @Component({
     selector: 'app-modelo',
@@ -15,27 +16,17 @@ export class ModeloComponent implements OnInit {
     
     constructor(
             private router: Router,
-            private bookmarkService: BookmarkService
+            private route: ActivatedRoute,
+            private bookmarkService: BookmarkService,
+            private modoExplorarService: ModoExplorarService
         ) {
 
-        // Verifica dentro do array modelosList se o id passado na URL existe 
-        // Caso exista, adiciona true no array possibleIds
-        for (let i = 0; i < this.modelosList.length; i++) {
+         // Verifica se o id passado na URL existe na lista de modelos
+        const currentPath = location.pathname;
+        const idExists = this.modelosList.some(modelo => currentPath === `/modelo/${modelo.id}`);
 
-            if(location.pathname !== `/modelo/${this.modelosList[i].id}`) {
-                this.possibleIds.push(false);
-            } else {
-                this.possibleIds.push(true);
-            }  
-            
-        }
-
-        // Váriavel que retornará true caso o ID passado na URL exista dentro do array "possibelIds"
-        let idExists = this.possibleIds.includes(true);
-
-        //Se não existir ID, redireciona pra página não encontrada
-        if(!idExists) {
-            this.router.navigate([`404`])
+        if (!idExists) {
+         this.router.navigate(['404']);
         }
 
     }
@@ -45,15 +36,26 @@ export class ModeloComponent implements OnInit {
     ngOnInit() {
         window.scrollTo(0, 0);
 
-        const id = location.pathname.split('/').pop();  // pega o ID da URL
+        const id = this.route.snapshot.paramMap.get('id');
+
+        if (!id) {
+            this.router.navigate(['404']);
+            return;
+          }
 
         this.currentModelo = this.modelosList.find(m => m.id === id);
 
-        if(this.currentModelo) {
-            this.currentModelo.isSalvo = this.bookmarkService.isSalvo(this.currentModelo.id);
-        } else {
+        if (!this.currentModelo) {
             this.router.navigate(['404']);
-        }
+            return;
+          }
+
+        // Atualiza o estado de favorito
+        this.currentModelo.isSalvo = this.bookmarkService.isSalvo(this.currentModelo.id);
+
+        // Atualiza os serviços para controle dos breadcrumbs
+        this.modoExplorarService.setModoExplorarAtivo(false); // Entrou direto no modelo
+         this.modoExplorarService.setModeloId(Number(id));
     }
 
     toggleBookmark(modelo: Modelo) {

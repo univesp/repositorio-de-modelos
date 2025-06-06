@@ -4,22 +4,26 @@
          (click)="redirectModeloPage(item.id)"
          >
 
-        <h2> {{ item.titulo }} </h2>
-
-        <div class="explorarGrid__detalhes">
-            <span> {{ item.date }} </span>
-            <span> | </span>
-            <span> {{ item.disciplina }} - </span>
-            <span> {{ item.categorias }} </span>
-            <span (click)="toggleBookmark(item, $event)">
-                <mat-icon 
-                  class="icon-bookmark" 
-                  aria-hidden="false" 
-                  aria-label="BookMark icon" 
-                  [fontIcon]=" item.isSalvo ? 'bookmark' : 'bookmark_border' ">
-                </mat-icon>
-              </span>
-        </div> 
+         <div class="explorarGrid__topo">
+            <div class="explorarGrid__info">
+              <h2>{{ item.titulo }}</h2>
+              <div class="explorarGrid__detalhes">
+                <span>{{ item.date }}</span>
+                <span> | </span>
+                <span>{{ item.disciplina }} - </span>
+                <span>{{ item.categorias }}</span>
+              </div>
+            </div>
+          
+            <mat-icon 
+              class="icon-bookmark" 
+              aria-hidden="false" 
+              aria-label="BookMark icon" 
+              [fontIcon]="item.isSalvo ? 'bookmark' : 'bookmark_border'" 
+              (click)="toggleBookmark(item, $event)">
+            </mat-icon>
+          </div>
+          
 
         <div class="explorarGrid__imagem">
             <img src="{{ item.img_lg }}" alt="">

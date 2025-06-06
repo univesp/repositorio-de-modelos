@@ -1,7 +1,69 @@
 <div class="dashboard">
-  <app-filter class="dashboard__filter"></app-filter>
-  <app-carousel [modelosList]="modelos" class="dashboard__carousel"></app-carousel>
-  <app-novidades [modelosList]="modelos" class="dashboard__novidades"></app-novidades>
-  <app-tags-dashboard class="dashboard__tags"></app-tags-dashboard>
-  <app-destaques [modelosList]="modelos" class="dashboard__destaques"></app-destaques>
-</div>/
+  <!-- Filtro sempre visível -->
+  <app-filter 
+    class="dashboard__filter"
+    (filtrosChanged)="onFiltrosChanged($event)"
+    (explorarClicked)="resetFiltrosDashboard()"
+  >
+  </app-filter>
+
+   <!-- Conteúdo principal dinâmico -->
+   <ng-container *ngIf="modoExplorarAtivo; else conteudoDashboard">
+
+      <div class="explorar">
+        <!-- Botões de visualização -->
+        <div class="explorar__switch-view-buttons">
+          <button (click)="switchViewType('grid')">
+            <mat-icon 
+              class="icon-viewType" 
+              aria-label="Grid View icon"
+              [ngStyle]="{ 'opacity': (viewType === 'grid') ? opacityClicked : 0.6 }"
+            >grid_view</mat-icon>
+          </button>
+          <button (click)="switchViewType('list')">
+            <mat-icon 
+              class="icon-viewType" 
+              aria-label="List View icon"
+              [ngStyle]="{ 'opacity': (viewType === 'list') ? opacityClicked : 0.6 }"
+            >view_headline</mat-icon>
+          </button>
+        </div>
+
+        <!-- Lista filtrada de modelos -->
+        <div class="explorar__resultados-container">
+          <app-explorar-grid 
+            *ngIf="viewType === 'grid'" 
+            [modelosList]="modelosFiltrados">
+          </app-explorar-grid>
+
+          <app-explorar-list 
+            *ngIf="viewType === 'list'" 
+            [modelosList]="modelosFiltrados">
+          </app-explorar-list>
+        </div>
+      </div>
+      
+   </ng-container>
+
+   <ng-template #conteudoDashboard>
+    <app-carousel 
+      [modelosList]="modelos" 
+      class="dashboard__carousel">
+    </app-carousel>
+  
+    <app-novidades 
+      [modelosList]="modelos" 
+      class="dashboard__novidades">
+    </app-novidades>
+  
+    <app-tags-dashboard 
+      class="dashboard__tags">
+    </app-tags-dashboard>
+  
+    <app-destaques 
+      [modelosList]="modelos" 
+      class="dashboard__destaques">
+    </app-destaques>
+   </ng-template>
+
+</div>

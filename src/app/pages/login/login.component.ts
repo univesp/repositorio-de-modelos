@@ -12,7 +12,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     if(isSignedIn()) {
-      this.router.navigate(['dashboard']);
+      this.router.navigate(['/']);
     }
   }
 

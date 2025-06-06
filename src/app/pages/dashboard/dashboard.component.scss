@@ -1,6 +1,6 @@
 .dashboard {
   width: 90%;
-  height: 260vh;
+  /*height: 260vh;*/
   color: #000;
   display: flex;
   flex-direction: column;  
@@ -8,7 +8,7 @@
 
   &__filter {
     width: 100%;
-    height: 26.3vh;
+    min-height: 150px;
     background-color: #7155d8;
     box-shadow: 0px 7px 5px #49378c;
     z-index: 10;
@@ -16,30 +16,146 @@
 
   &__carousel {
     width: 100%;
-    height: 65vh;
     background-color: #7155d8;
+    min-height: 530px;
   }
 
   &__novidades, &__tags {
     width: 100%;
-    height: 45vh;
     margin-top: 50px;
   }
 
   &__tags {
-    margin-top: -50px !important;
+    margin-top: 80px !important;
+   /* margin-top: -50px !important; */
   }
 
   &__destaques {
     width: 100%;
-    height: 50vh;
-    margin-top: -120px;
+    margin-top: 80px;
+   /* margin-top: -120px; */
   }
 
   &__novidades {
     margin-left: 20px;
   }
 }
+
+/* === Botões de visualização (Grid / List) === */
+.explorar__switch-view-buttons {
+  margin: 50px 40px 30px 0;
+  display: flex;
+  gap: 0 7px;
+  flex-direction: row-reverse;
+}
+
+.explorar__switch-view-buttons > button {
+  padding: 5px 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.icon-viewType {
+  transform: scale(1.4);
+  opacity: 0.6;
+}
+
+
+/* === Container da grid ou lista === */
+.explorar__resultados-container {
+  margin-top: 20px;
+  height: 100%;
+}
+
+
+/* === Grid de cartões (ExplorarGrid) === */
+.explorarGrid {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  gap: 100px 30px;
+  margin-left: 25px;
+
+  &__item {
+    width: 30%;
+    min-width: 300px;
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    background-color: #f8f8f8;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    position: relative;
+  }
+
+  &__topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-right: 10px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  &__info > h2 {
+    font-size: 24px;
+    margin: 0;
+  }
+
+  &__item > h2 {
+    font-size: 28px;
+    margin-left: 20px;
+  }
+
+  &__detalhes {
+    margin-top: 5px;
+    font-size: 17px;
+    margin-left: 20px;
+  }
+
+  &__imagem {
+    margin-top: 15px;
+  }
+
+  &__imagem > img {
+    width: 100%;         // Responsivo
+    max-width: 100%;
+    height: auto;
+  }
+
+  &__descricao {
+    margin-top: 20px;
+    font-size: 18px;
+    width: 85%;
+    margin-left: 25px;
+  }
+
+  &__autor {
+    margin-top: 20px;
+    margin-left: 25px;
+    font-size: 18px;
+  }
+}
+
+.icon-bookmark {
+  transform: scale(1.5);
+  color: #7155d8;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  align-self: flex-start;
+}
+
+.icon-bookmark.filled {
+  color: #7155d8;
+}
+
 
 @media (max-width: 1300px) {
   .dashboard__destaques {

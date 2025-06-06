@@ -2,21 +2,41 @@
     display: flex;
     flex-wrap: wrap;
     max-width: 100%;
-    gap: 100px 30px;
+    gap: 100px 65px;
     margin-left: 25px;
 
     &__item {
-        width: 600px;
+        width: 30%;
+        min-width: 300px;
         height: 550px;
         display: flex;
         flex-direction: column;
         cursor: pointer;
+        background-color: #f8f8f8;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 10px;
+        box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+        position: relative;
     }
 
-    &__item> h2 {
-        font-size: 28px;
-        margin-left: 20px;
-    }
+    &__topo {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-right: 10px;
+      }
+    
+      &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+    
+      &__info > h2 {
+        font-size: 24px;
+        margin: 0;
+      }
 
     &__detalhes {
         margin-top: 5px;
@@ -28,7 +48,7 @@
         margin-top: 15px;
     }
     &__imagem > img {
-        width: 590px;
+        width: 460px;
     }
 
     &__descricao {
@@ -48,9 +68,9 @@
 .icon-bookmark {
     transform: scale(1.5);
     color: #7155d8;
-    margin-left: 160px;
     cursor: pointer;
     transition: color 0.3s ease;
+    align-self: flex-start;
   }
   
   .icon-bookmark.filled {

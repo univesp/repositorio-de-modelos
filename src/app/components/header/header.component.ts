@@ -46,8 +46,9 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  isLoginPage(): boolean {
-    return this.router.url.startsWith('/login');
+  isnoBreadCrumbsPath(): boolean {
+    const noBreadCrumbsPath = ['/login', '/404'];
+    return noBreadCrumbsPath.some(path => this.router.url.startsWith(path));
   }
 
   onClickHome() {

@@ -5,7 +5,7 @@
   <h1>Repositório de Modelos</h1>
 </div>
 
-<div class="breadcrumbs" *ngIf="breadcrumbs.length > 0 && !isLoginPage()">
+<div class="breadcrumbs" *ngIf="breadcrumbs.length > 0 && !isnoBreadCrumbsPath()">
   <ng-container *ngFor="let crumb of breadcrumbs; let i = index; let last = last">
 
     <!-- Home: sempre clicável -->

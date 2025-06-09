@@ -1,5 +1,6 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { FilterConfigList } from '../../data/filterConfig-list'; 
 import { FiltroConfig } from '../../interfaces/filter/filterConfig.interface';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
@@ -9,7 +10,26 @@ import { ModoExplorarService } from '../../services/modo-explorar.service';
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss'
 })
-export class FilterComponent {
+export class FilterComponent implements OnInit, OnDestroy {
+
+  filtrosSub!: Subscription;
+
+  ngOnInit(): void {
+    this.filtrosSub = this.modoExplorarService.filtrosAtuais$.subscribe(filtros => {
+      if (Object.keys(filtros).length === 0) {
+        // Reset visual quando os filtros forem esvaziados
+        this.searchTerm = '';
+        this.filtrosConfig.forEach(f => {
+          this.filtros[f.key] = f.placeholder;
+        });
+      }
+    });
+  }
+  
+  ngOnDestroy(): void {
+    this.filtrosSub?.unsubscribe();
+  }
+  
 
   // Cria um "evento de saída" para comunicar mudanças para o componente pai (dashboard)
   @Output() filtrosChanged = new EventEmitter<{
@@ -32,21 +52,32 @@ export class FilterComponent {
 
   constructor(
         private router: Router,
+        private route: ActivatedRoute,
         private modoExplorarService: ModoExplorarService
       ) {
     
     const filtrosSalvos = this.modoExplorarService.getFiltrosAtuais();
-    if (Object.keys(filtrosSalvos).length > 0) {
-      this.filtros = { ...filtrosSalvos };
-    } else {
-      this.filtrosConfig.forEach(f => {
-        this.filtros[f.key] = f.placeholder;
-      });
-    }
+    this.filtrosConfig.forEach(f => {
+      const valorSalvo = filtrosSalvos[f.key];
+      this.filtros[f.key] = valorSalvo && valorSalvo.trim() !== '' ? valorSalvo : f.placeholder;
+    });
 
     // Escuta reset vindo da dashboard
     window.addEventListener('resetFiltros', () => {
      this.resetarFiltros();
+    });
+
+    // 🔥 NOVO: Pega filtros da URL (útil após reload ou acesso direto à rota com parâmetros)
+    this.route.queryParams.subscribe(params => {
+      this.filtrosConfig.forEach(f => {
+        const valor = params[f.key];
+        if (valor) {
+          this.filtros[f.key] = valor;
+        }
+      });
+
+    // Atualiza também no serviço global para manter sincronizado
+      this.modoExplorarService.setFiltrosAtuais(this.filtros);
     });
   }
 
@@ -68,28 +99,68 @@ export class FilterComponent {
 
   // Função que emite o evento para o componente pai com os filtros e busca atualizados
   emitirMudancas() {
-    this.voltarParaHomeSeEstiverNoModelo();
+    const filtrosValidos: { [key: string]: string } = {};
+  
+    for (const chave in this.filtros) {
+      const valor = this.filtros[chave];
+      if (valor && valor !== this.getPlaceholder(chave)) {
+        filtrosValidos[chave] = valor;
+      }
+    }
 
+     // Adiciona o searchTerm aos parâmetros da URL se existir
+    const queryParams = {
+      ...filtrosValidos,
+      ...(this.searchTerm ? { search: this.searchTerm } : {}) // Adiciona 'search' apenas se houver termo
+    };
+  
+    this.modoExplorarService.setFiltrosAtuais(this.filtros);
+  
+    // Sempre emite os dados para o pai (mesmo se não mudar rota)
     this.filtrosChanged.emit({
       filtros: this.filtros,
       searchTerm: this.searchTerm
     });
-
-    this.modoExplorarService.setFiltrosAtuais(this.filtros);
+  
+    // Se já estamos em /resultados, apenas atualiza a URL
+    if (this.router.url.startsWith('/resultados')) {
+      this.router.navigate([], {
+        queryParams: queryParams,
+        queryParamsHandling: 'merge', // Mantém os params anteriores
+      });
+    } else {
+      // Vindo da home ou modelo, navega com filtros
+      this.router.navigate(['/resultados'], { queryParams: queryParams });
+    }
   }
+  
 
    // Chame este método ao alterar algum filtro individualmente
    onFiltroChange() {
     this.emitirMudancas();
   }
 
-  // Detecta se estamos na página de um modelo e redireciona para Home ativando modoExplorar
-    private voltarParaHomeSeEstiverNoModelo() {
-      if (this.router.url.startsWith('/modelo/')) {
-        this.modoExplorarService.setModoExplorarAtivo(true); // Ativa modo explorar
-        this.modoExplorarService.setFiltrosAtuais(this.filtros); // Salva filtros
-        this.router.navigate(['/']); // Navega para Home
+  // Detecta se estamos na página de um modelo e redireciona para Resultados ativando modoExplorar
+  private voltarParaHomeSeEstiverNoModelo() {
+    if (this.router.url.startsWith('/modelo/')) {
+      this.modoExplorarService.setModoExplorarAtivo(true);
+      this.modoExplorarService.setFiltrosAtuais(this.filtros);
+  
+      const filtrosValidos: { [key: string]: string } = {};
+      for (const chave in this.filtros) {
+        const valor = this.filtros[chave];
+        if (valor && valor !== this.getPlaceholder(chave)) {
+          filtrosValidos[chave] = valor;
+        }
       }
+  
+      this.router.navigate(['/resultados'], { queryParams: filtrosValidos });
+    }
+  }
+
+  private getPlaceholder(chave: string): string {
+    const filtro = this.filtrosConfig.find(f => f.key === chave);
+    return filtro ? filtro.placeholder : '';
   }
 
   resetarFiltros() {

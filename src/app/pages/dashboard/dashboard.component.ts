@@ -103,35 +103,23 @@ export class DashboardComponent implements OnInit {
 
   // Quando filtros são alterados no <app-filter>, essa função é chamada
   onFiltrosChanged(dados: { filtros: { [key: string]: string }, searchTerm: string }) {
-    const { filtros, searchTerm } = dados;
+    const queryParams: any = {};
   
-    const buscaTemTexto = searchTerm.trim().length > 0;
-    const filtrosPreenchidos = Object.entries(filtros).some(
-      ([key, valor]) => valor && valor.trim() !== '' && valor !== this.getFiltroPlaceholder(key)
-    );
-  
-    const deveAtivarModoExplorar = buscaTemTexto || filtrosPreenchidos;
-  
-    // Salva filtros no serviço
-    this.modoExplorarService.setFiltrosAtuais(filtros);
-  
-    if (this.router.url !== '/') {
-      this.router.navigate(['/']).then(() => {
-        this.ativarModoExplorarComFiltros(deveAtivarModoExplorar);
-      });
-    } else {
-      this.ativarModoExplorarComFiltros(deveAtivarModoExplorar);
+    // Monta os filtros ativos como query params
+    for (const [key, value] of Object.entries(dados.filtros)) {
+      const placeholder = this.getFiltroPlaceholder(key);
+      if (value && value.trim() !== '' && value !== placeholder) {
+        queryParams[key] = value;
+      }
     }
-  }
   
+    if (dados.searchTerm.trim() !== '') {
+      queryParams.search = dados.searchTerm.trim();
+    }
   
-  // Nova função que centraliza a ativação do modoExplorar e aplica os dados filtrados
-  private ativarModoExplorarComFiltros(ativo: boolean) {
-    this.modoExplorarAtivo = ativo;
-    this.modoExplorarService.setModoExplorarAtivo(ativo);
-    this.modelosFiltrados = [...this.modelos]; // Exibe todos (ou no futuro, aplicar filtros de verdade)
-    this.modoExplorarService.setModeloId(null);
-  }
+    // Navega para a rota de resultados com os filtros aplicados na URL
+    this.router.navigate(['/resultados'], { queryParams });
+  }  
 
   private aplicarFiltros(filtros: { [key: string]: string }): Modelo[] {
     // Apenas retorna TODOS os modelos, independente do filtro (por enquanto)

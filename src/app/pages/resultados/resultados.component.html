@@ -1,0 +1,42 @@
+<div class="resultados">
+
+  <!-- Filtro reutilizado -->
+  <app-filter 
+    class="resultados__filter"
+    (filtrosChanged)="null"  
+    (explorarClicked)="null"
+  ></app-filter>
+
+  <!-- Botões de visualização -->
+  <div class="resultados__switch-view-buttons">
+    <button (click)="switchViewType('grid')">
+      <mat-icon 
+        class="icon-viewType" 
+        aria-label="Grid View icon"
+        [ngStyle]="{ 'opacity': (viewType === 'grid') ? opacityClicked : 0.6 }"
+      >grid_view</mat-icon>
+    </button>
+    <button (click)="switchViewType('list')">
+      <mat-icon 
+        class="icon-viewType" 
+        aria-label="List View icon"
+        [ngStyle]="{ 'opacity': (viewType === 'list') ? opacityClicked : 0.6 }"
+      >view_headline</mat-icon>
+    </button>
+  </div>
+
+  <!-- Lista filtrada de modelos -->
+  <div class="resultados__resultados-container">
+    <app-explorar-grid 
+      *ngIf="viewType === 'grid'" 
+      [modelosList]="modelosFiltrados"
+      (modeloSelecionado)="abrirModelo($event)">
+    </app-explorar-grid>
+
+    <app-explorar-list 
+      *ngIf="viewType === 'list'" 
+      [modelosList]="modelosFiltrados"
+      (modeloSelecionado)="abrirModelo($event)">
+    </app-explorar-list>
+  </div>
+</div>

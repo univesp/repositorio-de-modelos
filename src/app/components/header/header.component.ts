@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
 import { combineLatest } from 'rxjs';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
@@ -18,12 +19,32 @@ export class HeaderComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
+    // Atualiza o estado global com base na rota atual
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      const url = this.router.url;
+
+      if (url === '/') {
+        this.modoExplorarService.setModoExplorarAtivo(false);
+        this.modoExplorarService.setModeloId(null);
+        this.modoExplorarService.setFiltrosAtuais({});
+      } else if (url.startsWith('/resultados')) {
+        this.modoExplorarService.setModoExplorarAtivo(true);
+        this.modoExplorarService.setModeloId(null);
+      } else {
+        // Qualquer outra rota que não deve ativar explorar
+        this.modoExplorarService.setModoExplorarAtivo(false);
+      }
+      
+    });
+
     combineLatest([
       this.modoExplorarService.modoExplorarAtivo$,
-      this.modoExplorarService.modeloId$
-    ]).subscribe(([explorarAtivo, modeloId]) => {
+      this.modoExplorarService.modeloId$,
+      this.router.events.pipe(filter(event => event instanceof NavigationEnd))
+    ]).subscribe(([explorarAtivo, modeloId, navEvent]) => {
       const crumbs = ['Home'];
-      const url = this.router.url;
 
       if (modeloId !== null) {
         if (explorarAtivo) {
@@ -52,20 +73,15 @@ export class HeaderComponent implements OnInit {
   }
 
   onClickHome() {
-    // 1. Resetar todos os estados
-    this.modoExplorarService.setModoExplorarAtivo(false);
-    this.modoExplorarService.setModeloId(null);
-    this.modoExplorarService.setFiltrosAtuais({});
-  
-    // 2. Navegação otimizada
-    if (this.router.url === '/') {
-      // Se já está na home, força recarregamento
-      window.location.reload();
-    } else {
-      // Se está em outra rota, navega normalmente
-      this.router.navigate(['/']);
-    }
+    // Limpa TUDO antes de navegar (incluindo queryParams)
+    this.router.navigate(['/'], {
+      replaceUrl: true,          // Substitui a URL no histórico
+      queryParams: {},           // Garante que não há params residuais
+      queryParamsHandling: ''    // Ignora qualquer parâmetro existente
+    }).then(() => {
+      window.location.reload();  // 🔄 Força recarregar a página (opcional, teste sem isso primeiro)
+    });
   }
-
+  
   
 }

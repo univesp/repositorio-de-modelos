@@ -8,13 +8,15 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from "@angular/common";
 import { ModeloComponent } from "./modelo/modelo.component";
+import { ResultadosComponent } from './resultados/resultados.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
     DashboardComponent,
     NotFoundComponent,
-    ModeloComponent
+    ModeloComponent,
+    ResultadosComponent
   ],
   imports: [
     ComponentsModule,
@@ -26,7 +28,8 @@ import { ModeloComponent } from "./modelo/modelo.component";
   exports: [
     LoginComponent,
     DashboardComponent,
-    ModeloComponent
+    ModeloComponent,
+    ResultadosComponent
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })

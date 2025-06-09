@@ -55,7 +55,8 @@ export class ModeloComponent implements OnInit {
 
         // Atualiza os serviços para controle dos breadcrumbs
         this.modoExplorarService.setModoExplorarAtivo(false); // Entrou direto no modelo
-         this.modoExplorarService.setModeloId(Number(id));
+        this.modoExplorarService.setModeloId(Number(id));
+        this.modoExplorarService.setFiltrosAtuais({}); //  Resetar os filtros ao entrar em um modelo
     }
 
     toggleBookmark(modelo: Modelo) {

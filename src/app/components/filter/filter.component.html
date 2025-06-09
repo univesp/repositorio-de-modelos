@@ -19,14 +19,17 @@
     <!-- Campo de Busca -->
     <div class="barra-pesquisa">
       <div class="search-wrapper">
+        
         <div class="icone-circular">
-          <mat-icon class="icon">search</mat-icon>
+          <button class="icon-button" (click)="emitirMudancas()" aria-label="Buscar">
+            <mat-icon class="icon">search</mat-icon>
+          </button>
         </div>
 
         <input 
           type="text" 
           [(ngModel)]="searchTerm"
-          (input)="emitirMudancas()"
+          (keydown.enter)="emitirMudancas()"
           placeholder="Explore mais de 200 modelos disponíveis..."
         >
         <button 
@@ -49,7 +52,7 @@
     <div class="filtro" *ngFor="let filtro of filtrosConfig">
       <label>{{ filtro.label }}</label>
       <select [(ngModel)]="filtros[filtro.key]" (change)="emitirMudancas()">
-        <option [value]="filtro.placeholder">{{ filtro.placeholder }}</option>
+        <option [value]="filtro.placeholder" disabled hidden>{{ filtro.placeholder }}</option>
         <option *ngFor="let opcao of filtro.opcoes" [value]="opcao">{{ opcao }}</option>
       </select>
     </div>

@@ -101,6 +101,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   emitirMudancas() {
     const filtrosValidos: { [key: string]: string } = {};
   
+    // Verifica filtros válidos
     for (const chave in this.filtros) {
       const valor = this.filtros[chave];
       if (valor && valor !== this.getPlaceholder(chave)) {
@@ -108,28 +109,36 @@ export class FilterComponent implements OnInit, OnDestroy {
       }
     }
 
-     // Adiciona o searchTerm aos parâmetros da URL se existir
+    // Verifica se há algum critério de busca válido
+    const hasSearchTerm = !!this.searchTerm?.trim();
+    const hasValidFilters = Object.keys(filtrosValidos).length > 0;
+
+     // Se não há critérios válidos, não faz nada
+    if (!hasSearchTerm && !hasValidFilters) {
+      return;
+    }
+
+    // Prepara os parâmetros da URL
     const queryParams = {
       ...filtrosValidos,
-      ...(this.searchTerm ? { search: this.searchTerm } : {}) // Adiciona 'search' apenas se houver termo
+      ...(hasSearchTerm ? { search: this.searchTerm.trim() } : {})
     };
-  
+
     this.modoExplorarService.setFiltrosAtuais(this.filtros);
-  
-    // Sempre emite os dados para o pai (mesmo se não mudar rota)
+
+    // Emite os dados para o componente pai
     this.filtrosChanged.emit({
       filtros: this.filtros,
       searchTerm: this.searchTerm
     });
-  
-    // Se já estamos em /resultados, apenas atualiza a URL
+
+    // Lógica de navegação
     if (this.router.url.startsWith('/resultados')) {
       this.router.navigate([], {
         queryParams: queryParams,
-        queryParamsHandling: 'merge', // Mantém os params anteriores
+        queryParamsHandling: 'merge',
       });
     } else {
-      // Vindo da home ou modelo, navega com filtros
       this.router.navigate(['/resultados'], { queryParams: queryParams });
     }
   }

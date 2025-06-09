@@ -3,7 +3,9 @@ export interface Modelo {
   titulo: string;
   recurso: string;
   date: string;
+  curso: string[];
   disciplina: string;
+  area: string[];
   categorias: string[];
   img_sm: string;
   img_md: string;
@@ -11,6 +13,7 @@ export interface Modelo {
   descricao: string;
   autor: string;
   formato: string;
+  acessibilidade?: string[];
   hasMobile: boolean;
   hasCodigo: boolean;
   isDestaque: boolean;
@@ -27,4 +30,5 @@ export interface Modelo {
   link?: string;
   github?: string;
   isSalvo?: boolean;
+  licenca: string;
 }

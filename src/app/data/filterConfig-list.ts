@@ -3,13 +3,13 @@ export const FilterConfigList = [
       key: 'curso', 
       label: 'CURSO', 
       placeholder: '[ Selecione ]', 
-      opcoes: ['Administração', 'Ciência de Dados', 'Engenharia de Computação', 'Engenharia de Produção', 'Matemática'] 
+      opcoes: ['Administração', 'Ciência de Dados', 'Engenharia de Computação', 'Engenharia de Produção', 'Matemática', 'Tecnologia da Informação', 'Pedagogia', 'Processos Gerenciais'] 
     },
     { 
       key: 'area', 
       label: 'ÁREA', 
       placeholder: '[ Selecione ]', 
-      opcoes: ['Artes e Humanidades', 'Artes Linguísticas', 'Ciências Biológicas', 'Direito', 'Matemática'] 
+      opcoes: ['Ciências Biológicas', 'Direito', 'Matemática', 'Negócios', 'Tecnologia da Informação'] 
     },
     { 
       key: 'formato', 

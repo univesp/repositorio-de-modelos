@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { FilterConfigList } from '../../data/filterConfig-list'; 
 import { FiltroConfig } from '../../interfaces/filter/filterConfig.interface';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
+import { normalizarString } from '../../utils/string-utils';
 
 @Component({
   selector: 'app-filter',
@@ -67,16 +68,20 @@ export class FilterComponent implements OnInit, OnDestroy {
      this.resetarFiltros();
     });
 
-    // 🔥 NOVO: Pega filtros da URL (útil após reload ou acesso direto à rota com parâmetros)
+    //  Lê parâmetros da URL e converte de volta para o valor visual correto
     this.route.queryParams.subscribe(params => {
       this.filtrosConfig.forEach(f => {
-        const valor = params[f.key];
-        if (valor) {
-          this.filtros[f.key] = valor;
+        const valorNormalizado = params[f.key];
+        if (valorNormalizado) {
+          const original = f.opcoes?.find(opcao =>
+            normalizarString(opcao) === valorNormalizado
+          );
+          if (original) {
+            this.filtros[f.key] = original;
+          }
         }
       });
 
-    // Atualiza também no serviço global para manter sincronizado
       this.modoExplorarService.setFiltrosAtuais(this.filtros);
     });
   }
@@ -105,7 +110,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     for (const chave in this.filtros) {
       const valor = this.filtros[chave];
       if (valor && valor !== this.getPlaceholder(chave)) {
-        filtrosValidos[chave] = valor;
+        filtrosValidos[chave] = normalizarString(valor) ;
       }
     }
 
@@ -121,7 +126,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     // Prepara os parâmetros da URL
     const queryParams = {
       ...filtrosValidos,
-      ...(hasSearchTerm ? { search: this.searchTerm.trim() } : {})
+      ...(hasSearchTerm ? { search: normalizarString(this.searchTerm.trim()) } : {})
     };
 
     this.modoExplorarService.setFiltrosAtuais(this.filtros);

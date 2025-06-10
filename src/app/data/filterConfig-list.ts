@@ -27,7 +27,7 @@ export const FilterConfigList = [
       key: 'tecnologia', 
       label: 'TECNOLOGIA', 
       placeholder: '[ Selecione ]', 
-      opcoes: ['CSS3', 'HTML5', 'JavaScript', 'Realidade Virtual'] 
+      opcoes: ['CSS3', 'HTML5', 'Javascript', 'Realidade Virtual'] 
     },
     { 
       key: 'acessibilidade', 

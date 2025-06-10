@@ -8,7 +8,7 @@
   ></app-filter>
 
   <!-- Botões de visualização -->
-  <div class="resultados__switch-view-buttons">
+  <div class="resultados__switch-view-buttons" *ngIf="modelosFiltrados.length > 0">
     <button (click)="switchViewType('grid')">
       <mat-icon 
         class="icon-viewType" 
@@ -27,16 +27,25 @@
 
   <!-- Lista filtrada de modelos -->
   <div class="resultados__resultados-container">
-    <app-explorar-grid 
-      *ngIf="viewType === 'grid'" 
-      [modelosList]="modelosFiltrados"
-      (modeloSelecionado)="abrirModelo($event)">
-    </app-explorar-grid>
+    <ng-container *ngIf="modelosFiltrados.length > 0">
+      <app-explorar-grid 
+        *ngIf="viewType === 'grid'" 
+        [modelosList]="modelosFiltrados"
+        (modeloSelecionado)="abrirModelo($event)">
+      </app-explorar-grid>
 
-    <app-explorar-list 
-      *ngIf="viewType === 'list'" 
-      [modelosList]="modelosFiltrados"
-      (modeloSelecionado)="abrirModelo($event)">
-    </app-explorar-list>
+      <app-explorar-list 
+        *ngIf="viewType === 'list'" 
+        [modelosList]="modelosFiltrados"
+        (modeloSelecionado)="abrirModelo($event)">
+      </app-explorar-list>
+    </ng-container>
+    
+    <!-- Exibe a mensagem se não houver resultados -->
+    <div *ngIf="modelosFiltrados.length === 0" class="no-results-message">
+      <h2>Nenhum resultado encontrado para os filtros aplicados.</h2>
+      <p>Tente ajustar seus critérios de busca ou redefinir os filtros.</p>
+    </div>
   </div>
+
 </div>

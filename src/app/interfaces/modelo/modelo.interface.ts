@@ -7,12 +7,14 @@ export interface Modelo {
   disciplina: string;
   area: string[];
   categorias: string[];
+  tipo: string[];
   img_sm: string;
   img_md: string;
   img_lg: string;
   descricao: string;
   autor: string;
   formato: string;
+  tecnologia: string[];
   acessibilidade?: string[];
   hasMobile: boolean;
   hasCodigo: boolean;

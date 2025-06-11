@@ -8,6 +8,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ModeloComponent } from './pages/modelo/modelo.component';
 import { ResultadosComponent } from './pages/resultados/resultados.component';
 import { ExplorarComponent } from './pages/explorar/explorar.component';
+import { CadastroModeloComponent } from './pages/cadastro-modelo/cadastro-modelo.component'; 
 import { NotFoundComponent } from './pages/not-found/not-found.component'; 
 
 const routes: Routes = [
@@ -15,6 +16,7 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'modelo/:id', component: ModeloComponent},
   {path: 'explorar', component: ExplorarComponent},
+  {path: 'cadastro-novo-modelo', component: CadastroModeloComponent},
 
   {
     path: 'resultados', 

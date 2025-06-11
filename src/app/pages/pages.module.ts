@@ -1,4 +1,5 @@
 import { NgModule, NO_ERRORS_SCHEMA } from "@angular/core";
+import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentsModule } from "../components/components.module";
 import { AngularMaterialModule } from "../angular-material/angular-material.module";
@@ -10,6 +11,7 @@ import { CommonModule } from "@angular/common";
 import { ModeloComponent } from "./modelo/modelo.component";
 import { ResultadosComponent } from './resultados/resultados.component';
 import { ExplorarComponent } from './explorar/explorar.component';
+import { CadastroModeloComponent } from './cadastro-modelo/cadastro-modelo.component';
 
 @NgModule({
   declarations: [
@@ -18,21 +20,24 @@ import { ExplorarComponent } from './explorar/explorar.component';
     NotFoundComponent,
     ModeloComponent,
     ResultadosComponent,
-    ExplorarComponent
+    ExplorarComponent,
+    CadastroModeloComponent
   ],
   imports: [
     ComponentsModule,
     AngularMaterialModule,
     BrowserAnimationsModule,
     BrowserModule,
-    CommonModule
+    CommonModule,
+    FormsModule
   ],
   exports: [
     LoginComponent,
     DashboardComponent,
     ModeloComponent,
     ResultadosComponent,
-    ExplorarComponent
+    ExplorarComponent,
+    CadastroModeloComponent
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })

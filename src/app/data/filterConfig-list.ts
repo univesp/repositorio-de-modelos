@@ -15,7 +15,7 @@ export const FilterConfigList = [
       key: 'formato', 
       label: 'FORMATO', 
       placeholder: '[ Selecione ]', 
-      opcoes: ['REA Univesp', 'Jogo', 'Site', 'Recurso de Programação'] 
+      opcoes: ['REA Univesp', 'Jogo', 'Site', 'Recurso de Programação', 'Modelo Externo'] 
     },
     { 
       key: 'tipo', 

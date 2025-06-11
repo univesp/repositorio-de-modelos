@@ -96,6 +96,10 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.router.navigate(['/explorar'])
   }
 
+  handleCadastro() {
+    this.router.navigate(['/cadastro-novo-modelo'])
+  }
+
   // Limpa o texto da busca e emite as mudanças para o componente pai
   clearSearch() {
     this.searchTerm = '';

@@ -1,0 +1,240 @@
+.cadastro-modelo {
+  width: 100%;
+  color: #000;
+  display: flex;
+  flex-direction: column;  
+  margin: auto;
+
+  &__filter{
+    width: 100%;
+    min-height: 150px;
+    background-color: #7155d8;
+    box-shadow: 0px 7px 5px #49378c;
+    z-index: 10;
+  }
+
+  &__container {
+    margin-top: 50px;
+    color: #474747;
+    display: flex;
+    flex-direction: column;
+    margin-left: 300px;
+  }
+  &__container > h1 {
+    text-transform: uppercase;
+    font-size: 2.5em;
+  }
+  &__container > span {
+    font-size: 18px;
+  }
+
+  &__titulo-secao {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #7155d8;
+    font-size: 28px;
+  }
+  
+  &__formato-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que os itens quebrem a linha em telas menores */
+    gap: 15px 30px; /* Ajustei o gap para melhor espaçamento vertical e horizontal */
+    margin-top: 10px;
+    font-size: 18px;
+
+    div {
+      display: flex;
+      align-items: center;
+      position: relative; /* Necessário para posicionar o pseudo-elemento */
+      cursor: pointer; /* Indica que o item inteiro é clicável */
+    }
+
+    input[type="radio"] {
+      // Esconde o input nativo
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+      position: absolute;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding-left: 30px; /* Espaço para a bolinha customizada */
+      position: relative; /* Para posicionar o pseudo-elemento */
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px; /* Tamanho da bolinha externa */
+        height: 20px;
+        border: 1px solid #3a3a3a; /* Cor da borda */
+        border-radius: 50%;
+        background-color: #fff; /* Fundo branco */
+        transition: all 0.2s ease-in-out;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 6px; /* Posição para o círculo interno */
+        top: 50%;
+        transform: translateY(-50%);
+        width: 10px; /* Tamanho da bolinha interna */
+        height: 10px;
+        background-color: #7155d8; /* Cor do preenchimento */
+        border-radius: 50%;
+        opacity: 0; /* Começa escondido */
+        transition: opacity 0.2s ease-in-out;
+      }
+    }
+
+    // Estilo quando o radio button está marcado
+    input[type="radio"]:checked + label::after {
+      opacity: 1; /* Mostra a bolinha interna quando marcado */
+    }
+
+    // Estilo para o hover
+    label:hover::before {
+      box-shadow: 0 0 0 4px rgba(113, 85, 216, 0.2); /* Sutil efeito de sombra ao passar o mouse */
+    }
+  }
+
+  /* Estilos para o campo de Tags */
+  .tags-input-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que as tags quebrem a linha */
+    align-items: center;
+    border: 1px solid #b3b1b1;
+    border-radius: 0.375rem; 
+    padding: 0.5rem 0.75rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    min-height: 42px; /* Altura mínima para o campo, para que as tags não fiquem "apertadas" */
+    font-size: 18px; 
+    line-height: 1.5rem; 
+    background-color: #FFF;
+    width: 70%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    &:focus-within {
+      border: 1px solid #b3b1b1;
+    }
+
+    .tag-chip {
+      display: flex;
+      align-items: center;
+      background-color: #d9d9d9; /* Cor de fundo para o chip */
+      font-weight: bold;
+      padding: 0.25rem 0.625rem; /* Padding interno do chip */
+      border-radius: 0.5rem; 
+      margin-right: 0.5rem; /* Espaço entre os chips */
+      margin-bottom: 0.25rem; /* Espaço para quebra de linha */
+      font-size: 0.875rem;
+      white-space: nowrap; /* Evita que o texto da tag quebre a linha */
+
+      .tag-text {
+        margin-right: 0.3rem; /* Espaço entre o texto e o botão de remover */
+      }
+
+      .remove-tag {
+        background: none;
+        border: none;
+        color: #000;
+        cursor: pointer;
+        font-size: 0.875rem; /* Ajuste para o tamanho do 'x' */
+        padding: 0;
+        margin-left: 0.3rem;
+        transition: color 0.15s ease-in-out;
+      }
+    }
+
+    .tags-input {
+      flex-grow: 1; /* Permite que o input preencha o espaço restante */
+      border: none; /* Remove a borda padrão do input */
+      outline: none; /* Remove o outline ao focar */
+      padding: 0; /* Remove padding extra do input */
+      min-width: 80px; /* Garante que o input não fique muito pequeno */
+      height: 32px; /* Altura para alinhar com os chips */
+      background-color: transparent; /* Fundo transparente */
+    }
+  }
+
+  &__button {
+    background-color: #7155d8;
+    color: #FFF;
+    width: 270px;
+    padding: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 7px;
+    cursor: pointer;
+    margin-top: 15px;
+
+    &:hover {
+      background-color: #49378c;
+    }
+  }
+}
+
+form {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.titulo-info {
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 30px;
+}
+
+.input-text, .input-textArea {
+  width: 70%;
+  padding: 13px;
+  margin-top: 5px;
+  border-radius: 7px;
+  border: 1px solid #b3b1b1;
+  font-size: 18px;
+  font-family: sans-serif;
+}
+.input-text:focus, .input-text:active, .input-textArea:focus, .input-textArea:active {
+  border: 1px solid #b3b1b1;
+  outline: none;
+}
+
+.detalhe-campo-forms {
+  margin-top: 5px;
+  margin-left: 3px;
+  color: #7155d8;
+  font-weight: lighter;
+}
+
+.image-preview-container {
+  margin-top: 30px;
+}
+
+.remove-image-button {
+  background-color: #FF5555;
+  color: #FFF;
+  padding: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+  position: relative;
+  bottom: 15px;
+  border-radius: 5px;
+  &:hover {
+    background-color: rgba(255, 85, 85, .8);
+  }
+}
+
+.obrigatório {
+  color: #FF5555;
+}

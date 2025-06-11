@@ -9,6 +9,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from "@angular/common";
 import { ModeloComponent } from "./modelo/modelo.component";
 import { ResultadosComponent } from './resultados/resultados.component';
+import { ExplorarComponent } from './explorar/explorar.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { ResultadosComponent } from './resultados/resultados.component';
     DashboardComponent,
     NotFoundComponent,
     ModeloComponent,
-    ResultadosComponent
+    ResultadosComponent,
+    ExplorarComponent
   ],
   imports: [
     ComponentsModule,
@@ -29,7 +31,8 @@ import { ResultadosComponent } from './resultados/resultados.component';
     LoginComponent,
     DashboardComponent,
     ModeloComponent,
-    ResultadosComponent
+    ResultadosComponent,
+    ExplorarComponent
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })

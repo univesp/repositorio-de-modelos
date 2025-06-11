@@ -93,6 +93,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
     this.emitirMudancas();  // dispara os valores limpos
     this.explorarClicked.emit();  // comunica ao componente pai
+    this.router.navigate(['/explorar'])
   }
 
   // Limpa o texto da busca e emite as mudanças para o componente pai

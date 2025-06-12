@@ -94,7 +94,7 @@
       <!-- Imagem de Capa (Campo Obrigatório) -->
       <span class="titulo-info">Imagem de Capa <span class="obrigatório">*</span></span>
       <span class="detalhe-campo-forms" style="margin-left: 0; margin-bottom: 25px;">Selecione a imagem de capa do recurso. Tamanho Ideal: 500px x 280px. Formatos aceitos: PNG, JPG e JPEG</span>
-      <div class="image-upload-container">
+      <div class="image-upload-container" style="margin-bottom: 100px;">
         <!-- Input de arquivo OCULTO -->
         <input
           type="file"
@@ -122,6 +122,20 @@
         </div>
       </div>
       <!-- Fim do Campo de Imagem -->
+
+      <!-- FILTROS / CATEGORIAS -->
+      <span class="cadastro-modelo__titulo-secao">Filtros / Categorias</span>
+
+      <!-- Selects gerados dinamicamente a partir de selectsConfig -->
+      <ng-container *ngFor="let selectConfig of selectsConfig">
+        <app-custom-select
+          [label]="selectConfig.label"
+          [options]="selectConfig.opcoes"
+          [initialSelection]="selectedValues[selectConfig.key]"
+          (selectionChange)="onSelectChange(selectConfig.key, $event)"
+          [required]="selectConfig.obrigatorio">
+        </app-custom-select>
+      </ng-container>
 
     </form>
 

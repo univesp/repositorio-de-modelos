@@ -1,0 +1,184 @@
+.custom-select-wrapper {
+  margin-bottom: 20px; /* Espaçamento entre os selects */
+  position: relative; /* <<<< ESSA É A CHAVE: Torna este o contexto de posicionamento */
+  display: block; /* Garante que o wrapper ocupa sua própria linha */
+  width: 100%; /* Adicionado para que o wrapper contenha o select e o painel */
+
+  .titulo-info {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 30px;
+    display: block; /* Para que o span ocupe toda a largura e o select comece em nova linha */
+
+    .required-indicator {
+      color: red;
+    }
+
+    .select-hint {
+      font-weight: normal;
+      margin-left: 15px;
+    }
+  }
+}
+
+.custom-select {
+  position: relative;
+  width: 70%; /* Ajuste para a largura dos seus outros inputs */
+  padding: 13px;
+  margin-top: 5px;
+  border-radius: 7px;
+  border: 1px solid #b3b1b1;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura */
+
+  &:hover {
+    border-color: #7155d8;
+  }
+
+  &.open {
+    border-color: #7155d8;
+    box-shadow: 0 0 0 3px rgba(113, 85, 216, 0.2);
+    border-bottom-left-radius: 0; /* Remove o radius inferior quando aberto */
+    border-bottom-right-radius: 0;
+  }
+
+  .selected-items-display {
+    flex-grow: 1;
+    color: #474747;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .placeholder {
+      color: #9e9e9e;
+    }
+  }
+
+  .select-dropdown-icon {
+    font-size: 24px;
+    color: #474747;
+    transition: transform 0.2s ease-in-out;
+
+    &.rotated {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.options-panel {
+  position: absolute; /* Posição absoluta para sobrepor outros elementos */
+  width: 70%; /* Mesma largura do select */
+  border: 1px solid #b3b1b1;
+  border-top: none; /* Remove a borda superior para se juntar ao select */
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 20;
+  padding: 0; /* Remova padding interno aqui, adicione nos itens */
+  box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura */
+
+  /* Para alinhar o painel com o select */
+  left: 0;
+  // top: 100%; /* Isso seria relativo ao pai posicionando, o que faremos com o wrapper */
+  // margin-top: 5px; /* Não precisa de margin-top aqui se o wrapper for bem feito */
+
+  .option-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px; /* Padding para os itens */
+    cursor: pointer;
+    font-size: 16px;
+    color: #474747;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+
+    input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid #7155d8;
+      border-radius: 4px;
+      background-color: #fff;
+      margin-right: 10px;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(113, 85, 216, 0.2);
+      }
+
+      &:checked {
+        background-color: #7155d8;
+        border-color: #7155d8;
+
+        &::after {
+          content: '✔';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 14px;
+          color: #fff;
+        }
+      }
+    }
+
+    input[type="radio"] { /* Estilos para radio buttons dentro do select */
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid #7155d8;
+      border-radius: 50%; /* Bolinha */
+      background-color: #fff;
+      margin-right: 10px;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(113, 85, 216, 0.2);
+      }
+
+      &:checked {
+        background-color: #7155d8;
+        border-color: #7155d8;
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 8px; /* Ponto central */
+          height: 8px;
+          border-radius: 50%;
+          background-color: #fff;
+        }
+      }
+    }
+
+
+    label {
+      cursor: pointer;
+      flex-grow: 1;
+    }
+  }
+}

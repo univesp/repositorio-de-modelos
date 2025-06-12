@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren, HostListener } from '@angular/core';
+import { SelectsList } from '../../data/selects-list'; // Importa a lista de configurações de select
+import { CustomSelectComponent } from '../../components/custom-select/custom-select.component'; // Importa o CustomSelectComponent
+import { Selects } from '../../interfaces/selects/selects.interface'; // Importa a interface Selects
 
 @Component({
   selector: 'app-cadastro-modelo',
@@ -13,121 +16,163 @@ export class CadastroModeloComponent implements OnInit {
   maxTags: number = 7;
 
   // Propriedades para o carregamento da imagem
-  selectedFile: File | null = null; // Stores the selected image file
-  imagePreviewUrl: string | ArrayBuffer | null = null; // URL for image preview
-  imageErrorMessage: string | null = null; // Error messages related to the image
+  selectedFile: File | null = null; // Armazena o arquivo de imagem selecionado
+  imagePreviewUrl: string | ArrayBuffer | null = null; // URL para pré-visualização da imagem
+  imageErrorMessage: string | null = null; // Mensagens de erro relacionadas à imagem
+
+  // Nova estrutura para gerenciar os selects de forma escalável
+  // Explicitamente tipando selectsConfig como um array de Selects
+  public selectsConfig: Selects[] = SelectsList; // <<<< CORREÇÃO AQUI
+  // Objeto para armazenar as seleções de CADA select, usando suas 'keys' como chaves
+  public selectedValues: { [key: string]: string[] } = {};
+
+  // QueryList para obter todas as instâncias do CustomSelectComponent no template
+  @ViewChildren(CustomSelectComponent) customSelects!: QueryList<CustomSelectComponent>;
 
   constructor() { }
 
   ngOnInit(): void {
-    // Component initialization logic, if needed.
+    // Inicializa o objeto selectedValues com arrays vazios para cada chave do SelectsList
+    this.selectsConfig.forEach(config => {
+      this.selectedValues[config.key] = [];
+    });
   }
 
   /**
-   * Normalizes a tag string: removes extra spaces, converts to lowercase,
-   * removes accents and special characters.
-   * @param tag The tag string to be normalized.
-   * @returns The normalized tag.
+   * HostListener para detectar cliques em todo o documento.
+   * Fecha qualquer `app-custom-select` aberto se o clique ocorrer fora dele.
+   * Isso é mais robusto agora que temos múltiplos selects.
+   * @param event O evento de clique do documento.
+   */
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent): void {
+    // Itera sobre todas as instâncias de CustomSelectComponent
+    this.customSelects.forEach(selectComponent => {
+      // Verifica se o select está aberto e se o clique não ocorreu dentro do elemento do select
+      if (selectComponent.isSelectOpen && selectComponent.selectContainerRef && !selectComponent.selectContainerRef.nativeElement.contains(event.target)) {
+        selectComponent.isSelectOpen = false; // Fecha o select
+      }
+    });
+  }
+
+  /**
+   * Manipula a mudança de seleção para QUALQUER select customizado.
+   * Esta função genérica é chamada pelo `(selectionChange)` de cada `app-custom-select`.
+   * @param key A chave do select (ex: 'curso', 'area').
+   * @param selection O array de strings com as opções selecionadas para aquele select.
+   */
+  onSelectChange(key: string, selection: string[]): void {
+    this.selectedValues[key] = selection;
+    console.log(`${key} selecionado:`, this.selectedValues[key]);
+  }
+
+  // --- Métodos de Tags ---
+  /**
+   * Normaliza uma string de tag: remove espaços extras, converte para minúsculas,
+   * remove acentos e caracteres especiais.
+   * @param tag A string da tag a ser normalizada.
+   * @returns A tag normalizada.
    */
   private normalizeTag(tag: string): string {
     return tag.trim()
               .toLowerCase()
-              .normalize('NFD') // Normalizes to NFD form (separates letter from accent)
-              .replace(/[\u0300-\u036f]/g, ''); // Removes diacritics (accents)
+              .normalize('NFD') // Normaliza para forma de decomposição (separa a letra do acento)
+              .replace(/[\u0300-\u036f]/g, ''); // Remove os diacríticos (acentos)
   }
 
   /**
-   * Adds tags from the text input to the `tags` array.
-   * The function is triggered by keyboard events (comma, Enter) and the `blur` event.
-   * Handles multiple comma-separated tags, normalization, duplicates, and the maximum limit.
-   * @param event The DOM event that triggered the function (optional, to prevent Enter's default behavior).
+   * Adiciona tags do input de texto ao array `tags`.
+   * A função é acionada por eventos de teclado (vírgula, Enter) e pelo evento `blur`.
+   * Lida com múltiplos tags separados por vírgula, normalização, duplicatas e o limite máximo.
+   * @param event O evento do DOM que disparou a função (opcional, para prevenir o comportamento padrão do Enter).
    */
   addTagFromInput(event?: Event): void {
-    // Prevents default Enter key behavior (form submission)
+    // Previne o comportamento padrão da tecla Enter (submissão do formulário)
     if (event && (event as KeyboardEvent).key === 'Enter') {
       event.preventDefault();
     }
 
-    // Processes the typed text, splitting by commas and cleaning
+    // Processa o texto digitado, dividindo por vírgulas e limpando
     const input = this.currentTagInput.trim();
     if (input) {
       const newTags = input.split(',')
                            .map(tag => this.normalizeTag(tag))
-                           .filter(tag => tag !== '' && tag.length >= 2); // Filters empty or too short tags
+                           .filter(tag => tag !== '' && tag.length >= 2); // Filtra tags vazias ou muito curtas
 
       newTags.forEach(tag => {
-        // Adds the tag only if it's not a duplicate and the limit hasn't been reached
+        // Adiciona a tag apenas se não for duplicada e o limite não foi atingido
         if (this.tags.length < this.maxTags && !this.tags.includes(tag)) {
           this.tags.push(tag);
         }
       });
-      this.currentTagInput = ''; // Clears the input after adding tags
+      this.currentTagInput = ''; // Limpa o input após adicionar as tags
     }
   }
 
   /**
-   * Removes a specific tag from the `tags` array.
-   * @param tagToRemove The tag to be removed.
+   * Remove uma tag específica do array `tags`.
+   * @param tagToRemove A tag a ser removida.
    */
   removeTag(tagToRemove: string): void {
     this.tags = this.tags.filter(tag => tag !== tagToRemove);
   }
 
+  // --- Métodos de Imagem ---
   /**
-   * Handles file selection for the image field.
-   * @param event The change event from the file input.
+   * Manipula a seleção de arquivos para o campo de imagem.
+   * @param event O evento de mudança do input de arquivo.
    */
   onFileSelected(event: Event): void {
-    this.selectedFile = null; // Clears previous file
-    this.imagePreviewUrl = null; // Clears previous preview
-    this.imageErrorMessage = null; // Clears any previous error message
+    this.selectedFile = null; // Limpa o arquivo anterior
+    this.imagePreviewUrl = null; // Limpa a pré-visualização anterior
+    this.imageErrorMessage = null; // Limpa qualquer mensagem de erro anterior
 
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
-      // File type validation
+      // Validação do tipo de arquivo
       const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
       if (!allowedTypes.includes(file.type)) {
-        this.imageErrorMessage = 'Invalid file format. Please select a PNG or JPG image.';
+        this.imageErrorMessage = 'Formato de arquivo inválido. Por favor, selecione uma imagem PNG ou JPG.';
         return;
       }
 
-      // File size validation (e.g., max 2MB)
+      // Validação do tamanho do arquivo (ex: máximo de 2MB)
       const maxSize = 2 * 1024 * 1024; // 2 MB
       if (file.size > maxSize) {
-        this.imageErrorMessage = `The file is too large. The maximum allowed size is ${maxSize / (1024 * 1024)} MB.`;
+        this.imageErrorMessage = `O arquivo é muito grande. O tamanho máximo permitido é ${maxSize / (1024 * 1024)} MB.`;
         return;
       }
 
       this.selectedFile = file;
 
-      // Create URL for image preview
+      // Cria URL para pré-visualização da imagem
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreviewUrl = reader.result;
       };
       reader.onerror = (error) => {
-        console.error('Error reading file:', error);
-        this.imageErrorMessage = 'Could not read image file.';
+        console.error('Erro ao ler o arquivo:', error);
+        this.imageErrorMessage = 'Não foi possível ler o arquivo de imagem.';
       };
-      reader.readAsDataURL(file); // Reads the file as a data URL (base64)
+      reader.readAsDataURL(file); // Lê o arquivo como URL de dados (base64)
     } else {
-      this.imageErrorMessage = 'No file selected.';
+      this.imageErrorMessage = 'Nenhum arquivo selecionado.';
     }
   }
 
   /**
-   * Removes the selected image and its preview.
+   * Remove a imagem selecionada e sua pré-visualização.
    */
   removeImage(): void {
     this.selectedFile = null;
     this.imagePreviewUrl = null;
     this.imageErrorMessage = null;
-    // Optional: Clear the file input (if you need to reset selection)
+    // Opcional: Limpar o input de arquivo (se for necessário reiniciar a seleção)
     const fileInput = document.getElementById('carregaImagem') as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = ''; // Clears the selected file in the input element
+      fileInput.value = ''; // Limpa o arquivo selecionado no elemento input
     }
   }
 }

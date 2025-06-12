@@ -1,0 +1,31 @@
+<div class="custom-select-wrapper">
+  <!-- Rótulo do Select -->
+  <span class="titulo-info">{{ label }}
+    <span *ngIf="required" class="required-indicator">*</span> <!-- Slot para o '*' de obrigatório -->
+    <span class="select-hint">(Selecione uma ou mais opções)</span> <!-- Slot para a dica (Selecione uma ou mais opções) -->
+  </span>
+
+  <!-- Select customizado -->
+  <div #selectContainer class="custom-select" [class.open]="isSelectOpen" (click)="toggleSelect($event)">
+    <div class="selected-items-display">
+      <span *ngIf="selectedItems.length === 0" class="placeholder">{{ placeholder }}</span>
+      <span *ngIf="selectedItems.length > 0">{{ getDisplayValue() }}</span>
+    </div>
+    <mat-icon class="select-dropdown-icon" [class.rotated]="isSelectOpen">arrow_drop_down</mat-icon>
+  </div>
+
+  <!-- Painel de opções (aparece quando o select está aberto) -->
+  <div class="options-panel" *ngIf="isSelectOpen">
+    <div *ngFor="let option of options" class="option-item" (click)="$event.stopPropagation()">
+      <input
+        [type]="allowMultiple ? 'checkbox' : 'radio'"
+        [id]="getSafeHtmlId(option)"
+        [value]="option"
+        [checked]="isSelected(option)"
+        (change)="onOptionChange(option, $event)"
+        [name]="allowMultiple ? getSafeHtmlId(label) + '-option-' + getSafeHtmlId(option) : getSafeHtmlId(label)"
+      >
+      <label [for]="getSafeHtmlId(option)">{{ option }}</label>
+    </div>
+  </div>
+</div>

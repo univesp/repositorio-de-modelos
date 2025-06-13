@@ -11,7 +11,7 @@
     <h1>Envie um Modelo</h1>
     <span>Por favor, preencha todos os campos abaixo com as informações solicitadas para cadastrar o modelo no repositório.</span>
 
-    <form>
+    <form class="cadastro-modelo__formulario">
 
       <!-- Informações Básicas -->
       <span class="cadastro-modelo__titulo-secao">Informações Básicas</span>
@@ -21,27 +21,27 @@
       <div class="cadastro-modelo__formato-container">
         
         <div>
-          <input type="radio" id="reaUnivesp" name="formato" value="reaUnivesp">
+          <input type="radio" id="reaUnivesp" name="formato" value="reaUnivesp" (change)="onFormatoChange($event)">
             <label for="reaUnivesp">REA Univesp</label>
         </div>
 
         <div>
-          <input type="radio" id="recursoProgramacao" name="formato" value="recursoProgramacao">
+          <input type="radio" id="recursoProgramacao" name="formato" value="recursoProgramacao" (change)="onFormatoChange($event)">
             <label for="recursoProgramacao">Recurso de Programação</label>
         </div>
 
         <div>
-          <input type="radio" id="formatoSite" name="formato" value="formatoSite">
+          <input type="radio" id="formatoSite" name="formato" value="formatoSite" (change)="onFormatoChange($event)">
             <label for="formatoSite">Site</label>
         </div>
 
         <div>
-          <input type="radio" id="formatoJogo" name="formato" value="formatoJogo">
+          <input type="radio" id="formatoJogo" name="formato" value="formatoJogo" (change)="onFormatoChange($event)">
             <label for="formatoJogo">Jogo</label>
         </div>
 
         <div>
-          <input type="radio" id="modeloExterno" name="formato" value="modeloExterno">
+          <input type="radio" id="modeloExterno" name="formato" value="modeloExterno" (change)="onFormatoChange($event)">
             <label for="modeloExterno">Modelo Externo</label>
         </div>
         
@@ -111,7 +111,7 @@
         <!-- Pré-visualização da imagem e botão de remover -->
         <div *ngIf="imagePreviewUrl" class="image-preview-container">
           <img [src]="imagePreviewUrl" alt="Pré-visualização da imagem" class="image-preview">
-          <button type="button" class="remove-image-button" (click)="removeImage()">
+          <button type="button" class="remove-image-button" (click)="removeFile()">
             Remover Imagem
           </button>
         </div>
@@ -136,6 +136,94 @@
           [required]="selectConfig.obrigatorio">
         </app-custom-select>
       </ng-container>
+
+      <!-- Código-fonte -->
+      <div class="cadastro-modelo__formato-container formato-radio-inline-container">
+        <span class="titulo-info">Código-fonte disponível?<span class="obrigatório" style="margin-left: 5px;">*</span></span>
+
+        <div class="radio-buttons-group">
+          <div>
+            <input type="radio" id="codigoSim" name="codigo" value="true" (change)="onCodigoFonteChange($event)" [checked]="codigoFonteDisponivel === true">
+            <label for="codigoSim">Sim</label>
+          </div>
+  
+          <div>
+            <input type="radio" id="codigoNao" name="codigo" value="false" (change)="onCodigoFonteChange($event)" [checked]="codigoFonteDisponivel === false">
+            <label for="codigoNao">Não</label>
+          </div>
+        </div>   
+      </div>
+      <div *ngIf="codigoFonteDisponivel === true" class="image-upload-container" style="margin-bottom: 15px; margin-top: 40px;">
+        <!-- Input de arquivo OCULTO -->
+        <input
+          type="file"
+          id="carregaArquivo"
+          (change)="onFileSelected($event)"
+          accept=".zip"
+          style="display: none;"
+        >
+        <!-- Label estilizada como botão -->
+        <label for="carregaArquivo" class="cadastro-modelo__button">
+          Carregar Arquivo
+        </label>
+        <!-- Adicione aqui a pré-visualização ou mensagem de erro para o arquivo ZIP, se necessário -->
+        <div *ngIf="selectedFile && imagePreviewUrl" class="file-preview-container">
+          <p>Arquivo selecionado: {{ imagePreviewUrl }}</p>
+          <button type="button" class="remove-file-button" style="margin: 20px 0 0 0;" (click)="removeFile()">Remover Arquivo</button>
+        </div>
+        <div *ngIf="imageErrorMessage" class="image-error-message">
+          {{ imageErrorMessage }}
+        </div>
+      </div>
+      <span *ngIf="codigoFonteDisponivel === true" class="detalhe-campo-forms" style="margin-left: 0; margin-bottom: 15px;">Somente formato .zip</span>
+      <div *ngIf="codigoFonteDisponivel === true" style="display: flex; flex-direction: column;">
+        <p><b>OU</b></p>
+        <span class="titulo-info" style="margin-top: 10px;">Link Github</span>
+        <input class="input-text" type="text" placeholder="https://">
+        <span class="detalhe-campo-forms">Confira o link</span>
+      </div>
+
+      <!-- AUTORIA -->
+      <div class="cadastro-modelo__autoria">
+        <span class="cadastro-modelo__titulo-secao">Autoria</span>
+        <span class="botao-autor">Adicionar-me como Autor</span>
+        <span>Ou adicione autores abaixo</span>
+      </div>
+
+      <span class="titulo-info">Nome Completo <span class="obrigatório">*</span> </span>
+      <input class="input-text" type="text" placeholder="Escreva Aqui">
+
+      <!-- EQUIPE (PARA REAS UNIVESP OU JOGO) -->
+      <div class="cadastro-modelo__equipe" *ngIf="isReaOuJogo">
+        <span class="cadastro-modelo__titulo-secao">Equipe</span>
+
+        <span class="titulo-info">Docente Responsável</span>
+        <input class="input-text" type="text" placeholder="Escreva Aqui">
+
+        <span class="titulo-info">Coordenação</span>
+        <input class="input-text" type="text" placeholder="Escreva Aqui">
+
+        <span class="titulo-info">Roteirização e Design Instrucional</span>
+        <input class="input-text" type="text" placeholder="Escreva Aqui">
+
+        <span class="titulo-info">Layout</span>
+        <input class="input-text" type="text" placeholder="Escreva Aqui">
+
+        <span class="titulo-info">Ilustração</span>
+        <input class="input-text" type="text" placeholder="Escreva Aqui">
+
+        <span class="titulo-info">Programação</span>
+        <input class="input-text" type="text" placeholder="Escreva Aqui">
+      </div>
+
+
+      <!-- BOTÕES DE ENVIO DO FORMULÁRIO -->
+      <div class="cadastro-modelo__botoes-submit">
+        <button>Enviar</button>
+        <button>Eviar e Adicionar Outro</button>
+        <button>Limpar Formulário</button>
+      </div>
+      
 
     </form>
 

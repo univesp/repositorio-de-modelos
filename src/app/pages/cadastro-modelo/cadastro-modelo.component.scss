@@ -187,6 +187,65 @@
       background-color: #49378c;
     }
   }
+
+  &__autoria {
+    margin-top: 70px;
+    display: flex;
+    align-items: center;
+    gap: 0 18px;
+  }
+
+  &__autoria > .botao-autor {
+    border: 2px solid #7155d8;
+    padding: 10px;
+    color: #7155d8;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #7155d8;
+      color: #fff;
+    }
+  }
+
+  &__botoes-submit {
+    margin-top: 80px;
+    display: flex;
+    align-items: center;
+    gap: 0 30px;
+  }
+  &__botoes-submit > button {
+    padding: 15px;
+    font-weight: bold;
+    font-size: 22px;
+    cursor: pointer;
+    min-width: 150px;
+    border-radius: 7px;
+  }
+  &__botoes-submit > button:nth-child(1) {
+    background-color: #7155d8;
+    color: #fff;
+
+    &:hover {
+      background-color: rgba(113, 85, 216, .9);
+    }
+  }
+  &__botoes-submit > button:not(:first-child) {
+    border: 1px solid #7155d8;
+    color: #7155d8;
+
+    &:hover {
+      background-color: #7155d8;
+      color: #fff;
+    }
+  }
+
+  &__equipe {
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px;
+  }
 }
 
 form {
@@ -226,7 +285,7 @@ form {
   margin-top: 30px;
 }
 
-.remove-image-button {
+.remove-image-button, .remove-file-button {
   background-color: #FF5555;
   color: #FFF;
   padding: 10px;
@@ -238,6 +297,23 @@ form {
   &:hover {
     background-color: rgba(255, 85, 85, .8);
   }
+}
+
+.formato-radio-inline-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.radio-buttons-group {
+  display: flex;
+  gap: 20px;
+  position: relative;
+  top: 13px;
+}
+
+.file-preview-container {
+  margin-top: 20px;
 }
 
 .obrigatório {

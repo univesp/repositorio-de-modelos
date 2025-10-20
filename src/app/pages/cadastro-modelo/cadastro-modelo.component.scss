@@ -1,3 +1,7 @@
+/* Imports de estilos do Quill Editor */
+@import 'quill/dist/quill.core.css';
+@import 'quill/dist/quill.snow.css';
+
 .cadastro-modelo {
   width: 100%;
   color: #000;
@@ -318,4 +322,27 @@ form {
 
 .obrigatório {
   color: #FF5555;
+}
+
+/* Estilos para o Quill Editor para ajustar a altura e bordas */
+.quill-editor-container {
+  min-height: 250px; /* Altura mínima do editor */
+  margin-top: 5px;
+  border: 1px solid #b3b1b1; /* Cor da borda */
+  border-radius: 7px; /* Arredondamento da borda */
+  font-size: 20px;
+  font-family: sans-serif;
+  width: 70%;
+  background-color: #FFF;
+  
+  .ql-toolbar { /* Estilo da barra de ferramentas do Quill */
+    border-bottom: 1px solid #b3b1b1;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+  }
+
+  .ql-container { /* Estilo da área de conteúdo do Quill */
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+  }
 }

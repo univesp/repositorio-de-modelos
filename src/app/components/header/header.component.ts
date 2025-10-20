@@ -46,7 +46,14 @@ export class HeaderComponent implements OnInit {
         // Captura a URL da página de Explorar
         this.lastListPageUrl = url;
       }
-       else {
+      // Adicionado: Lógica para a página de cadastro
+      else if (url.startsWith('/cadastro-novo-modelo')) {
+        this.modoExplorarService.setModoExplorarAtivo(false); // Cadastro não é 'explorar'
+        this.modoExplorarService.setModeloId(null);
+        this.modoExplorarService.setFiltrosAtuais({});
+        this.lastListPageUrl = url; // Considera como uma "página de listagem" para o propósito de breadcrumb
+      }
+      else {
         this.modoExplorarService.setModoExplorarAtivo(false);
         // Não limpa lastListPageUrl aqui, pois podemos ter navegado para uma página de modelo
         // e precisamos saber de onde viemos.
@@ -64,15 +71,23 @@ export class HeaderComponent implements OnInit {
       const crumbs = ['Home'];
       const currentUrl = navEvent.urlAfterRedirects;
 
-      if (modeloId !== null) { // Estamos em uma página de detalhes do modelo (ex: /modelo/123)
+      // Extrai o ID do modelo da URL, se for uma página de modelo (ex: /modelo/123)
+      const idFromUrlMatch = currentUrl.match(/\/modelo\/(\d+)/);
+      const idFromUrl = idFromUrlMatch ? parseInt(idFromUrlMatch[1], 10) : null;
+
+      if (idFromUrl !== null) { // Estamos em uma página de detalhes do modelo (ex: /modelo/123)
         // Usa a última URL de listagem capturada para decidir o breadcrumb "pai"
         if (this.lastListPageUrl?.startsWith('/resultados')) {
           crumbs.push('Resultados');
         } else if (this.lastListPageUrl?.startsWith('/explorar')) {
           crumbs.push('Explorar');
         }
-        crumbs.push(`Modelo #${modeloId}`);
-      } else { // Estamos em uma página de listagem ou Home
+        // Adicionado: Se a página anterior foi a de cadastro, adiciona o breadcrumb
+        else if (this.lastListPageUrl?.startsWith('/cadastro-novo-modelo')) {
+          crumbs.push('Cadastro de Modelo');
+        }
+        crumbs.push(`Modelo #${idFromUrl}`); // Usa o ID extraído da URL para o breadcrumb do modelo
+      } else { // Estamos em uma página de listagem, Home ou cadastro
         if (currentUrl.startsWith('/resultados')) {
           crumbs.push('Resultados');
           // Garante que a URL da lista é capturada caso o usuário acesse diretamente a URL
@@ -81,6 +96,10 @@ export class HeaderComponent implements OnInit {
           crumbs.push('Explorar');
           // Garante que a URL da lista é capturada caso o usuário acesse diretamente a URL
           this.lastListPageUrl = currentUrl;
+        }
+        // Adicionado: Lógica para a página de cadastro
+        else if (currentUrl.startsWith('/cadastro-novo-modelo')) {
+          crumbs.push('Cadastro de Modelo');
         }
         // Se currentUrl é apenas '/', os crumbs permanecem ['Home'],
         // e lastListPageUrl já é null (definido acima).

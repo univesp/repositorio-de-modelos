@@ -2,7 +2,17 @@
   <span>Email</span>
   <mat-form-field style="width: 500px;">
     <mat-label>E-mail cadastrado</mat-label>
-    <input type="email" matInput>
+    <input 
+      type="email" 
+      matInput
+      [(ngModel)]="email"
+      name="email"
+      required
+      email>
+    <mat-error *ngIf="emailControl?.invalid && emailControl?.touched">
+      <span *ngIf="emailControl?.errors?.['required']">Email é obrigatório</span>
+      <span *ngIf="emailControl?.errors?.['email']">Email inválido</span>
+    </mat-error>
   </mat-form-field>
 
   <br>
@@ -10,7 +20,12 @@
   <span>Senha</span>
   <mat-form-field style="width: 500px;">
     <mat-label>Senha</mat-label>
-    <input matInput [type]="hide() ? 'password' : 'text'" />
+    <input 
+      matInput 
+      [type]="hide() ? 'password' : 'text'" 
+      [(ngModel)]="password"
+      name="password"
+      required/>
     <button
       mat-icon-button
       matSuffix
@@ -20,18 +35,21 @@
     >
       <mat-icon>{{hide() ? 'visibility_off' : 'visibility'}}</mat-icon>
     </button>
+    <mat-error *ngIf="passwordControl?.invalid && passwordControl?.touched">
+      <span *ngIf="passwordControl?.errors?.['required']">Senha é obrigatória</span>
+    </mat-error>
   </mat-form-field>
 
   <br>
 
-  <div class="check-remember">
-    <input type="checkbox"> 
-    <span>Lembrar</span>
-  </div>
-
   <div class="submit-button">
-    <button (click)="onLogin()">Entrar</button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onLogin()"
+      [disabled]="isLoading || !isFormValid()">
+      {{ isLoading ? 'ENTRANDO...' : 'ENTRAR' }}
+    </button>
   </div>
   
 </div>
-

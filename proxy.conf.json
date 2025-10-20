@@ -1,0 +1,11 @@
+{
+  "/api": {
+    "target": "https://apps.univesp.br",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": "/repositorio-modelos"
+    }
+  }
+}

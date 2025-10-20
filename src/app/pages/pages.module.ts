@@ -6,12 +6,13 @@ import { AngularMaterialModule } from "../angular-material/angular-material.modu
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { BrowserModule } from '@angular/platform-browser';
+//import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from "@angular/common";
 import { ModeloComponent } from "./modelo/modelo.component";
 import { ResultadosComponent } from './resultados/resultados.component';
 import { ExplorarComponent } from './explorar/explorar.component';
 import { CadastroModeloComponent } from './cadastro-modelo/cadastro-modelo.component';
+import { QuillModule } from 'ngx-quill'; 
 
 @NgModule({
   declarations: [
@@ -27,9 +28,10 @@ import { CadastroModeloComponent } from './cadastro-modelo/cadastro-modelo.compo
     ComponentsModule,
     AngularMaterialModule,
     BrowserAnimationsModule,
-    BrowserModule,
+   // BrowserModule,
     CommonModule,
-    FormsModule
+    FormsModule, 
+    QuillModule
   ],
   exports: [
     LoginComponent,

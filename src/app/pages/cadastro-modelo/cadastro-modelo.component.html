@@ -21,27 +21,27 @@
       <div class="cadastro-modelo__formato-container">
         
         <div>
-          <input type="radio" id="reaUnivesp" name="formato" value="reaUnivesp" (change)="onFormatoChange($event)">
+          <input class="checkFormato" type="radio" id="reaUnivesp" name="formato" value="REA Univesp" (change)="onFormatoChange($event)">
             <label for="reaUnivesp">REA Univesp</label>
         </div>
 
         <div>
-          <input type="radio" id="recursoProgramacao" name="formato" value="recursoProgramacao" (change)="onFormatoChange($event)">
+          <input class="checkFormato" type="radio" id="recursoProgramacao" name="formato" value="Recurso de Programação" (change)="onFormatoChange($event)">
             <label for="recursoProgramacao">Recurso de Programação</label>
         </div>
 
         <div>
-          <input type="radio" id="formatoSite" name="formato" value="formatoSite" (change)="onFormatoChange($event)">
+          <input class="checkFormato" type="radio" id="formatoSite" name="formato" value="Site" (change)="onFormatoChange($event)">
             <label for="formatoSite">Site</label>
         </div>
 
         <div>
-          <input type="radio" id="formatoJogo" name="formato" value="formatoJogo" (change)="onFormatoChange($event)">
+          <input class="checkFormato" type="radio" id="formatoJogo" name="formato" value="Jogo" (change)="onFormatoChange($event)">
             <label for="formatoJogo">Jogo</label>
         </div>
 
         <div>
-          <input type="radio" id="modeloExterno" name="formato" value="modeloExterno" (change)="onFormatoChange($event)">
+          <input class="checkFormato" type="radio" id="modeloExterno" name="formato" value="Modelo Externo" (change)="onFormatoChange($event)">
             <label for="modeloExterno">Modelo Externo</label>
         </div>
         
@@ -49,17 +49,23 @@
 
       <!-- Título (Campo Obrigatório) -->
       <span class="titulo-info">Título <span class="obrigatório">*</span></span>
-      <input class="input-text" type="text" placeholder="Escreva Aqui">
+      <input class="input-text" id="inputTitle" type="text" placeholder="Escreva Aqui">
       <span class="detalhe-campo-forms">Insira um título claro e conciso para o recurso/modelo. (ex.: "Jogo da Forca Interativo")</span>
 
       <!-- Descrição (Campo Obrigatório) -->
       <span class="titulo-info">Descrição <span class="obrigatório">*</span></span>
-      <textarea class="input-textArea" cols="30" rows="10" placeholder="Escreva Aqui"></textarea>
+      <quill-editor
+        name="descricao"
+        [(ngModel)]="descricaoModelo"
+        [modules]="{ toolbar: toolbarOptions }"
+        placeholder="Escreva a descrição completa do recurso aqui..."
+        class="quill-editor-container" 
+      ></quill-editor>
       <span class="detalhe-campo-forms">Forneça uma descrição completa do recurso, incluindo suas principais caraterísticas e funcionalidades.</span>
 
       <!-- URL -->
       <span class="titulo-info">URL</span>
-      <input class="input-text" type="text" placeholder="https://">
+      <input class="input-text" id="urlInput" type="url" placeholder="https://" pattern="https?://.+">
       <span class="detalhe-campo-forms">Confira o link</span>
 
       <!-- Tags (Campo Obrigatório) -->
@@ -77,15 +83,14 @@
             class="tags-input"
             placeholder="Adicionar tags (separe por Enter)"
             [(ngModel)]="currentTagInput"
-            (keyup.comma)="addTagFromInput()"
+            (keyup)="onKeyUp($event)"
             (blur)="addTagFromInput()"
-            (keyup.enter)="addTagFromInput($event)"
             name="tagInput" 
             [disabled]="tags.length >= maxTags"
           >
         </div>
         <!-- Exibe o limite de tags restantes dinamicamente -->
-        <span class="detalhe-campo-forms">Insira palavras-chave relacionadas ao recurso para facilitar a busca (separe por Enter). Limite: {{ maxTags - tags.length }} restantes.</span>
+        <span class="detalhe-campo-forms">Insira palavras-chave relacionadas ao recurso para facilitar a busca (separe por vírgula). Limite: {{ maxTags - tags.length }} restantes.</span>
         <!-- Mensagem de erro de validação simples para tags (mostra se não houver tags) -->
         
       </div>
@@ -111,7 +116,7 @@
         <!-- Pré-visualização da imagem e botão de remover -->
         <div *ngIf="imagePreviewUrl" class="image-preview-container">
           <img [src]="imagePreviewUrl" alt="Pré-visualização da imagem" class="image-preview">
-          <button type="button" class="remove-image-button" (click)="removeFile()">
+          <button type="button" class="remove-image-button" (click)="removeFile('imagem')">
             Remover Imagem
           </button>
         </div>
@@ -167,9 +172,9 @@
           Carregar Arquivo
         </label>
         <!-- Adicione aqui a pré-visualização ou mensagem de erro para o arquivo ZIP, se necessário -->
-        <div *ngIf="selectedFile && imagePreviewUrl" class="file-preview-container">
+        <div *ngIf="selectedZipFile && imagePreviewUrl" class="file-preview-container">
           <p>Arquivo selecionado: {{ imagePreviewUrl }}</p>
-          <button type="button" class="remove-file-button" style="margin: 20px 0 0 0;" (click)="removeFile()">Remover Arquivo</button>
+          <button type="button" class="remove-file-button" style="margin: 20px 0 0 0;" (click)="removeFile('zip')">Remover Arquivo</button>
         </div>
         <div *ngIf="imageErrorMessage" class="image-error-message">
           {{ imageErrorMessage }}
@@ -178,8 +183,8 @@
       <span *ngIf="codigoFonteDisponivel === true" class="detalhe-campo-forms" style="margin-left: 0; margin-bottom: 15px;">Somente formato .zip</span>
       <div *ngIf="codigoFonteDisponivel === true" style="display: flex; flex-direction: column;">
         <p><b>OU</b></p>
-        <span class="titulo-info" style="margin-top: 10px;">Link Github</span>
-        <input class="input-text" type="text" placeholder="https://">
+        <span class="titulo-info" style="margin-top: 10px;">Link:</span>
+        <input class="input-text" id="codigoLink" type="text" placeholder="https://">
         <span class="detalhe-campo-forms">Confira o link</span>
       </div>
 
@@ -191,35 +196,35 @@
       </div>
 
       <span class="titulo-info">Nome Completo <span class="obrigatório">*</span> </span>
-      <input class="input-text" type="text" placeholder="Escreva Aqui">
+      <input class="input-text" id="autoriaName" type="text" placeholder="Escreva Aqui">
 
       <!-- EQUIPE (PARA REAS UNIVESP OU JOGO) -->
       <div class="cadastro-modelo__equipe" *ngIf="isReaOuJogo">
         <span class="cadastro-modelo__titulo-secao">Equipe</span>
 
         <span class="titulo-info">Docente Responsável</span>
-        <input class="input-text" type="text" placeholder="Escreva Aqui">
+        <input class="input-text" id="EquipeDocenteResponsavel" type="text" placeholder="Escreva Aqui">
 
         <span class="titulo-info">Coordenação</span>
-        <input class="input-text" type="text" placeholder="Escreva Aqui">
+        <input class="input-text" id="EquipeCoordenacao" type="text" placeholder="Escreva Aqui">
 
         <span class="titulo-info">Roteirização e Design Instrucional</span>
-        <input class="input-text" type="text" placeholder="Escreva Aqui">
+        <input class="input-text" id="equipeRoteirizacaoDI" type="text" placeholder="Escreva Aqui">
 
         <span class="titulo-info">Layout</span>
-        <input class="input-text" type="text" placeholder="Escreva Aqui">
+        <input class="input-text" id="equipeLayout" type="text" placeholder="Escreva Aqui">
 
         <span class="titulo-info">Ilustração</span>
-        <input class="input-text" type="text" placeholder="Escreva Aqui">
+        <input class="input-text" id="equipeIlustracao" type="text" placeholder="Escreva Aqui">
 
         <span class="titulo-info">Programação</span>
-        <input class="input-text" type="text" placeholder="Escreva Aqui">
+        <input class="input-text" id="equipeProgramacao" type="text" placeholder="Escreva Aqui">
       </div>
 
 
       <!-- BOTÕES DE ENVIO DO FORMULÁRIO -->
       <div class="cadastro-modelo__botoes-submit">
-        <button>Enviar</button>
+        <button (click)="onSubmit()">Enviar</button>
         <button>Eviar e Adicionar Outro</button>
         <button>Limpar Formulário</button>
       </div>

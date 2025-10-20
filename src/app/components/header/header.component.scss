@@ -108,6 +108,91 @@
   }
 }
 
+.header-auth-section {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  position: relative;
+  left: 200px;
+  top: 15px;
+}
+
+.login-header-button {
+  background: #7155d8;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  font-weight: bold;
+  width: 150px;
+  font-size: 16px;
+
+  &:hover {
+    background: rgba(113, 85, 216, 0.9);
+  }
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4caf50, #2196f3);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 32px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.user-dropdown-menu {
+  .mat-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    mat-icon {
+      margin-right: 0;
+    }
+  }
+}
+
+// Se quiser um menu dropdown mais estilizado
+::ng-deep .user-dropdown-menu {
+  min-width: 180px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  
+  .mat-menu-content {
+    padding: 8px 0;
+  }
+  
+  .mat-menu-item {
+    height: 40px;
+    line-height: 40px;
+    
+    &:hover {
+      background: #f5f5f5;
+    }
+  }
+}
+
 @media (max-width: 1300px) {
   .header__image-container {
     width: 220px;

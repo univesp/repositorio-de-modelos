@@ -52,7 +52,7 @@ export class AuthService {
   logout(): void {
     this.setAuthentication(false);
     localStorage.removeItem('authData');
-    this.router.navigate(['/login']);
+    //this.router.navigate(['/login']);
   }
 
   private setAuthentication(status: boolean): void {

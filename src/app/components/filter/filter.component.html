@@ -9,7 +9,7 @@
     </div>
 
     <!-- Botão Novo -->
-    <div class="button-adicionar">
+    <div class="button-adicionar" *ngIf="isLoggedIn">
       <button (click)="handleCadastro()">
         <span class="plus">+</span>
         <span>Novo</span>

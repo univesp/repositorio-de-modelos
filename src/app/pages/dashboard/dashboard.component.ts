@@ -40,9 +40,9 @@ export class DashboardComponent implements OnInit {
   { }
 
   ngOnInit(): void {
-    if(this.isPrivate && !isSignedIn()) {
-      this.router.navigate(['login']);
-    }
+   // if(this.isPrivate && !isSignedIn()) {
+    //  this.router.navigate(['login']);
+   // }
 
     this.modelos = Modeloslist.map(modelo => ({
       ...modelo,

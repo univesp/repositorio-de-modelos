@@ -3,6 +3,7 @@ import { ModoExplorarService } from '../../services/modo-explorar.service';
 import { combineLatest } from 'rxjs';
 import { NavigationEnd, Router, Event as RouterEvent } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../services/auth.service'; 
 
 @Component({
   selector: 'app-header',
@@ -15,12 +16,26 @@ export class HeaderComponent implements OnInit {
   // Variável para armazenar a URL da última página de listagem visitada
   private lastListPageUrl: string | null = null;
 
+  isLoggedIn: boolean = false;
+  userName: string = '';
+  userInitial: string = '';
+
   constructor(
     private modoExplorarService: ModoExplorarService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ){}
 
   ngOnInit(): void {
+    // Verifica o estado de autenticação
+    this.checkAuthStatus();
+
+    // Observa mudanças no estado de autenticação
+    this.authService.isAuthenticated().subscribe(isAuthenticated => {
+      this.isLoggedIn = isAuthenticated;
+      this.updateUserInfo();
+    });
+
     // Atualiza o estado global e captura a URL da última página de listagem
     this.router.events
     .pipe(
@@ -107,6 +122,46 @@ export class HeaderComponent implements OnInit {
 
       this.breadcrumbs = crumbs;
     });
+  }
+
+  // Método para verificar o status de autenticação
+  private checkAuthStatus(): void {
+    this.isLoggedIn = this.authService.isSignedIn();
+    this.updateUserInfo();
+  }
+
+  // Método para atualizar informações do usuário
+  private updateUserInfo(): void {
+    if(this.isLoggedIn) {
+      const userData = this.authService.getAuthData();
+      if(userData) {
+        this.userName = userData.nome;
+
+        // Pega a primeira letra do nome para o avatar
+        this.userInitial = this.userName.charAt(0).toUpperCase();
+      }
+    } else {
+      this.userName = '';
+      this.userInitial = '';
+    }
+  }
+
+  // Método para navegar para o Login
+  goToLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
+  // Método para navegar para página do usuário
+  goToUserProfile(): void {
+    this.router.navigate(['/perfil']);
+  }
+
+  // Método para fazer logout
+  logout(): void {
+    this.authService.logout();
+    this.isLoggedIn = false;
+    this.userName = '';
+    this.userInitial = '';
   }
 
   isnoBreadCrumbsPath(): boolean {

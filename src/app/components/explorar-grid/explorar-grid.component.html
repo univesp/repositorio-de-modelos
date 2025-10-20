@@ -20,7 +20,8 @@
               aria-hidden="false" 
               aria-label="BookMark icon" 
               [fontIcon]="item.isSalvo ? 'bookmark' : 'bookmark_border'" 
-              (click)="toggleBookmark(item, $event); $event.stopImmediatePropagation()">
+              (click)="toggleBookmark(item, $event); $event.stopImmediatePropagation()"
+              *ngIf="isLoggedIn">
             </mat-icon>
           </div>
           

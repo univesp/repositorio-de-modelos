@@ -14,7 +14,7 @@
         <span> | </span> 
         <span>{{ modelo.disciplina }}, </span> 
         <span>{{ modelo.categorias }}</span>
-        <span (click)="toggleBookmark(modelo)">
+        <span (click)="toggleBookmark(modelo)" *ngIf="isLoggedIn">
           <mat-icon 
             class="icon-bookmark" 
             aria-hidden="false" 

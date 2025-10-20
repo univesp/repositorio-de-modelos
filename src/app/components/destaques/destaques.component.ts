@@ -1,23 +1,34 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
 import { BookmarkService } from '../../services/bookmark.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-destaques',
   templateUrl: './destaques.component.html',
   styleUrl: './destaques.component.scss'
 })
-export class DestaquesComponent {
+export class DestaquesComponent implements OnInit {
 
   @Input({required: true}) modelosList: Modelo[] = [];
+  isLoggedIn: boolean = false;
 
   constructor(
       private router: Router,
-      private bookmarkService: BookmarkService
+      private bookmarkService: BookmarkService,
+      private authService: AuthService
     )
     { }
+
+  ngOnInit() {
+    this.isLoggedIn = this.authService.isSignedIn();
+
+    this.authService.isAuthenticated().subscribe(loggedIn => {
+      this.isLoggedIn = loggedIn;
+    })
+  }
 
   redirectModeloPage(id: string) {
     this.router.navigate([`modelo/${id}`])

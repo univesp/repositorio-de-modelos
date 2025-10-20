@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { FilterConfigList } from '../../data/filterConfig-list'; 
 import { FiltroConfig } from '../../interfaces/filter/filterConfig.interface';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-filter',
@@ -13,6 +14,9 @@ import { ModoExplorarService } from '../../services/modo-explorar.service';
 export class FilterComponent implements OnInit, OnDestroy {
 
   filtrosSub!: Subscription;
+  authSub!: Subscription;
+
+  isLoggedIn: boolean = false;
 
   ngOnInit(): void {
     this.filtrosSub = this.modoExplorarService.filtrosAtuais$.subscribe(filtros => {
@@ -24,10 +28,20 @@ export class FilterComponent implements OnInit, OnDestroy {
         });
       }
     });
+
+    // Verificar dados de autenticação
+    this.checkAuthStatus();
+
+    // Obeserva mudanças no estado de autenticação
+    this.authSub = this.authService.isAuthenticated().subscribe(isAuthenticated => {
+      this.isLoggedIn = isAuthenticated;
+    });
   }
+  
   
   ngOnDestroy(): void {
     this.filtrosSub?.unsubscribe();
+    this.authSub?.unsubscribe();
   }
   
 
@@ -53,7 +67,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   constructor(
         private router: Router,
         private route: ActivatedRoute,
-        private modoExplorarService: ModoExplorarService
+        private modoExplorarService: ModoExplorarService,
+        private authService: AuthService
       ) {
     
     const filtrosSalvos = this.modoExplorarService.getFiltrosAtuais();
@@ -83,6 +98,10 @@ export class FilterComponent implements OnInit, OnDestroy {
 
       this.modoExplorarService.setFiltrosAtuais(this.filtros);
     });
+  }
+
+  private checkAuthStatus(): void {
+    this.isLoggedIn = this.authService.isSignedIn();
   }
 
   handleExplorar() {

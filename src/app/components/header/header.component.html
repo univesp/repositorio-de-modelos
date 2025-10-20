@@ -3,6 +3,44 @@
     <img src="https://apps.univesp.br/common/colorida-positiva.svg" alt="Logo da Univesp">
   </div>
   <h1>Repositório de Modelos</h1>
+  
+  <div class="header-auth-section" *ngIf="!isnoBreadCrumbsPath()">
+
+    <!-- Se NÃO estiver logado: mostra botão de login -->
+    <button 
+      *ngIf="!isLoggedIn"
+      class="login-header-button"
+      (click)="goToLogin()">
+        Login
+    </button>
+
+    <!-- Se estiver logado: mostra avatar do usuário -->
+    <div *ngIf="isLoggedIn" class="user-menu">
+
+      <button
+        class="user-avatar"
+        [matMenuTriggerFor]="userMenu"
+        [title]="'Logado como '+ userName">
+          {{ userInitial }}
+      </button>
+
+      <mat-menu #userMenu="matMenu" class="user-dropdown-menu">
+
+        <button mat-menu-item (click)="goToUserProfile()">
+          <mat-icon>account_circle</mat-icon>
+          <span>Meu Perfil</span>
+        </button>
+
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sair</span>
+        </button>
+
+      </mat-menu>
+
+    </div>
+
+  </div>
 </div>
 
 <div class="breadcrumbs" *ngIf="breadcrumbs.length > 0 && !isnoBreadCrumbsPath()">

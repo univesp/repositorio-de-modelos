@@ -1,0 +1,59 @@
+<div class="perfil-container">
+
+  <!-- Filtro reutilizado -->
+  <app-filter 
+    class="perfil-container__filter"
+    (filtrosChanged)="null"  
+    (explorarClicked)="null"
+  ></app-filter>
+
+  <div class="perfil-container__contentBox">
+
+    <div class="user-page user-content">
+
+      <div class="user-basic-info">
+        <div class="profile-image">G</div>
+        <div class="profile-userName">
+          <span>gabriel.gallo</span>
+          <span>Gabriel Gallo</span>
+        </div>
+      </div>
+
+      <div class="profile-other-info-box">
+        <div class="other-info-item">
+          <p class="other-info-title">E-mail Institucional</p>
+          <p class="other-info-content">gabriel.gallo&#64;tv.univesp.br</p>
+        </div>
+
+        <div class="other-info-item">
+          <p class="other-info-title">Instituição</p>
+          <p class="other-info-content">Univesp</p>
+        </div>
+
+        <div class="other-info-item">
+          <p class="other-info-title">Cargo</p>
+          <p class="other-info-content">Programador</p>
+        </div>
+
+        <div class="other-info-item">
+          <p class="other-info-title">Nível de Acesso</p>
+          <p class="other-info-content">Usuário</p>
+        </div>
+      </div>
+
+      <div class="logout-perfil-page">
+        <button mat-menu-item>
+          <mat-icon>logout</mat-icon>
+          <span>Sair da Conta</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="user-page user-bookmarks">
+
+    </div>
+
+  </div>
+
+</div>

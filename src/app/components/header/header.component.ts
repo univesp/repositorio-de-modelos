@@ -68,6 +68,12 @@ export class HeaderComponent implements OnInit {
         this.modoExplorarService.setFiltrosAtuais({});
         this.lastListPageUrl = url; // Considera como uma "página de listagem" para o propósito de breadcrumb
       }
+      // Lógica para a página de perfil
+      else if (url.startsWith('/perfil')) {
+        this.modoExplorarService.setModoExplorarAtivo(false);
+        this.modoExplorarService.setModeloId(null);
+        this.modoExplorarService.setFiltrosAtuais({});
+      }
       else {
         this.modoExplorarService.setModoExplorarAtivo(false);
         // Não limpa lastListPageUrl aqui, pois podemos ter navegado para uma página de modelo
@@ -116,6 +122,9 @@ export class HeaderComponent implements OnInit {
         else if (currentUrl.startsWith('/cadastro-novo-modelo')) {
           crumbs.push('Cadastro de Modelo');
         }
+        else if (currentUrl.startsWith('/perfil')) {
+          crumbs.push('Perfil');
+        }
         // Se currentUrl é apenas '/', os crumbs permanecem ['Home'],
         // e lastListPageUrl já é null (definido acima).
       }
@@ -162,6 +171,7 @@ export class HeaderComponent implements OnInit {
     this.isLoggedIn = false;
     this.userName = '';
     this.userInitial = '';
+    this.router.navigate(['/']);
   }
 
   isnoBreadCrumbsPath(): boolean {

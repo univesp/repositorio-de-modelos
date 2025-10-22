@@ -9,20 +9,28 @@
 
   <div class="perfil-container__contentBox">
 
+    <!-- Mensagem se não encontrar dados -->
+    <div *ngIf="!userData" class="no-data">
+      <p>Nenhum dado de usuário encontrado. Faça login novamente.</p>
+    </div>
+
+    <!-- Conteúdo do perfil -->
     <div class="user-page user-content">
 
       <div class="user-basic-info">
-        <div class="profile-image">G</div>
+        <div class="profile-image">
+          {{ userData?.imagemUrl ? '' : getUserInitial() }}
+        </div>
         <div class="profile-userName">
-          <span>gabriel.gallo</span>
-          <span>Gabriel Gallo</span>
+          <span> {{ getUserName() }} </span>
+          <span> {{ userData?.nome }} </span>
         </div>
       </div>
 
       <div class="profile-other-info-box">
         <div class="other-info-item">
           <p class="other-info-title">E-mail Institucional</p>
-          <p class="other-info-content">gabriel.gallo&#64;tv.univesp.br</p>
+          <p class="other-info-content"> {{ userData?.email }} </p>
         </div>
 
         <div class="other-info-item">
@@ -42,7 +50,7 @@
       </div>
 
       <div class="logout-perfil-page">
-        <button mat-menu-item>
+        <button mat-menu-item (click)="logout()">
           <mat-icon>logout</mat-icon>
           <span>Sair da Conta</span>
         </button>

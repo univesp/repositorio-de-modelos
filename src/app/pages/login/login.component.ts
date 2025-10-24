@@ -26,10 +26,10 @@ export class LoginComponent implements OnInit {
   onLogin(credentials: { email: string; password: string }) {
     this.authService.login(credentials).subscribe({
       next: (response) => {
-        console.log('Login realizado com sucesso!', response);
+        //console.log('Login realizado com sucesso!', response);
         
         // Verifica se está realmente autenticado
-        console.log('isSignedIn após login:', this.authService.isSignedIn());
+       // console.log('isSignedIn após login:', this.authService.isSignedIn());
         
         this.router.navigate(['/']);
       },
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
         this.loginFormComponent.resetLoading();
         
         // Verifica que NÃO está autenticado
-        console.log('isSignedIn após erro:', this.authService.isSignedIn());
+        //console.log('isSignedIn após erro:', this.authService.isSignedIn());
         
                 // SWEETALERTS DE ERRO
                 if (error.status === 401) {

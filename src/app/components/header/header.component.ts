@@ -142,13 +142,16 @@ export class HeaderComponent implements OnInit {
   // Método para atualizar informações do usuário
   private updateUserInfo(): void {
     if(this.isLoggedIn) {
-      const userData = this.authService.getAuthData();
-      if(userData) {
-        this.userName = userData.nome;
-
-        // Pega a primeira letra do nome para o avatar
-        this.userInitial = this.userName.charAt(0).toUpperCase();
-      }
+      this.authService.getUserProfile().subscribe({
+        next: (profile) => {
+          this.userName = profile.nome;
+          this.userInitial = profile.nome.charAt(0).toUpperCase();
+        },
+        error: () => {
+          this.userName = 'Usuário';
+          this.userInitial = 'U';
+        }
+      });
     } else {
       this.userName = '';
       this.userInitial = '';

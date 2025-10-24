@@ -1,51 +1,59 @@
 <div class="perfil-container">
-
-  <!-- Filtro reutilizado -->
   <app-filter 
     class="perfil-container__filter"
     (filtrosChanged)="null"  
     (explorarClicked)="null"
   ></app-filter>
 
+  <!-- Loading dos dados de usuario -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-content">
+      <p>Carregando dados do usuário...</p>
+    </div>
+  </div>
+
   <div class="perfil-container__contentBox">
 
-    <!-- Mensagem se não encontrar dados -->
-    <div *ngIf="!userData" class="no-data">
-      <p>Nenhum dado de usuário encontrado. Faça login novamente.</p>
+    <!-- Erro -->
+    <div *ngIf="error" class="error">
+      <p>{{ error }}</p>
     </div>
 
     <!-- Conteúdo do perfil -->
-    <div class="user-page user-content">
+    <div *ngIf="userData && !isLoading" class="user-page user-content">
 
       <div class="user-basic-info">
         <div class="profile-image">
-          {{ userData?.imagemUrl ? '' : getUserInitial() }}
+          {{ userData.imagemUrl ? '' : getUserInitial() }}
         </div>
         <div class="profile-userName">
-          <span> {{ getUserName() }} </span>
-          <span> {{ userData?.nome }} </span>
+          <span>{{ getUserName() }}</span>
+          <span>{{ userData.nome }}</span>
         </div>
       </div>
 
       <div class="profile-other-info-box">
         <div class="other-info-item">
           <p class="other-info-title">E-mail Institucional</p>
-          <p class="other-info-content"> {{ userData?.email }} </p>
+          <p class="other-info-content">{{ userData.email }}</p>
         </div>
 
+        <!-- NOVOS CAMPOS DA API -->
         <div class="other-info-item">
           <p class="other-info-title">Instituição</p>
-          <p class="other-info-content">Univesp</p>
+          <p class="other-info-content">{{ userData.instituicao }}</p>
         </div>
 
         <div class="other-info-item">
           <p class="other-info-title">Cargo</p>
-          <p class="other-info-content">Programador</p>
+          <p class="other-info-content">{{ userData.cargo }}</p>
         </div>
 
         <div class="other-info-item">
           <p class="other-info-title">Nível de Acesso</p>
-          <p class="other-info-content">Usuário</p>
+          <p class="other-info-content">
+            {{ userData.role === "USER" ? 'Editor' : 'Administrador' }}
+          </p>
         </div>
       </div>
 
@@ -55,13 +63,9 @@
           <span>Sair da Conta</span>
         </button>
       </div>
-
     </div>
 
     <div class="user-page user-bookmarks">
-
     </div>
-
   </div>
-
 </div>

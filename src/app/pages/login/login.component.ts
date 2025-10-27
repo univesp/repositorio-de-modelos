@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
                     text: 'Verifique os campos e tente novamente',
                     icon: 'warning',
                     confirmButtonText: 'Corrigir',
-                    confirmButtonColor: '#f44336'
+                    confirmButtonColor: '#FF9800'
                   });
                 } else if (error.status === 0) {
                   Swal.fire({

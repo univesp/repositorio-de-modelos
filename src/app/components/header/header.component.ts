@@ -1,74 +1,105 @@
-import { Component, OnInit } from '@angular/core';
+// header.component.ts - VERSÃO CORRIGIDA
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { NavigationEnd, Router, Event as RouterEvent } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { AuthService } from '../../services/auth.service'; 
+import { AuthService, UserProfile } from '../../services/auth.service'; 
+import { ImageService } from '../../services/image.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
   breadcrumbs: string[] = ['Home'];
-  // Variável para armazenar a URL da última página de listagem visitada
   private lastListPageUrl: string | null = null;
 
   isLoggedIn: boolean = false;
   userName: string = '';
   userInitial: string = '';
+  
+  userProfile: UserProfile | null = null;
+  imageBlobUrl: SafeUrl | null = null;
+  private userProfileSubscription: Subscription | null = null;
+  private imageSubscription: Subscription | null = null;
+  private authSubscription: Subscription | null = null;
+
+  isImageLoading: boolean = false;
+  hasImageError: boolean = false;
 
   constructor(
     private modoExplorarService: ModoExplorarService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private imageService: ImageService,
+    private sanitizer: DomSanitizer
   ){}
 
   ngOnInit(): void {
-    // Verifica o estado de autenticação
     this.checkAuthStatus();
 
-    // Observa mudanças no estado de autenticação
-    this.authService.isAuthenticated().subscribe(isAuthenticated => {
+    // CORREÇÃO: Observa mudanças de autenticação E carrega a imagem quando loga
+    this.authSubscription = this.authService.isAuthenticated().subscribe(isAuthenticated => {
       this.isLoggedIn = isAuthenticated;
       this.updateUserInfo();
+      
+      // CORREÇÃO IMPORTANTE: Se acabou de logar, força o carregamento da imagem
+      if (isAuthenticated && this.userProfile) {
+        //console.log('🔐 Login detectado, carregando imagem...');
+        this.loadProfileImage();
+      }
     });
 
-    // Atualiza o estado global e captura a URL da última página de listagem
+    // Observa mudanças no perfil do usuário
+    this.userProfileSubscription = this.authService.userProfile$.subscribe(profile => {
+      this.userProfile = profile;
+      if (profile) {
+        this.userName = profile.nome;
+        this.userInitial = profile.nome.charAt(0).toUpperCase();
+        
+        // CORREÇÃO: Sempre carrega a imagem quando o perfil é atualizado
+       // console.log('🔄 Perfil atualizado no header, carregando imagem...');
+        this.loadProfileImage();
+      } else {
+        this.userName = '';
+        this.userInitial = '';
+        this.imageBlobUrl = null;
+      }
+    });
+
+    // Resto do código permanece igual...
     this.router.events
     .pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     )
     .subscribe((event: NavigationEnd) => {
       const url = event.urlAfterRedirects;
-
+      
       if (url === '/') {
         this.modoExplorarService.setModoExplorarAtivo(false);
         this.modoExplorarService.setModeloId(null);
         this.modoExplorarService.setFiltrosAtuais({});
-        this.lastListPageUrl = null; // Limpa a URL da última lista se for para a Home
+        this.lastListPageUrl = null;
       } else if (url.startsWith('/resultados')) {
         this.modoExplorarService.setModoExplorarAtivo(true);
         this.modoExplorarService.setModeloId(null);
-        // Captura a URL da página de Resultados
         this.lastListPageUrl = url;
       } else if (url.startsWith('/explorar')) {
         this.modoExplorarService.setModoExplorarAtivo(true);
         this.modoExplorarService.setModeloId(null);
         this.modoExplorarService.setFiltrosAtuais({});
-        // Captura a URL da página de Explorar
         this.lastListPageUrl = url;
       }
-      // Adicionado: Lógica para a página de cadastro
       else if (url.startsWith('/cadastro-novo-modelo')) {
-        this.modoExplorarService.setModoExplorarAtivo(false); // Cadastro não é 'explorar'
+        this.modoExplorarService.setModoExplorarAtivo(false);
         this.modoExplorarService.setModeloId(null);
         this.modoExplorarService.setFiltrosAtuais({});
-        this.lastListPageUrl = url; // Considera como uma "página de listagem" para o propósito de breadcrumb
+        this.lastListPageUrl = url;
       }
-      // Lógica para a página de perfil
       else if (url.startsWith('/perfil')) {
         this.modoExplorarService.setModoExplorarAtivo(false);
         this.modoExplorarService.setModeloId(null);
@@ -76,8 +107,6 @@ export class HeaderComponent implements OnInit {
       }
       else {
         this.modoExplorarService.setModoExplorarAtivo(false);
-        // Não limpa lastListPageUrl aqui, pois podemos ter navegado para uma página de modelo
-        // e precisamos saber de onde viemos.
       }
     });
 
@@ -92,88 +121,154 @@ export class HeaderComponent implements OnInit {
       const crumbs = ['Home'];
       const currentUrl = navEvent.urlAfterRedirects;
 
-      // Extrai o ID do modelo da URL, se for uma página de modelo (ex: /modelo/123)
       const idFromUrlMatch = currentUrl.match(/\/modelo\/(\d+)/);
       const idFromUrl = idFromUrlMatch ? parseInt(idFromUrlMatch[1], 10) : null;
 
-      if (idFromUrl !== null) { // Estamos em uma página de detalhes do modelo (ex: /modelo/123)
-        // Usa a última URL de listagem capturada para decidir o breadcrumb "pai"
+      if (idFromUrl !== null) {
         if (this.lastListPageUrl?.startsWith('/resultados')) {
           crumbs.push('Resultados');
         } else if (this.lastListPageUrl?.startsWith('/explorar')) {
           crumbs.push('Explorar');
         }
-        // Adicionado: Se a página anterior foi a de cadastro, adiciona o breadcrumb
         else if (this.lastListPageUrl?.startsWith('/cadastro-novo-modelo')) {
           crumbs.push('Cadastro de Modelo');
         }
-        crumbs.push(`Modelo #${idFromUrl}`); // Usa o ID extraído da URL para o breadcrumb do modelo
-      } else { // Estamos em uma página de listagem, Home ou cadastro
+        crumbs.push(`Modelo #${idFromUrl}`);
+      } else {
         if (currentUrl.startsWith('/resultados')) {
           crumbs.push('Resultados');
-          // Garante que a URL da lista é capturada caso o usuário acesse diretamente a URL
           this.lastListPageUrl = currentUrl;
         } else if (currentUrl.startsWith('/explorar')) {
           crumbs.push('Explorar');
-          // Garante que a URL da lista é capturada caso o usuário acesse diretamente a URL
           this.lastListPageUrl = currentUrl;
         }
-        // Adicionado: Lógica para a página de cadastro
         else if (currentUrl.startsWith('/cadastro-novo-modelo')) {
           crumbs.push('Cadastro de Modelo');
         }
         else if (currentUrl.startsWith('/perfil')) {
           crumbs.push('Perfil');
         }
-        // Se currentUrl é apenas '/', os crumbs permanecem ['Home'],
-        // e lastListPageUrl já é null (definido acima).
       }
 
       this.breadcrumbs = crumbs;
     });
   }
 
-  // Método para verificar o status de autenticação
+  ngOnDestroy(): void {
+    // Limpa todas as subscriptions
+    if (this.userProfileSubscription) {
+      this.userProfileSubscription.unsubscribe();
+    }
+    if (this.imageSubscription) {
+      this.imageSubscription.unsubscribe();
+    }
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+  }
+
+  private loadProfileImage(): void {
+    // Limpa subscription anterior
+    if (this.imageSubscription) {
+      this.imageSubscription.unsubscribe();
+    }
+
+    if (this.userProfile?.mongoId && this.userHasImage()) {
+     // console.log('🖼️ Header: Carregando imagem para:', this.userProfile.mongoId);
+
+       // Inicia loading
+       this.isImageLoading = true;
+       this.hasImageError = false;
+      
+      this.imageSubscription = this.imageService.getProfileImage(this.userProfile.mongoId).subscribe({
+        next: (secureUrl) => {
+          this.imageBlobUrl = secureUrl;
+          this.isImageLoading = false;
+        //  console.log('✅ Header: Imagem carregada com sucesso');
+        },
+        error: (error) => {
+          console.error('❌ Header: Erro ao carregar imagem:', error);
+          this.imageBlobUrl = null;
+          this.isImageLoading = false;
+          this.hasImageError = true;
+          
+          // Se for 404, o usuário realmente não tem imagem
+          if (error.status === 404) {
+           // console.log('ℹ️ Header: Usuário não tem imagem (404)');
+          }
+        }
+      });
+    } else {
+      this.imageBlobUrl = null;
+      this.isImageLoading = false;
+      this.hasImageError = false;
+     // console.log('ℹ️ Header: Usuário não tem imagem ou mongoId não disponível');
+    }
+  }
+
+  private userHasImage(): boolean {
+    if (!this.userProfile) return false;
+    return !!(this.userProfile.imagemFileId || this.userProfile.imagemUrl);
+  }
+
   private checkAuthStatus(): void {
     this.isLoggedIn = this.authService.isSignedIn();
     this.updateUserInfo();
   }
 
-  // Método para atualizar informações do usuário
+  // MÉTODO ATUALIZADO: Mais inteligente
   private updateUserInfo(): void {
     if(this.isLoggedIn) {
-      this.authService.getUserProfile().subscribe({
-        next: (profile) => {
-          this.userName = profile.nome;
-          this.userInitial = profile.nome.charAt(0).toUpperCase();
-        },
-        error: () => {
-          this.userName = 'Usuário';
-          this.userInitial = 'U';
-        }
-      });
+      // Se já temos um perfil (via userProfile$), não precisa buscar de novo
+      const currentProfile = this.authService.getCurrentUserProfile();
+      
+      if (currentProfile) {
+        // Já temos o perfil em cache, usa ele
+        this.userProfile = currentProfile;
+        this.userName = currentProfile.nome;
+        this.userInitial = currentProfile.nome.charAt(0).toUpperCase();
+        
+        // CORREÇÃO: Carrega a imagem imediatamente
+       // console.log('👤 Header: Perfil em cache, carregando imagem...');
+        this.loadProfileImage();
+      } else {
+        // Precisa buscar o perfil
+        this.authService.getUserProfile().subscribe({
+          next: (profile) => {
+            // O userProfile$ vai ser atualizado automaticamente pelo AuthService
+            // que por sua vez vai disparar loadProfileImage()
+          },
+          error: () => {
+            this.userName = 'Usuário';
+            this.userInitial = 'U';
+            this.imageBlobUrl = null;
+          }
+        });
+      }
     } else {
       this.userName = '';
       this.userInitial = '';
+      this.imageBlobUrl = null;
+      this.userProfile = null;
     }
   }
 
-  // Método para navegar para o Login
+  // Métodos existentes permanecem iguais...
   goToLogin(): void {
     this.router.navigate(['/login']);
   }
 
-  // Método para navegar para página do usuário
   goToUserProfile(): void {
     this.router.navigate(['/perfil']);
   }
 
-  // Método para fazer logout
   logout(): void {
     this.authService.logout();
     this.isLoggedIn = false;
     this.userName = '';
     this.userInitial = '';
+    this.imageBlobUrl = null;
+    this.userProfile = null;
     this.router.navigate(['/']);
   }
 
@@ -187,8 +282,6 @@ export class HeaderComponent implements OnInit {
       replaceUrl: true,
       queryParams: {},
       queryParamsHandling: ''
-    }).then(() => {
-      // window.location.reload(); // Manter comentado
     });
   }
 }

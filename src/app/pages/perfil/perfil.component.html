@@ -12,7 +12,23 @@
     </div>
   </div>
 
+  <!-- Loading do upload de imagem -->
+  <div *ngIf="isUploading" class="loading-overlay">
+    <div class="loading-content">
+      <p>{{ selectedFile ? 'Enviando imagem...' : 'Removendo imagem...' }}</p>
+    </div>
+  </div>
+
   <div class="perfil-container__contentBox">
+
+    <!-- Input de arquivo oculto -->
+    <input 
+      type="file" 
+      id="fileInput" 
+      style="display: none;" 
+      (change)="onFileSelected($event)"
+      accept="image/*"
+    >
 
     <!-- Erro -->
     <div *ngIf="error" class="error">
@@ -23,9 +39,63 @@
     <div *ngIf="userData && !isLoading" class="user-page user-content">
 
       <div class="user-basic-info">
-        <div class="profile-image">
-          {{ userData.imagemUrl ? '' : getUserInitial() }}
+        <!-- CONTAINER DA IMAGEM ATUALIZADO -->
+        <div class="profile-image-container">
+          <div 
+            class="profile-image"
+            [class.has-image]="imageBlobUrl"
+            [class.is-loading]="isImageLoading"
+            [class.has-error]="hasImageError"
+            (click)="toggleImageMenu()"
+          >
+
+          <!-- LOADING DA IMAGEM -->
+          <div *ngIf="isImageLoading" class="image-loading">
+            <div class="loading-spinner"></div>
+          </div>
+
+            <!-- IMAGEM SEGURA COM BLOB URL -->
+            <img 
+              *ngIf="imageBlobUrl && !isImageLoading" 
+              [src]="imageBlobUrl" 
+              alt="Foto de perfil"
+            >
+            <span 
+            *ngIf="!imageBlobUrl && !isImageLoading && !hasImageError"
+            class="avatar-initial"
+            >
+              {{ getUserInitial() }}
+            </span>
+          </div>
+          
+          <!-- Botão de edição -->
+          <button class="edit-image-btn" (click)="toggleImageMenu()">
+            <mat-icon>photo_camera</mat-icon>
+          </button>
+
+          <!-- Menu de opções da imagem -->
+          <div *ngIf="showImageMenu" class="image-menu">
+            <button (click)="triggerFileInput()" class="menu-item">
+              <mat-icon>file_upload</mat-icon>
+              <span>{{ imageBlobUrl ? 'Alterar' : 'Adicionar' }} Foto</span>
+            </button>
+            
+            <button 
+              *ngIf="imageBlobUrl" 
+              (click)="removeImage()" 
+              class="menu-item delete"
+            >
+              <mat-icon>delete</mat-icon>
+              <span>Remover Foto</span>
+            </button>
+
+            <button (click)="showImageMenu = false" class="menu-item cancel">
+              <mat-icon>close</mat-icon>
+              <span>Cancelar</span>
+            </button>
+          </div>
         </div>
+
         <div class="profile-userName">
           <span>{{ getUserName() }}</span>
           <span>{{ userData.nome }}</span>
@@ -63,9 +133,9 @@
           <span>Sair da Conta</span>
         </button>
       </div>
-    </div>
+    </div> 
 
     <div class="user-page user-bookmarks">
     </div>
   </div>
-</div>
+</div> 

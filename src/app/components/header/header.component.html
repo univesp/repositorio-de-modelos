@@ -19,9 +19,37 @@
 
       <button
         class="user-avatar"
+        [class.has-image]="imageBlobUrl"
+        [class.is-loading]="isImageLoading"
+        [class.has-error]="hasImageError"
         [matMenuTriggerFor]="userMenu"
         [title]="'Logado como '+ userName">
+
+        <!-- LOADING DA IMAGEM -->
+        <div *ngIf="isImageLoading" class="image-loading">
+          <div class="loading-spinner"></div>
+        </div>
+    
+        
+        <!-- IMAGEM DE PERFIL (se existir) -->
+        <img 
+          *ngIf="imageBlobUrl && !isImageLoading" 
+          [src]="imageBlobUrl" 
+          alt="Foto de perfil"
+          class="avatar-image"
+        >
+        
+        <!-- INICIAL DO NOME (se não tiver imagem) -->
+        <span *ngIf="!imageBlobUrl && !isImageLoading && !hasImageError" class="avatar-initial">
           {{ userInitial }}
+        </span>
+
+        <!-- ERRO (fallback para inicial) -->
+        <span 
+        *ngIf="hasImageError && !isImageLoading" 
+        class="avatar-initial error-fallback">
+          {{ userInitial }}
+        </span>
       </button>
 
       <mat-menu #userMenu="matMenu" class="user-dropdown-menu">
@@ -53,7 +81,7 @@
       [class.breadcrumb-active]="breadcrumbs.length === 1"
       (click)="onClickHome()" 
       style="cursor:pointer;">
-        <mat-icon class="breadcrumb-icon" aria-hidden="false" aria-label="Início">home</mat-icon> <!-- Ícone Home -->
+        <mat-icon class="breadcrumb-icon" aria-hidden="false" aria-label="Início">home</mat-icon>
         {{ crumb }}
     </a>
 
@@ -71,4 +99,3 @@
     </ng-container>
   </ng-container>
 </div>
-

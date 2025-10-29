@@ -19,18 +19,42 @@
         </div>
 
         <div class="modelo__galeriaImagens">
-            <img src="{{ currentModelo.img_lg }}" alt="">
-            <img src="{{ currentModelo.img_lg }}" alt="">
-            <img src="{{ currentModelo.img_lg }}" alt="">
-            <img src="{{ currentModelo.img_lg }}" alt="">
+            <img src="{{ currentModelo.img_lg }}" alt="{{ currentModelo.titulo }}"
+             (click)="abrirModalImagem(currentModelo.img_lg)">
+        </div>
+
+        <!-- Modal para imagem ampliada -->
+        <div class="modal-imagem" *ngIf="modalAberto" (click)="fecharModalImagem()">
+            <div class="modal-conteudo" (click)="$event.stopPropagation()">
+                <button class="modal-fechar" (click)="fecharModalImagem()">
+                    <mat-icon>close</mat-icon>
+                </button>
+                <img [src]="imagemModal" alt="{{ currentModelo.titulo }}">
+            </div>
         </div>
 
         <div class="modelo__detailsBox">
             <div class="modelo__col1">
-                <a *ngIf="currentModelo.hasEquipe" href="{{ currentModelo.link }}" target="_blank">
+                <a href="{{ currentModelo.link }}" target="_blank">
                     Acessar Material
                     <mat-icon>open_in_new</mat-icon>
                 </a>
+            </div>
+
+            <div class="modelo-action-buttons">
+
+                <div class="editar-modelo-button-container">
+                    <mat-icon class="icon-edit">edit</mat-icon>
+                    <button class="action-button-modelo editar-modelo-button">Editar Modelo</button>
+                </div>
+
+                <div class="adicionarDestaque-modelo-button-container">
+                    <button class="action-button-modelo adicionar-destaques-button">
+                        <mat-icon>add</mat-icon>
+                        Adicionar aos Destaques
+                    </button>
+                </div>
+
             </div>
         </div>
 

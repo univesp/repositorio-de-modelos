@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
@@ -18,6 +18,8 @@ export class ModeloComponent implements OnInit, OnDestroy {
     currentModelo: any = [];
     modelosSimilares: any[] = [];
     private destroy$ = new Subject<void>();
+    modalAberto: boolean = false;
+    imagemModal: string = '';
     
     constructor(
             private router: Router,
@@ -47,7 +49,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
-        this.carregarModelo;
+        this.carregarModelo();
     }
 
     carregarModelo() {
@@ -148,6 +150,30 @@ export class ModeloComponent implements OnInit, OnDestroy {
         .then( () => {
           this.carregarModelo();
         } )
+    }
+
+    abrirModalImagem(imagemUrl: string) {
+      this.imagemModal = imagemUrl;
+      this.modalAberto = true;
+
+      // Previne scroll do body quando modal está aberto
+      document.body.style.overflow = 'hidden';
+    }
+
+    fecharModalImagem() {
+      this.modalAberto = false;
+      this.imagemModal = '';
+
+      // Restaura scroll do body
+      document.body.style.overflow = 'auto';
+    }
+
+    // Fechar modal com ESC key
+    @HostListener('document:keydown.escape', ['$event'])
+    fecharModalComEsc(event: KeyboardEvent) {
+      if (this.modalAberto) {
+        this.fecharModalImagem();
+      }
     }
 
     ngOnDestroy() {

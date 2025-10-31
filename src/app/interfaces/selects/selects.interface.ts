@@ -3,4 +3,5 @@ export interface Selects {
   label: string;
   opcoes: string[];
   obrigatorio: boolean;
+  maxSelecoes?: number;
 }

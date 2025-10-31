@@ -50,6 +50,7 @@
     gap: 15px 30px; /* Ajustei o gap para melhor espaçamento vertical e horizontal */
     margin-top: 10px;
     font-size: 18px;
+    width: 70%;
 
     div {
       display: flex;
@@ -344,5 +345,33 @@ form {
   .ql-container { /* Estilo da área de conteúdo do Quill */
     border-bottom-left-radius: 7px;
     border-bottom-right-radius: 7px;
+  }
+}
+
+// Estilos para campos com erro de validação
+.erro-validacao {
+  border: 2px solid #ff5555 !important;
+  box-shadow: 0 0 0 3px rgba(255, 85, 85, 0.2) !important;
+  
+  // Para o container de formato (radio buttons)
+  &.cadastro-modelo__formato-container {
+    padding: 10px;
+    border-radius: 7px;
+    background-color: rgba(255, 85, 85, 0.05);
+  }
+  
+  // Para o container de tags
+  &.tags-input-container {
+    border: 2px solid #ff5555 !important;
+    background-color: rgba(255, 85, 85, 0.05);
+  }
+}
+
+// Estilo específico para o Quill Editor com erro
+.quill-editor-container.erro-validacao {
+  border: 2px solid #ff5555 !important;
+  
+  .ql-toolbar {
+    border-bottom: 2px solid #ff5555 !important;
   }
 }

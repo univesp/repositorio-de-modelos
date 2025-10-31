@@ -48,6 +48,12 @@
     border-bottom-right-radius: 0;
   }
 
+  &.has-error {
+    border: 2px solid #ff5555 !important;
+    box-shadow: 0 0 0 3px rgba(255, 85, 85, 0.2) !important;
+    background-color: rgba(255, 85, 85, 0.05);
+  }
+
   .selected-items-display {
     flex-grow: 1;
     color: #474747;
@@ -99,9 +105,22 @@
     font-size: 16px;
     color: #474747;
 
-    &:hover {
+    &:hover:not(.disabled) {
       background-color: #7155d8;
       color: #fff;
+    }
+
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      
+      label {
+        cursor: not-allowed;
+      }
+      
+      input {
+        cursor: not-allowed;
+      }
     }
 
     input[type="checkbox"] {

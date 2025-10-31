@@ -18,30 +18,62 @@
 
       <!-- Formato (Campo Obrigatório) -->
       <span class="titulo-info">Formato <span class="obrigatório">*</span></span>
-      <div class="cadastro-modelo__formato-container">
+      <div class="cadastro-modelo__formato-container"
+           id="cadastro-modelo__formato-container"
+           [class.erro-validacao]="camposComErro.includes('formato')">
         
         <div>
-          <input class="checkFormato" type="radio" id="reaUnivesp" name="formato" value="REA Univesp" (change)="onFormatoChange($event)">
+          <input 
+            class="checkFormato" 
+            type="radio" 
+            id="reaUnivesp" 
+            name="formato" 
+            value="REA Univesp" 
+            (change)="onFormatoChange($event); limparErroFormato()">
             <label for="reaUnivesp">REA Univesp</label>
         </div>
 
         <div>
-          <input class="checkFormato" type="radio" id="recursoProgramacao" name="formato" value="Recurso de Programação" (change)="onFormatoChange($event)">
+          <input 
+            class="checkFormato" 
+            type="radio" 
+            id="recursoProgramacao" 
+            name="formato" 
+            value="Recurso de Programação" 
+            (change)="onFormatoChange($event); limparErroFormato()">
             <label for="recursoProgramacao">Recurso de Programação</label>
         </div>
 
         <div>
-          <input class="checkFormato" type="radio" id="formatoSite" name="formato" value="Site" (change)="onFormatoChange($event)">
+          <input 
+            class="checkFormato" 
+            type="radio" 
+            id="formatoSite" 
+            name="formato" 
+            value="Site" 
+            (change)="onFormatoChange($event); limparErroFormato()">
             <label for="formatoSite">Site</label>
         </div>
 
         <div>
-          <input class="checkFormato" type="radio" id="formatoJogo" name="formato" value="Jogo" (change)="onFormatoChange($event)">
+          <input 
+            class="checkFormato" 
+            type="radio" 
+            id="formatoJogo" 
+            name="formato" 
+            value="Jogo" 
+            (change)="onFormatoChange($event); limparErroFormato()">
             <label for="formatoJogo">Jogo</label>
         </div>
 
         <div>
-          <input class="checkFormato" type="radio" id="modeloExterno" name="formato" value="Modelo Externo" (change)="onFormatoChange($event)">
+          <input 
+            class="checkFormato" 
+            type="radio" 
+            id="modeloExterno" 
+            name="formato" 
+            value="Modelo Externo" 
+            (change)="onFormatoChange($event); limparErroFormato()">
             <label for="modeloExterno">Modelo Externo</label>
         </div>
         
@@ -49,7 +81,14 @@
 
       <!-- Título (Campo Obrigatório) -->
       <span class="titulo-info">Título <span class="obrigatório">*</span></span>
-      <input class="input-text" id="inputTitle" type="text" placeholder="Escreva Aqui">
+      <input 
+        class="input-text" 
+        id="inputTitle" 
+        type="text" 
+        placeholder="Escreva Aqui"
+        [class.erro-validacao]="camposComErro.includes('inputTitle')"
+        (input)="limparErroCampo('inputTitle')"
+        (change)="limparErroCampo('inputTitle')">
       <span class="detalhe-campo-forms">Insira um título claro e conciso para o recurso/modelo. (ex.: "Jogo da Forca Interativo")</span>
 
       <!-- Descrição (Campo Obrigatório) -->
@@ -59,19 +98,29 @@
         [(ngModel)]="descricaoModelo"
         [modules]="{ toolbar: toolbarOptions }"
         placeholder="Escreva a descrição completa do recurso aqui..."
-        class="quill-editor-container" 
-      ></quill-editor>
+        class="quill-editor-container"
+        [class.erro-validacao]="camposComErro.includes('descricao')"
+        (onContentChanged)="limparErroCampo('descricao')">
+      </quill-editor>
       <span class="detalhe-campo-forms">Forneça uma descrição completa do recurso, incluindo suas principais caraterísticas e funcionalidades.</span>
 
       <!-- URL -->
-      <span class="titulo-info">URL</span>
-      <input class="input-text" id="urlInput" type="url" placeholder="https://" pattern="https?://.+">
+      <span class="titulo-info">URL <span class="obrigatório">*</span></span>
+      <input 
+        class="input-text" 
+        id="urlInput" 
+        type="url" 
+        placeholder="https://" 
+        pattern="https?://.+"
+        [class.erro-validacao]="camposComErro.includes('urlInput')"
+        (input)="limparErroCampo('urlInput')"
+        (change)="limparErroCampo('urlInput')">
       <span class="detalhe-campo-forms">Confira o link</span>
 
       <!-- Tags (Campo Obrigatório) -->
-      <div class="mb-4" style="margin-top: 30px;"> <!-- Adicionei mb-4 para espaçamento -->
+      <div class="mb-4" style="margin-top: 30px;">
         <span class="titulo-info">Tags <span class="obrigatório">*</span></span>
-        <div class="tags-input-container">
+        <div class="tags-input-container" id="tags-input-container" [class.erro-validacao]="camposComErro.includes('tags')">
           <!-- Itera sobre o array 'tags' do componente TypeScript -->
           <div *ngFor="let tag of tags" class="tag-chip">
             <span class="tag-text">{{ tag }}</span>
@@ -85,6 +134,7 @@
             [(ngModel)]="currentTagInput"
             (keyup)="onKeyUp($event)"
             (blur)="addTagFromInput()"
+            (input)="limparErroCampo('tags')"
             name="tagInput" 
             [disabled]="tags.length >= maxTags"
           >
@@ -96,40 +146,8 @@
       </div>
       <!-- Fim do campo de Tags -->
 
-      <!-- Imagem de Capa (Campo Obrigatório) -->
-      <span class="titulo-info">Imagem de Capa <span class="obrigatório">*</span></span>
-      <span class="detalhe-campo-forms" style="margin-left: 0; margin-bottom: 25px;">Selecione a imagem de capa do recurso. Tamanho Ideal: 500px x 280px. Formatos aceitos: PNG, JPG e JPEG</span>
-      <div class="image-upload-container" style="margin-bottom: 100px;">
-        <!-- Input de arquivo OCULTO -->
-        <input
-          type="file"
-          id="carregaImagem"
-          (change)="onFileSelected($event)"
-          accept=".png, .jpg, .jpeg"
-          style="display: none;"
-        >
-        <!-- Label estilizada como botão -->
-        <label for="carregaImagem" class="cadastro-modelo__button">
-          Carregar Imagem
-        </label>
-
-        <!-- Pré-visualização da imagem e botão de remover -->
-        <div *ngIf="imagePreviewUrl" class="image-preview-container">
-          <img [src]="imagePreviewUrl" alt="Pré-visualização da imagem" class="image-preview">
-          <button type="button" class="remove-image-button" (click)="removeFile('imagem')">
-            Remover Imagem
-          </button>
-        </div>
-
-        <!-- Mensagem de erro da imagem -->
-        <div *ngIf="imageErrorMessage" class="image-error-message text-red-600 text-xs mt-1">
-          {{ imageErrorMessage }}
-        </div>
-      </div>
-      <!-- Fim do Campo de Imagem -->
-
       <!-- FILTROS / CATEGORIAS -->
-      <span class="cadastro-modelo__titulo-secao">Filtros / Categorias</span>
+      <span class="cadastro-modelo__titulo-secao" style="margin-top: 50px;">Filtros / Categorias</span>
 
       <!-- Selects gerados dinamicamente a partir de selectsConfig -->
       <ng-container *ngFor="let selectConfig of selectsConfig">
@@ -138,68 +156,59 @@
           [options]="selectConfig.opcoes"
           [initialSelection]="selectedValues[selectConfig.key]"
           (selectionChange)="onSelectChange(selectConfig.key, $event)"
-          [required]="selectConfig.obrigatorio">
+          (selectionChanged)="limparErroSelect(selectConfig.key)"
+          [required]="selectConfig.obrigatorio"
+          [hasError]="selectsComErro.includes(selectConfig.key)"
+          [maxSelecoes]="selectConfig.maxSelecoes">
         </app-custom-select>
       </ng-container>
 
       <!-- Código-fonte -->
-      <div class="cadastro-modelo__formato-container formato-radio-inline-container">
+      <div 
+        class="cadastro-modelo__formato-container formato-radio-inline-container"
+        id="formato-radio-inline-container"
+        [class.erro-validacao]="camposComErro.includes('codigoFonte')">
+
         <span class="titulo-info">Código-fonte disponível?<span class="obrigatório" style="margin-left: 5px;">*</span></span>
 
         <div class="radio-buttons-group">
           <div>
-            <input type="radio" id="codigoSim" name="codigo" value="true" (change)="onCodigoFonteChange($event)" [checked]="codigoFonteDisponivel === true">
+            <input 
+              type="radio" 
+              id="codigoSim" 
+              name="codigo" 
+              value="true" 
+              (change)="onCodigoFonteChange($event); limparErroCodigoFonte()" 
+              [checked]="codigoFonteDisponivel === true">
             <label for="codigoSim">Sim</label>
           </div>
   
           <div>
-            <input type="radio" id="codigoNao" name="codigo" value="false" (change)="onCodigoFonteChange($event)" [checked]="codigoFonteDisponivel === false">
+            <input 
+              type="radio" 
+              id="codigoNao" 
+              name="codigo" 
+              value="false" 
+              (change)="onCodigoFonteChange($event); limparErroCodigoFonte()" 
+              [checked]="codigoFonteDisponivel === false">
             <label for="codigoNao">Não</label>
           </div>
         </div>   
       </div>
-      <div *ngIf="codigoFonteDisponivel === true" class="image-upload-container" style="margin-bottom: 15px; margin-top: 40px;">
-        <!-- Input de arquivo OCULTO -->
-        <input
-          type="file"
-          id="carregaArquivo"
-          (change)="onFileSelected($event)"
-          accept=".zip"
-          style="display: none;"
-        >
-        <!-- Label estilizada como botão -->
-        <label for="carregaArquivo" class="cadastro-modelo__button">
-          Carregar Arquivo
-        </label>
-        <!-- Adicione aqui a pré-visualização ou mensagem de erro para o arquivo ZIP, se necessário -->
-        <div *ngIf="selectedZipFile && imagePreviewUrl" class="file-preview-container">
-          <p>Arquivo selecionado: {{ imagePreviewUrl }}</p>
-          <button type="button" class="remove-file-button" style="margin: 20px 0 0 0;" (click)="removeFile('zip')">Remover Arquivo</button>
-        </div>
-        <div *ngIf="imageErrorMessage" class="image-error-message">
-          {{ imageErrorMessage }}
-        </div>
-      </div>
-      <span *ngIf="codigoFonteDisponivel === true" class="detalhe-campo-forms" style="margin-left: 0; margin-bottom: 15px;">Somente formato .zip</span>
+
       <div *ngIf="codigoFonteDisponivel === true" style="display: flex; flex-direction: column;">
-        <p><b>OU</b></p>
-        <span class="titulo-info" style="margin-top: 10px;">Link:</span>
-        <input class="input-text" id="codigoLink" type="text" placeholder="https://">
+        <span class="titulo-info" style="margin-top: 10px;">Link do Código-fonte::</span>
+        <input 
+          class="input-text" 
+          id="codigoLink" 
+          type="text" 
+          placeholder="https://">
         <span class="detalhe-campo-forms">Confira o link</span>
+        <span class="detalhe-campo-forms">Obs:. Caso você possua um arquivo (.zip) com o código-fonte, será possível inseri-lo posteriormente na página do modelo.</span>
       </div>
-
-      <!-- AUTORIA -->
-      <div class="cadastro-modelo__autoria">
-        <span class="cadastro-modelo__titulo-secao">Autoria</span>
-        <span class="botao-autor">Adicionar-me como Autor</span>
-        <span>Ou adicione autores abaixo</span>
-      </div>
-
-      <span class="titulo-info">Nome Completo <span class="obrigatório">*</span> </span>
-      <input class="input-text" id="autoriaName" type="text" placeholder="Escreva Aqui">
 
       <!-- EQUIPE (PARA REAS UNIVESP OU JOGO) -->
-      <div class="cadastro-modelo__equipe" *ngIf="isReaOuJogo">
+      <div class="cadastro-modelo__equipe" *ngIf="isRea">
         <span class="cadastro-modelo__titulo-secao">Equipe</span>
 
         <span class="titulo-info">Docente Responsável</span>
@@ -224,9 +233,12 @@
 
       <!-- BOTÕES DE ENVIO DO FORMULÁRIO -->
       <div class="cadastro-modelo__botoes-submit">
-        <button (click)="onSubmit()">Enviar</button>
-        <button>Eviar e Adicionar Outro</button>
-        <button>Limpar Formulário</button>
+        <button (click)="onSubmit()" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Enviar</span>
+          <span *ngIf="isLoading">Enviando...</span>
+        </button>
+        
+        <button type="button" (click)="limparFormulario()">Limpar Formulário</button>
       </div>
       
 

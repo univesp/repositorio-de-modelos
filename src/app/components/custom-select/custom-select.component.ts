@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener, ElementRef, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
-  selector: 'app-custom-select',
-  templateUrl: './custom-select.component.html',
-  styleUrls: ['./custom-select.component.scss']
+selector: 'app-custom-select',
+templateUrl: './custom-select.component.html',
+styleUrls: ['./custom-select.component.scss']
 })
-export class CustomSelectComponent implements OnInit {
+export class CustomSelectComponent implements OnInit, OnChanges {
 
   // ENTRADAS (INPUTS)
   @Input() label: string = ''; // Rótulo do select (ex: "Curso", "Área")
@@ -14,6 +14,8 @@ export class CustomSelectComponent implements OnInit {
   @Input() initialSelection: string[] = []; // Seleções iniciais, se houver
   @Input() allowMultiple: boolean = true; // Define se permite múltiplas seleções
   @Input() required: boolean = false; // Indica se o select é obrigatório
+  @Input() hasError: boolean = false; // Indica se está faltando preencher algum campo obrigatório
+  @Input() maxSelecoes?: number; // Passa o limite máximo de seleções do respectivo Select
 
   // SAÍDAS (OUTPUTS)
   @Output() selectionChange = new EventEmitter<string[]>(); // Emite as opções selecionadas
@@ -28,40 +30,48 @@ export class CustomSelectComponent implements OnInit {
   constructor(private elementRef: ElementRef) { }
 
   ngOnInit(): void {
-    // Inicializa os itens selecionados com base na entrada (initialSelection)
+  // Inicializa os itens selecionados com base na entrada (initialSelection)
     if (this.initialSelection) {
       this.selectedItems = [...this.initialSelection];
     }
   }
 
+  // Reage a mudanças nas propriedades de entrada
+  ngOnChanges(changes: SimpleChanges): void {
+     // Se initialSelection mudou, atualiza os itens selecionados
+     if (changes['initialSelection'] && changes['initialSelection'].currentValue) {
+     this.selectedItems = [...changes['initialSelection'].currentValue]
+    }
+  }
+
   /**
-   * HostListener para detectar cliques em todo o documento.
-   * Fecha o select se o clique ocorrer fora do componente do select.
-   * @param event O evento de clique do documento.
-   */
+  * HostListener para detectar cliques em todo o documento.
+  * Fecha o select se o clique ocorrer fora do componente do select.
+  * @param event O evento de clique do documento.
+  */
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent): void {
-    // Verifica se o clique não ocorreu dentro do elemento do select customizado
-    if (this.isSelectOpen && this.selectContainerRef && !this.selectContainerRef.nativeElement.contains(event.target)) {
+      // Verifica se o clique não ocorreu dentro do elemento do select customizado
+      if (this.isSelectOpen && this.selectContainerRef && !this.selectContainerRef.nativeElement.contains(event.target)) {
       this.isSelectOpen = false; // Fecha o select
     }
   }
 
   /**
-   * Alterna a visibilidade do painel de opções do select.
-   * @param event O evento de clique, para parar a propagação e evitar que o HostListener o capture imediatamente.
-   */
+  * Alterna a visibilidade do painel de opções do select.
+  * @param event O evento de clique, para parar a propagação e evitar que o HostListener o capture imediatamente.
+  */
   toggleSelect(event: MouseEvent): void {
     event.stopPropagation(); // Impede que o clique se propague para o documento e feche o select imediatamente
     this.isSelectOpen = !this.isSelectOpen;
   }
 
   /**
-   * Manipula a mudança de seleção de uma opção.
-   * Adiciona ou remove a opção do array `selectedItems`.
-   * @param option A opção que foi alterada.
-   * @param event O evento de mudança do checkbox/radio.
-   */
+  * Manipula a mudança de seleção de uma opção.
+  * Adiciona ou remove a opção do array `selectedItems`.
+  * @param option A opção que foi alterada.
+  * @param event O evento de mudança do checkbox/radio.
+  */
   onOptionChange(option: string, event: Event): void {
     event.stopPropagation(); // Impede o fechamento do select ao clicar no checkbox/radio
 
@@ -70,33 +80,53 @@ export class CustomSelectComponent implements OnInit {
 
     if (this.allowMultiple) { // Lógica para múltiplas seleções (checkbox)
       if (isChecked) {
+        // Verifica se atingiu o limite máximo
+        if (this.maxSelecoes && this.selectedItems.length >= this.maxSelecoes) {
+          // Se SIM, NÃO permite selecionar mais itens
+          target.checked = false;
+          return;
+        }
+
         if (!this.selectedItems.includes(option)) {
           this.selectedItems.push(option);
+
+          // Fecha select se atingiu o limite máximo
+          if (this.maxSelecoes && this.selectedItems.length >= this.maxSelecoes) {
+            this.isSelectOpen = false;
+          }
         }
       } else {
         this.selectedItems = this.selectedItems.filter(item => item !== option);
       }
-    } else { // Lógica para seleção única (radio - não é o caso atual, mas para escalabilidade futura)
-      this.selectedItems = isChecked ? [option] : [];
-      this.isSelectOpen = false; // Fecha o select após seleção única
-    }
+      } else { // Lógica para seleção única (radio - não é o caso atual, mas para escalabilidade futura)
+        this.selectedItems = isChecked ? [option] : [];
+        this.isSelectOpen = false; // Fecha o select após seleção única
+      }
     this.selectionChange.emit(this.selectedItems); // Emite a mudança
   }
 
-  /**
-   * Verifica se uma opção está selecionada.
-   * @param option A opção a ser verificada.
-   * @returns `true` se a opção estiver selecionada, `false` caso contrário.
-   */
-  isSelected(option: string): boolean {
-    return this.selectedItems.includes(option);
+  // Método para verificar se uma opção pode ser selecionada
+  isOptionDisabled(option: string): boolean {
+  // Se não está selecionada E atingiu o limite máximo
+  return !this.isSelected(option) && 
+      !!this.maxSelecoes && 
+      this.selectedItems.length >= this.maxSelecoes;
   }
 
   /**
-   * Retorna o valor a ser exibido no select quando fechado.
-   * Se houver opções selecionadas, retorna uma string formatada.
-   * Se não houver, retorna um placeholder.
-   */
+  * Verifica se uma opção está selecionada.
+  * @param option A opção a ser verificada.
+  * @returns `true` se a opção estiver selecionada, `false` caso contrário.
+  */
+    isSelected(option: string): boolean {
+     return this.selectedItems.includes(option);
+    }
+
+  /**
+  * Retorna o valor a ser exibido no select quando fechado.
+  * Se houver opções selecionadas, retorna uma string formatada.
+  * Se não houver, retorna um placeholder.
+  */
   getDisplayValue(): string {
     if (this.selectedItems.length === 0) {
       return this.placeholder;
@@ -106,11 +136,11 @@ export class CustomSelectComponent implements OnInit {
   }
 
   /**
-   * Gera um ID seguro para elementos HTML a partir de uma string de opção.
-   * Remove espaços e caracteres não-alfanuméricos, substituindo-os por hifens.
-   * @param option A string da opção.
-   * @returns Um ID/nome seguro para uso em HTML.
-   */
+  * Gera um ID seguro para elementos HTML a partir de uma string de opção.
+  * Remove espaços e caracteres não-alfanuméricos, substituindo-os por hifens.
+  * @param option A string da opção.
+  * @returns Um ID/nome seguro para uso em HTML.
+  */
   getSafeHtmlId(option: string): string {
     return option.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
   }

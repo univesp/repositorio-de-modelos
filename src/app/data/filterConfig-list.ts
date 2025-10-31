@@ -1,56 +1,55 @@
+import { SelectsList } from './selects-list';
+
+// Configuração base com todas as opções que podem vir do SelectsList
+const baseConfig = [
+  { key: 'curso', label: 'CURSO' },
+  { key: 'area', label: 'ÁREA' },
+  { key: 'tipo', label: 'TIPO' },
+  { key: 'tecnologia', label: 'TECNOLOGIA', selectKey: 'tecnologias' }, // Mapeia chave diferente
+  { key: 'acessibilidade', label: 'ACESSIBILIDADE' },
+  { key: 'licenca', label: 'LICENÇA' }
+];
+
+// Filtros que não existem no SelectsList
+const additionalFilters = [
+  { 
+    key: 'formato', 
+    label: 'FORMATO', 
+    placeholder: '[ Selecione ]', 
+    opcoes: ['REA Univesp', 'Jogo', 'Site', 'Recurso de Programação', 'Modelo Externo'] 
+  },
+  { 
+    key: 'data', 
+    label: 'DATA', 
+    placeholder: '[ Selecione ]', 
+    opcoes: ['Este Mês', 'Esta Semana', 'Este Ano'] 
+  }
+  /*
+  ,
+  { 
+    key: 'ordenarPor', 
+    label: 'ORDENAR POR', 
+    placeholder: '[ Selecione ]', 
+    opcoes: ['Mais Comentado', 'Mais Curtido', 'Mais Recentes', 'Ordem Alfabética'] 
+  }
+  */
+];
+
+// Gera os filtros a partir do SelectsList
+const filtersFromSelectsList = baseConfig.map(config => {
+  const selectKey = config.selectKey || config.key; // Usa selectKey se definido, senão usa key
+  const selectConfig = SelectsList.find(s => s.key === selectKey);
+  
+  return {
+    key: config.key,
+    label: config.label,
+    placeholder: '[ Selecione ]',
+    opcoes: selectConfig?.opcoes || [] // Pega opções do SelectsList ou array vazio
+  };
+});
+
+// Combina todos os filtros
 export const FilterConfigList = [
-    { 
-      key: 'curso', 
-      label: 'CURSO', 
-      placeholder: '[ Selecione ]', 
-      opcoes: ['Administração', 'Ciência de Dados', 'Engenharia de Computação', 'Engenharia de Produção', 'Matemática', 'Tecnologia da Informação', 'Pedagogia', 'Processos Gerenciais'] 
-    },
-    { 
-      key: 'area', 
-      label: 'ÁREA', 
-      placeholder: '[ Selecione ]', 
-      opcoes: ['Ciências Biológicas', 'Direito', 'Matemática', 'Negócios', 'Tecnologia da Informação'] 
-    },
-    { 
-      key: 'formato', 
-      label: 'FORMATO', 
-      placeholder: '[ Selecione ]', 
-      opcoes: ['REA Univesp', 'Jogo', 'Site', 'Recurso de Programação', 'Modelo Externo'] 
-    },
-    { 
-      key: 'tipo', 
-      label: 'TIPO', 
-      placeholder: '[ Selecione ]', 
-      opcoes: ['Interativo', 'Abas', 'Accordions', 'Lightbox', 'Questionário'] 
-    },
-    { 
-      key: 'tecnologia', 
-      label: 'TECNOLOGIA', 
-      placeholder: '[ Selecione ]', 
-      opcoes: ['CSS3', 'HTML5', 'Javascript', 'Realidade Virtual'] 
-    },
-    { 
-      key: 'acessibilidade', 
-      label: 'ACESSIBILIDADE', 
-      placeholder: '[ Selecione ]', 
-      opcoes: ['Auditiva', 'Descrição de áudio', 'Legenda', 'Transcrição'] 
-    },
-    { 
-      key: 'licenca', 
-      label: 'LICENÇA', 
-      placeholder: '[ Selecione ]', 
-      opcoes: ['Alguns direitos reservados', 'Domínio Público', 'Uso educacional', 'Uso irrestrito / CCO', 'Uso restrito'] 
-    },
-    { 
-      key: 'data', 
-      label: 'DATA', 
-      placeholder: '[ Selecione ]', 
-      opcoes: ['Este Mês', 'Esta Semana', 'Este Ano'] 
-    },
-    { 
-      key: 'ordenarPor', 
-      label: 'ORDENAR POR', 
-      placeholder: '[ Selecione ]', 
-      opcoes: ['Mais Comentado', 'Mais Curtido', 'Mais Recentes', 'Ordem Alfabética'] 
-    }
+  ...filtersFromSelectsList,
+  ...additionalFilters
 ];

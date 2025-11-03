@@ -22,6 +22,7 @@ export class ResultadosComponent implements OnInit, OnDestroy {
   modelosFiltrados: Modelo[] = [];
   viewType: 'grid' | 'list' = 'grid';
   opacityClicked = 1;
+  ordenacaoSelecionada: string = ''; // Nova propriedade para o select
 
   constructor(
     private route: ActivatedRoute,
@@ -32,34 +33,62 @@ export class ResultadosComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Adicione esta linha no início para limpar qualquer estado residual
     this.modoExplorarService.resetAll();
 
     const savedViewType = localStorage.getItem('viewType');
     this.viewType = savedViewType === 'list' ? 'list' : 'grid';
 
     this.route.queryParams.subscribe((params: Params) => {
-      
-        this.aplicarFiltrosViaUrl(params);
-      
+      this.aplicarFiltrosViaUrl(params);
     });
   }
 
   aplicarFiltrosViaUrl(params: Params): void {
-    // Primeiro, aplica os filtros usando o FiltroService
-    // Passa a lista original de modelos e os parâmetros da URL como filtros
-    const modelosBase = Modeloslist; // A lista completa de modelos
-    const modelosPosFiltro = this.filtroService.aplicarFiltros(modelosBase, params);
+    const modelosBase = Modeloslist;
+    let modelosPosFiltro = this.filtroService.aplicarFiltros(modelosBase, params);
 
-    // Em seguida, mapeia para adicionar o status de 'isSalvo'
+    // Aplica ordenação se houver uma selecionada
+    if (this.ordenacaoSelecionada) {
+      modelosPosFiltro = this.aplicarOrdenacaoInterna(modelosPosFiltro);
+    }
+
     this.modelosFiltrados = modelosPosFiltro.map(modelo => ({
       ...modelo,
       isSalvo: this.bookmarkService.isSalvo(modelo.id)
-    }));
+    })) as Modelo[];
 
-    // Define o modo explorar ativo e os filtros atuais no serviço ModoExplorarService
     this.modoExplorarService.setModoExplorarAtivo(true);
     this.modoExplorarService.setFiltrosAtuais(params);
+  }
+
+  /**
+   * Aplica a ordenação quando o select é alterado
+   */
+  aplicarOrdenacao(): void {
+    // Reaplica os filtros atuais com a nova ordenação
+    this.route.queryParams.subscribe((params: Params) => {
+      this.aplicarFiltrosViaUrl(params);
+    });
+  }
+
+  /**
+   * Aplica a lógica de ordenação interna
+   */
+  private aplicarOrdenacaoInterna(modelos: Modelo[]): Modelo[] {
+    switch (this.ordenacaoSelecionada) {
+      case 'alfabetica':
+        return [...modelos].sort((a, b) => 
+          a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' })
+        );
+      
+      case 'recentes':
+        // Por enquanto, retorna sem ordenação (implementaremos depois)
+        console.log('Ordenação por "Mais Recentes" será implementada em breve');
+        return modelos;
+      
+      default:
+        return modelos;
+    }
   }
 
   switchViewType(type: 'grid' | 'list') {
@@ -68,7 +97,6 @@ export class ResultadosComponent implements OnInit, OnDestroy {
   }
 
   abrirModelo(id: string) {
-    // Converte para number se necessário (ajuste conforme seu service)
     const idNumber = Number(id);
     this.modoExplorarService.setModeloId(idNumber);
     this.router.navigate(['/modelo', id]);
@@ -79,5 +107,4 @@ export class ResultadosComponent implements OnInit, OnDestroy {
     this.modoExplorarService.setModeloId(null);
     this.modoExplorarService.setFiltrosAtuais({});
   }
-  
 }

@@ -23,6 +23,18 @@
         [ngStyle]="{ 'opacity': (viewType === 'list') ? opacityClicked : 0.6 }"
       >view_headline</mat-icon>
     </button>
+
+    <!-- Select de Ordenação -->
+    <div class="ordenacao-container">
+      <select class="ordenacao-select" 
+              [(ngModel)]="ordenacaoSelecionada"
+              (change)="aplicarOrdenacao()">
+        <option value="">Ordenar Por:</option>
+        <option value="alfabetica">Ordem Alfabética</option>
+        <option value="recentes">Mais Recentes</option>
+      </select>
+      <mat-icon class="ordenacao-icon">arrow_drop_down</mat-icon>
+    </div>
   </div>
 
   <!-- Lista filtrada de modelos -->

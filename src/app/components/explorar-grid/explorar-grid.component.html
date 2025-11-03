@@ -1,5 +1,5 @@
 <div class="explorarGrid">
-    <div *ngFor="let item of modelosList" 
+    <div *ngFor="let item of modelosPaginados" 
          class="explorarGrid__item" 
          (click)="redirectModeloPage(item.id, $event)"
          >
@@ -42,4 +42,38 @@
         <p class="explorarGrid__autor">Enviado por:  <b>{{ item.autor }}</b> </p>
         
     </div>
+</div>
+
+<!-- PAGINAÇÃO -->
+<div class="paginacao" *ngIf="totalPaginas > 1">
+  <button class="paginacao-btn" 
+          (click)="irParaPrimeiraPagina()"
+          [disabled]="paginaAtual === 1">
+      &lt;&lt;
+  </button>
+
+  <button class="paginacao-btn" 
+          (click)="paginaAnterior()"
+          [disabled]="paginaAtual === 1">
+      &lt; Anterior
+  </button>
+
+  <span *ngFor="let pagina of paginasParaExibir" 
+        class="paginacao-numero"
+        [class.paginacao-ativa]="pagina === paginaAtual"
+        (click)="irParaPagina(pagina)">
+      {{ pagina }}
+  </span>
+
+  <button class="paginacao-btn" 
+          (click)="proximaPagina()"
+          [disabled]="paginaAtual === totalPaginas">
+      Próxima &gt;
+  </button>
+
+  <button class="paginacao-btn" 
+          (click)="irParaUltimaPagina()"
+          [disabled]="paginaAtual === totalPaginas">
+      &gt;&gt;
+  </button>
 </div>

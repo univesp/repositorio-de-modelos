@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 // DATA
-import { Modeloslist } from '../../data/modelos-list'; // Importa a lista completa de modelos
+import { Modeloslist } from '../../data/modelos-list';
 
 // INTERFACES
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
@@ -12,15 +12,16 @@ import { ModoExplorarService } from '../../services/modo-explorar.service';
 import { BookmarkService } from '../../services/bookmark.service';
 
 @Component({
-  selector: 'app-explorar', // Garanta que este seletor corresponda ao usado no seu HTML
+  selector: 'app-explorar',
   templateUrl: './explorar.component.html',
   styleUrls: ['./explorar.component.scss']
 })
 export class ExplorarComponent implements OnInit, OnDestroy {
 
-  modelosExibidos: Modelo[] = []; // Irá armazenar todos os modelos sem filtro inicial
-  viewType: 'grid' | 'list' = 'grid'; // Define o tipo de visualização padrão
-  opacityClicked = 1; // Para controlar a opacidade dos ícones de visualização
+  modelosExibidos: Modelo[] = [];
+  viewType: 'grid' | 'list' = 'grid';
+  opacityClicked = 1;
+  ordenacaoSelecionada: string = '';
 
   constructor(
     private router: Router,
@@ -29,29 +30,63 @@ export class ExplorarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Ao iniciar, limpa qualquer estado residual do modo explorar
     this.modoExplorarService.resetAll();
 
-    // Carrega o tipo de visualização salvo no localStorage (grid ou list)
     const savedViewType = localStorage.getItem('viewType');
     this.viewType = savedViewType === 'list' ? 'list' : 'grid';
 
-    // Carrega todos os modelos da Modeloslist
-    // Mapeia para adicionar a propriedade 'isSalvo' baseada no BookmarkService
-    this.modelosExibidos = Modeloslist.map(modelo => ({
+    this.carregarModelos();
+  }
+
+  /**
+   * Carrega e aplica a ordenação nos modelos
+   */
+  private carregarModelos(): void {
+    // Primeiro cria a lista base com a propriedade isSalvo
+    const modelosComBookmark = Modeloslist.map(modelo => ({
       ...modelo,
       isSalvo: this.bookmarkService.isSalvo(modelo.id)
-    }));
+    })) as Modelo[]; // ← FORÇA A TIPAGEM AQUI
 
-    // Define o modo explorar como ativo e limpa filtros atuais
-    this.modoExplorarService.setModoExplorarAtivo(true);
-    this.modoExplorarService.setFiltrosAtuais({}); // Não há filtros aplicados nesta página inicialmente
+    // Aplica ordenação se houver uma selecionada
+    let modelosOrdenados = modelosComBookmark;
+    
+    if (this.ordenacaoSelecionada) {
+      modelosOrdenados = this.aplicarOrdenacaoInterna(modelosComBookmark);
+    }
+
+    this.modelosExibidos = modelosOrdenados;
+  }
+
+  /**
+   * Aplica a ordenação quando o select é alterado
+   */
+  aplicarOrdenacao(): void {
+    this.carregarModelos();
+  }
+
+  /**
+   * Aplica a lógica de ordenação interna
+   */
+  private aplicarOrdenacaoInterna(modelos: Modelo[]): Modelo[] {
+    switch (this.ordenacaoSelecionada) {
+      case 'alfabetica':
+        return [...modelos].sort((a, b) => 
+          a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' })
+        );
+      
+      case 'recentes':
+        // Por enquanto, retorna sem ordenação (implementaremos depois)
+        console.log('Ordenação por "Mais Recentes" será implementada em breve');
+        return modelos;
+      
+      default:
+        return modelos;
+    }
   }
 
   /**
    * Alterna o tipo de visualização entre 'grid' e 'list'
-   * e salva a preferência no localStorage.
-   * @param type O tipo de visualização a ser definido ('grid' ou 'list').
    */
   switchViewType(type: 'grid' | 'list') {
     this.viewType = type;
@@ -60,18 +95,16 @@ export class ExplorarComponent implements OnInit, OnDestroy {
 
   /**
    * Navega para a página de detalhes de um modelo específico.
-   * @param id O ID do modelo a ser aberto.
    */
   abrirModelo(id: string) {
-    const idNumber = Number(id); // Converte para número, se necessário
-    this.modoExplorarService.setModeloId(idNumber); // Define o ID do modelo no serviço
-    this.router.navigate(['/modelo', id]); // Navega para a rota do modelo
+    const idNumber = Number(id);
+    this.modoExplorarService.setModeloId(idNumber);
+    this.router.navigate(['/modelo', id]);
   }
 
   ngOnDestroy(): void {
-    // Ao destruir o componente, define o modo explorar como inativo e limpa o ID do modelo
     this.modoExplorarService.setModoExplorarAtivo(false);
     this.modoExplorarService.setModeloId(null);
-    this.modoExplorarService.setFiltrosAtuais({}); // Limpa filtros ao sair da página
+    this.modoExplorarService.setFiltrosAtuais({});
   }
 }

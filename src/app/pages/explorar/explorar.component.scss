@@ -16,7 +16,7 @@
 
   /* === Botões de visualização (Grid / List) === */
   &__switch-view-buttons {
-    margin: 50px 40px 30px 0;
+    margin: 50px 80px 30px 0;
     display: flex;
     gap: 0 7px;
     flex-direction: row-reverse;
@@ -32,6 +32,7 @@
   &__modelos-container {
     margin-top: 20px;
     height: 100%;
+    margin-left: 50px;
   }
 }
 

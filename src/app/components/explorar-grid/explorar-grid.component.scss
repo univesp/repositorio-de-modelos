@@ -2,23 +2,30 @@
     display: flex;
     flex-wrap: wrap;
     max-width: 100%;
-    gap: 100px 65px;
-    margin-left: 25px;
+    gap: 70px 50px;
+    margin-left: 50px;
 
     &__item {
         width: 30%;
         min-width: 300px;
-        height: 550px;
+        min-height: 600px;
         display: flex;
         flex-direction: column;
         cursor: pointer;
-        background-color: #f8f8f8;
+        background-color: #fff;
         padding: 20px;
         box-sizing: border-box;
         border-radius: 10px;
-        box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         position: relative;
         user-select: none; // Evita seleção de texto ao clicar rápido
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+          border-color: #7155d8;
+        }
     }
 
     &__topo {
@@ -49,14 +56,22 @@
         margin-top: 15px;
     }
     &__imagem > img {
-        width: 460px;
+        width: 100%;
     }
 
     &__descricao {
         margin-top: 20px;
         font-size: 18px;
-        width: 85%;
+        width: 95%;
         margin-left: 25px;
+        line-height: 1.4;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 4; // NÚMERO DE LINHAS
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-height: calc(1.4em * 4);
     }
 
     &__autor {
@@ -64,6 +79,11 @@
         margin-left: 25px;
         font-size: 18px;
     }
+}
+
+.modelo-title {
+  margin-left: 20px;
+  margin-top: 10px;
 }
 
   .explorarGrid__topo,
@@ -87,6 +107,27 @@
   .icon-bookmark.filled {
     color: #7155d8;
   }
+
+  .modelo-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: flex-end;
+    margin-top: 10px;
+    margin-right: 4px;
+    
+    .tag-item {
+      background: #7155d8;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 14px;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+    }
+  }
+
+
 
 @media (max-width: 1300px){
     .explorarGrid {

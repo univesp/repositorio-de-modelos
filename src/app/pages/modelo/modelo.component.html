@@ -106,7 +106,9 @@
     
                     <div class="modelo-other-info-item">
                         <span class="other-info-title">Acessibilidade:</span>
-                        <span class="other-info-content"> {{ currentModelo.acessibilidade.join(', ') }} </span>
+                        <span class="other-info-content"> 
+                            {{ currentModelo.acessibilidade ? currentModelo.acessibilidade.join(', ') : '' }} 
+                        </span>
                     </div>
     
                     <div class="modelo-other-info-item">

@@ -1,26 +1,24 @@
 <div class="explorarList">
 
   <div *ngFor="let item of modelosList" 
-       class="explorarList__item-container" 
-       (click)="redirectModeloPage(item.id)"
-       >
+       class="explorarList__item-container">
 
     <div class="explorarList__item">
+
       <div class="explorarList__imagem">
         <img src="{{ item.img_lg }}" alt="">
       </div>
-  
-      <div class="explorarList__titulo">
-        <h2> {{ item.titulo }} </h2>
-      </div>
-  
-      <div class="explorarList__data">
-        <span> {{ item.date }} </span>
-      </div>
-  
-      <div class="explorarList__descricao">
-        <p> {{ item.descricao }} </p>
 
+      <div class="main-info-list">
+        <h2> {{ item.titulo }} </h2>
+        <p> {{ item.descricao }} </p>
+        <div class="botoes-acao">
+          <a href="javascript:void(0)" (click)="redirectModeloPage(item.id)">Mais Informações</a>
+          <a target="_blank" href="{{ item.link }}">Ir Para o Material</a>
+        </div>
+      </div>
+
+      <div class="other-elements-list">
         <span (click)="toggleBookmark(item, $event)" *ngIf="isLoggedIn">
           <mat-icon 
             class="icon-bookmark" 
@@ -29,7 +27,10 @@
             [fontIcon]=" item.isSalvo ? 'bookmark' : 'bookmark_border' ">
           </mat-icon>
         </span>
+
+        <span> {{ item.date }} </span>
       </div>
+
     </div>
     
     <hr>

@@ -5,34 +5,48 @@
   #slickModal="slick-carousel"
   [config]="modelosConfig">
 
-    <div ngxSlickItem *ngFor="let modelo of modelosDestaque" class="modelo-items-container">
+    <div ngxSlickItem *ngFor="let modelo of modelosDestaque" 
+         class="modelo-items-container"
+         (click)="redirectModeloPage(modelo.id)">
       
-      <h2>{{ modelo.titulo }}</h2>
-
       <div class="modelo-detalhes">
-        <span>{{ modelo.date }}</span> 
-        <span> | </span> 
-        <span>{{ modelo.disciplina }}, </span> 
-        <span>{{ modelo.categorias }}</span>
-        <span (click)="toggleBookmark(modelo)" *ngIf="isLoggedIn">
-          <mat-icon 
-            class="icon-bookmark" 
-            aria-hidden="false" 
-            aria-label="BookMark icon" 
-            [fontIcon]=" modelo.isSalvo ? 'bookmark' : 'bookmark_border' ">
-          </mat-icon>
-        </span>
+        <div>
+          <span>{{ modelo.date }}</span> 
+          <span> | </span> 
+          <span>{{ modelo.categorias }}</span>
+        </div>
+
+        <div>
+          <span (click)="toggleBookmark(modelo)" *ngIf="isLoggedIn">
+            <mat-icon 
+              class="icon-bookmark" 
+              aria-hidden="false" 
+              aria-label="BookMark icon" 
+              [fontIcon]=" modelo.isSalvo ? 'bookmark' : 'bookmark_border' ">
+            </mat-icon>
+          </span>
+        </div>
+      </div>
+
+      <div class="modelo-title">
+        <h2>{{ modelo.titulo }}</h2>
       </div>
 
       <div class="modelo-imagem">
-        <img src="{{ modelo.img_md }}" alt="">
+        <img src="{{ modelo.img_lg }}" alt="">
+      </div>
+
+      <div class="modelo-tags">
+        <span *ngFor="let tag of modelo.tags" class="tag-item">
+          {{ tag }}
+        </span>
       </div>
 
       <p class="modelo-descricao">{{ modelo.descricao }}</p>
 
-      <p class="modelo-autor">Enviado por: <b>{{ modelo.autor }}</b></p>
-
-      <button class="modelo-button-destaques" (click)="redirectModeloPage(modelo.id)">Saiba Mais</button>
+      <div class="modelo-footer">
+        <p class="modelo-autor">Enviado por: <b>{{ modelo.autor }}</b></p>
+      </div>
       
     </div>
 

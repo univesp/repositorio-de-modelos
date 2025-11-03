@@ -9,16 +9,40 @@
   align-items: stretch;
 }
 
+.modelo-detalhes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
 .modelo-items-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 1rem;
-  border-radius: 8px;
+  padding: 1.2rem;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 650px;
+  min-height: 550px;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  margin: 0 10px;
+  background-color: #FFF;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    border-color: #7155d8;
+  }
+}
+
+.modelo-title {
+  margin-bottom: 20px;
 }
 
 .modelo-items-container > h2 {
@@ -27,17 +51,24 @@
   margin-left: 30px;
 }
 
-.modelo-detalhes {
-  margin-bottom: 15px;
-  margin-left: 30px;
-}
-
 .modelo-descricao {
   margin-top: 20px;
   font-size: 18px;
-  width: 80%;
+  width: 95%;
   margin-left: 20px;
   margin-bottom: 40px;
+  line-height: 1.4;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 4; // NÚMERO DE LINHAS
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: calc(1.4em * 4);
+}
+
+.modelo-imagem > img {
+  width: 100%;
 }
 
 .modelo-autor {
@@ -65,9 +96,8 @@
 }
 
 .icon-bookmark {
-  transform: scale(1.4);
+  transform: scale(1.5);
   color: #7155d8;
-  margin-left: 100px;
   cursor: pointer;
   transition: color 0.3s ease;
 }
@@ -75,6 +105,29 @@
 .icon-bookmark.filled {
   color: #7155d8;
 }
+
+.modelo-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: flex-end;
+  margin-top: 10px;
+  margin-right: 4px;
+  
+  .tag-item {
+    background: #e0e0e0;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+  }
+}
+
+
+
+
 
 @media (max-width: 1300px) {
   .destaques-container {

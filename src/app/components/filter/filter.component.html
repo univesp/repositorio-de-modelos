@@ -59,6 +59,20 @@
         <option *ngFor="let opcao of filtro.opcoes" [value]="opcao">{{ opcao }}</option>
       </select>
     </div>
+ 
+
+    <!-- Botão para limpar TODOS os filtros -->
+    <div class="filtro clear-all-container" *ngIf="temFiltrosAtivos()">
+      <label>&nbsp;</label> <!-- Label vazia para alinhamento -->
+      <button 
+        class="clear-all-filters" 
+        (click)="limparTodosFiltros()"
+        [disabled]="!temFiltrosAtivos()"
+        aria-label="Limpar todos os filtros">
+        <mat-icon>clear_all</mat-icon>
+        <span>Limpar Tudo</span>
+      </button>
+    </div>
   </div>
     
 </div>

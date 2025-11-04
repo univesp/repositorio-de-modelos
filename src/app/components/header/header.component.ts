@@ -278,10 +278,31 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onClickHome() {
+    // Primeiro, para todas as subscriptions que podem interferir
+    if (this.userProfileSubscription) {
+      this.userProfileSubscription.unsubscribe();
+    }
+    if (this.imageSubscription) {
+      this.imageSubscription.unsubscribe();
+    }
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+  
+    // Reseta o serviço de modo explorar COMPLETAMENTE
+    this.modoExplorarService.resetAll();
+    
+    // Limpa qualquer estado residual
+    this.lastListPageUrl = null;
+    
+    // Navega para home de forma CLEAN
     this.router.navigate(['/'], {
       replaceUrl: true,
       queryParams: {},
       queryParamsHandling: ''
+    }).then(() => {
+      // Força um reload se necessário
+      window.dispatchEvent(new Event('locationchange'));
     });
   }
 }

@@ -3,7 +3,7 @@
   <!-- Filtro reutilizado -->
   <app-filter 
     class="resultados__filter"
-    (filtrosChanged)="null"  
+    (filtrosChanged)="aplicarFiltrosViaUrl($event.filtros)"  
     (explorarClicked)="null"
   ></app-filter>
 

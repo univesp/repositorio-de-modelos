@@ -38,9 +38,36 @@ export class ResultadosComponent implements OnInit, OnDestroy {
     const savedViewType = localStorage.getItem('viewType');
     this.viewType = savedViewType === 'list' ? 'list' : 'grid';
 
+     // Escuta mudanças nos parâmetros da URL
     this.route.queryParams.subscribe((params: Params) => {
       this.aplicarFiltrosViaUrl(params);
     });
+
+    // Escuta mudanças diretas do serviço (quando filtros são limpos)
+    this.modoExplorarService.filtrosAtuais$.subscribe(filtros => {
+      // Se os filtros estão vazios, recarrega todos os modelos
+      if (Object.keys(filtros).length === 0) {
+        this.carregarTodosModelos();
+      }
+    });
+  }
+
+  //carrega todos os modelos
+  private carregarTodosModelos(): void {
+    const todosModelos = Modeloslist;
+    
+    // Aplica ordenação se houver
+    if (this.ordenacaoSelecionada) {
+      this.modelosFiltrados = this.aplicarOrdenacaoInterna(todosModelos);
+    } else {
+      this.modelosFiltrados = todosModelos;
+    }
+
+    // Atualiza o status de salvamento
+    this.modelosFiltrados = this.modelosFiltrados.map(modelo => ({
+      ...modelo,
+      isSalvo: this.bookmarkService.isSalvo(modelo.id)
+    })) as Modelo[];
   }
 
   aplicarFiltrosViaUrl(params: Params): void {

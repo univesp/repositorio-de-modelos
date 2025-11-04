@@ -16,13 +16,13 @@ const additionalFilters = [
     key: 'formato', 
     label: 'FORMATO', 
     placeholder: '[ Selecione ]', 
-    opcoes: ['REA Univesp', 'Jogo', 'Site', 'Recurso de Programação', 'Modelo Externo'] 
+    opcoes: ['[ Selecione ]', 'REA Univesp', 'Jogo', 'Site', 'Recurso de Programação', 'Modelo Externo'] 
   },
   { 
     key: 'data', 
     label: 'DATA', 
     placeholder: '[ Selecione ]', 
-    opcoes: ['Este Mês', 'Esta Semana', 'Este Ano'] 
+    opcoes: ['[ Selecione ]', 'Este Mês', 'Esta Semana', 'Este Ano'] 
   }
   /*
   ,
@@ -44,7 +44,7 @@ const filtersFromSelectsList = baseConfig.map(config => {
     key: config.key,
     label: config.label,
     placeholder: '[ Selecione ]',
-    opcoes: selectConfig?.opcoes || [] // Pega opções do SelectsList ou array vazio
+    opcoes: ['[ Selecione ]', ...(selectConfig?.opcoes || []) ] // Pega opções do SelectsList ou array vazio
   };
 });
 

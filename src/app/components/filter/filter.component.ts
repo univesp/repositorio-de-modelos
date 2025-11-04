@@ -26,6 +26,14 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.filtrosConfig.forEach(f => {
           this.filtros[f.key] = f.placeholder;
         });
+      } else {
+         // ATUALIZAÇÃO: Mantém os valores visuais dos filtros que existem
+        // Isso previne que filtros fiquem vazios visualmente
+        for (const key in filtros) {
+          if (filtros[key] && this.filtros.hasOwnProperty(key)) {
+            this.filtros[key] = filtros[key];
+          }
+        }
       }
     });
 
@@ -70,45 +78,94 @@ export class FilterComponent implements OnInit, OnDestroy {
         private modoExplorarService: ModoExplorarService,
         private authService: AuthService
       ) {
+
+        // INICIALIZA TODOS OS FILTROS COM PLACEHOLDER PRIMEIRO
+        this.filtrosConfig.forEach(f => {
+          this.filtros[f.key] = f.placeholder;
+        });
+          
+        // SÓ incializa filtros se não estiver na home
+        if (!this.router.url.startsWith('/')) {
+          const filtrosSalvos = this.modoExplorarService.getFiltrosAtuais();
+          this.filtrosConfig.forEach(f => {
+            const valorSalvo = filtrosSalvos[f.key];
+            // Só sobrescreve se tiver um valor salvo válido
+            if (valorSalvo && valorSalvo.trim() !== '' && valorSalvo !== f.placeholder) {
+              this.filtros[f.key] = valorSalvo;
+            }
+          });
+        }
+   
     
-    const filtrosSalvos = this.modoExplorarService.getFiltrosAtuais();
-    this.filtrosConfig.forEach(f => {
-      const valorSalvo = filtrosSalvos[f.key];
-      this.filtros[f.key] = valorSalvo && valorSalvo.trim() !== '' ? valorSalvo : f.placeholder;
-    });
 
     // Escuta reset vindo da dashboard
-    window.addEventListener('resetFiltros', () => {
-     this.resetarFiltros();
-    });
+    //window.addEventListener('resetFiltros', () => {
+     //this.resetarFiltros();
+   // });
 
     //  Lê parâmetros da URL e converte de volta para o valor visual correto
-    this.route.queryParams.subscribe(params => {
-      this.filtrosConfig.forEach(f => {
-        const valorNormalizado = params[f.key];
-        if (valorNormalizado) {
-          const original = f.opcoes?.find(opcao =>
-            opcao === valorNormalizado
-          );
-          if (original) {
-            this.filtros[f.key] = original;
+    if (!this.router.url.startsWith('/')) {
+      this.route.queryParams.subscribe(params => {
+        this.filtrosConfig.forEach(f => {
+          const valorNormalizado = params[f.key];
+          if (valorNormalizado) {
+            const original = f.opcoes?.find(opcao =>
+              opcao === valorNormalizado
+            );
+            if (original) {
+              this.filtros[f.key] = original;
+            }
           }
-        }
+        });
+  
+        this.modoExplorarService.setFiltrosAtuais(this.filtros);
       });
-
-      this.modoExplorarService.setFiltrosAtuais(this.filtros);
-    });
+    } 
   }
 
   private checkAuthStatus(): void {
     this.isLoggedIn = this.authService.isSignedIn();
   }
 
-  handleExplorar() {
-    this.searchTerm = '';  // Limpa a busca
+  /**
+   * Verifica se há filtros ativos (diferentes do placeholder)
+   */
+  temFiltrosAtivos(): boolean {
+    return this.filtrosConfig.some(f => 
+      this.filtros[f.key] !== f.placeholder
+    ) || !!this.searchTerm.trim();
+  }
+
+  /**
+   * Limpa TODOS os filtros e redireciona para Explorar
+   */
+  limparTodosFiltros(): void {
+    this.searchTerm = '';
     this.filtrosConfig.forEach(f => {
       this.filtros[f.key] = f.placeholder;
     });
+
+    // Limpa os filtros no serviço
+    this.modoExplorarService.setFiltrosAtuais({});
+
+    // Emite evento informando que os filtros foram limpos
+    this.filtrosChanged.emit({
+      filtros: {},
+      searchTerm: ''
+    });
+
+    // Redireciona para a página Explorar (mostra todos os modelos)
+    this.router.navigate(['/explorar']);
+  }
+
+  handleExplorar() {
+    // Só executa se NÃO estiver na página Explorar
+    if (!this.router.url.startsWith('/explorar')) {
+      this.searchTerm = '';  // Limpa a busca
+      this.filtrosConfig.forEach(f => {
+        this.filtros[f.key] = f.placeholder;
+      });
+    }
 
     this.emitirMudancas();  // dispara os valores limpos
     this.explorarClicked.emit();  // comunica ao componente pai
@@ -129,10 +186,13 @@ export class FilterComponent implements OnInit, OnDestroy {
   emitirMudancas() {
     const filtrosValidos: { [key: string]: string } = {};
   
-    // Verifica filtros válidos
+    // Verifica filtros válidos e detecta quando foi limpo
     for (const chave in this.filtros) {
       const valor = this.filtros[chave];
-      if (valor && valor !== this.getPlaceholder(chave)) {
+      const placeholder = this.getPlaceholder(chave);
+
+      // Se o valor é diferente do placeholder [Selecione], inclui nos filtros válidos
+      if (valor && valor !== placeholder) {
         filtrosValidos[chave] = valor ;
       }
     }
@@ -141,8 +201,20 @@ export class FilterComponent implements OnInit, OnDestroy {
     const hasSearchTerm = !!this.searchTerm?.trim();
     const hasValidFilters = Object.keys(filtrosValidos).length > 0;
 
-     // Se não há critérios válidos, não faz nada
+     // Mesmo sem critérios válidos, emite para recarregar todos os resultados
+    //  Isso permite que quando o usuário limpar um filtro, o sistema mostre todos os modelos
     if (!hasSearchTerm && !hasValidFilters) {
+      // Limpa os filtros no serviço
+      this.modoExplorarService.setFiltrosAtuais({});
+
+      // Emite filtros vazios para mostrar TODOS os resultados
+      this.filtrosChanged.emit({
+        filtros: {},
+        searchTerm: ''
+      });
+
+      // Navega para explorar (todos os modelos)
+      this.router.navigate(['/explorar']);
       return;
     }
 
@@ -157,7 +229,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
     // Emite os dados para o componente pai
     this.filtrosChanged.emit({
-      filtros: this.filtros,
+      filtros: filtrosValidos,
       searchTerm: this.searchTerm
     });
 

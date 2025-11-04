@@ -4,6 +4,7 @@ import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
 import { BookmarkService } from '../../services/bookmark.service';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
+import { AuthService } from '../../services/auth.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -20,12 +21,15 @@ export class ModeloComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
     modalAberto: boolean = false;
     imagemModal: string = '';
+
+    isLoggedIn: boolean = false;
     
     constructor(
             private router: Router,
             private route: ActivatedRoute,
             private bookmarkService: BookmarkService,
-            private modoExplorarService: ModoExplorarService
+            private modoExplorarService: ModoExplorarService,
+            private authService: AuthService
         ) {
 
          // Verifica se o id passado na URL existe na lista de modelos
@@ -49,6 +53,12 @@ export class ModeloComponent implements OnInit, OnDestroy {
 
 
     ngOnInit() {
+      this.isLoggedIn = this.authService.isSignedIn();
+
+      this.authService.isAuthenticated().subscribe(loggedIn => {
+        this.isLoggedIn = loggedIn;
+      });
+
         this.carregarModelo();
     }
 

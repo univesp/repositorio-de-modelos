@@ -7,7 +7,7 @@
             <p> {{ currentModelo?.date }} | {{ currentModelo?.id }} </p>
             <div class="modeloTitleandBokmark">
                 <h1> {{ currentModelo?.titulo }} </h1>
-                <span (click)="toggleBookmark(currentModelo)">
+                <span (click)="toggleBookmark(currentModelo)" *ngIf="isLoggedIn">
                     <mat-icon 
                     class="icon-bookmark" 
                     aria-hidden="false" 

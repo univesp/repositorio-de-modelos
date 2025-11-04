@@ -1,20 +1,21 @@
 <div class="explorarList">
 
-  <div *ngFor="let item of modelosList" 
-       class="explorarList__item-container">
+  <div *ngFor="let item of modelosExibidos; let last = last" 
+       class="explorarList__item-container"
+       #lastItem>
 
     <div class="explorarList__item">
 
       <div class="explorarList__imagem">
-        <img src="{{ item.img_lg }}" alt="">
+        <img [src]="item.img_lg" [alt]="item.titulo">
       </div>
 
       <div class="main-info-list">
-        <h2> {{ item.titulo }} </h2>
-        <p> {{ item.descricao }} </p>
+        <h2>{{ item.titulo }}</h2>
+        <p>{{ item.descricao }}</p>
         <div class="botoes-acao">
           <a href="javascript:void(0)" (click)="redirectModeloPage(item.id)">Mais Informações</a>
-          <a target="_blank" href="{{ item.link }}">Ir Para o Material</a>
+          <a target="_blank" [href]="item.link">Ir Para o Material</a>
         </div>
       </div>
 
@@ -24,17 +25,27 @@
             class="icon-bookmark" 
             aria-hidden="false" 
             aria-label="BookMark icon" 
-            [fontIcon]=" item.isSalvo ? 'bookmark' : 'bookmark_border' ">
+            [fontIcon]="item.isSalvo ? 'bookmark' : 'bookmark_border'">
           </mat-icon>
         </span>
-
-        <span> {{ item.date }} </span>
+        <span>{{ item.date }}</span>
       </div>
 
     </div>
     
     <hr>
 
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="carregandoMais" class="loading-indicator">
+    <div class="loading-spinner"></div>
+    <span>Carregando mais modelos...</span>
+  </div>
+
+  <!-- Mensagem quando todos os itens foram carregados -->
+  <div *ngIf="todosCarregados && modelosExibidos.length > 0" class="end-of-list">
+    <span>Todos os modelos foram carregados!</span>
   </div>
 
 </div>

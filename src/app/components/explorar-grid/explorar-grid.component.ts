@@ -4,6 +4,7 @@ import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
 import { BookmarkService } from '../../services/bookmark.service'; 
 import { AuthService } from '../../services/auth.service';
+import { CarregamentoService } from '../../services/carregamento-modelos.service';
 
 @Component({
   selector: 'app-explorar-grid',
@@ -15,15 +16,16 @@ export class ExplorarGridComponent implements OnInit {
 
   // Propriedades Paginação
   paginaAtual: number = 1;
-  itensPorPagina: number = 9;
   modelosPaginados: Modelo[] = [];
   totalPaginas: number = 0;
   paginasParaExibir: number[] = [];
+  carregando: boolean = false;
 
   constructor(
       private router: Router,
       private bookmarkService: BookmarkService,
-      private authService: AuthService
+      private authService: AuthService,
+      private carregamentoService: CarregamentoService
     ) { }
 
   @Output() modeloSelecionado = new EventEmitter<string>();
@@ -37,21 +39,32 @@ export class ExplorarGridComponent implements OnInit {
       this.isLoggedIn = loggedIn;
     });
 
-    this.calcularPaginas();
-    this.atualizarModelosPaginados();
+    this.inicializarPagina();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['modelosList']) {
       this.paginaAtual = 1; // Reset para primeira página quando a lista muda
+      this.inicializarPagina();
+    }    
+  }
+
+  /**
+   * Inicializa a página carregando apenas os primeiros 9 itens
+   */
+  private inicializarPagina(): void {
+    this.carregando = true;
+
+    setTimeout(() => {
       this.calcularPaginas();
       this.atualizarModelosPaginados();
-    }    
+      this.carregando = false;
+    }, 1000);
   }
 
   // Métodos de Paginação
   calcularPaginas() {
-    this.totalPaginas = Math.ceil(this.modelosList.length / this.itensPorPagina);
+    this.totalPaginas = this.carregamentoService.getTotalPaginas(this.modelosList);
     this.atualizarPaginasParaExibir();
   }
 
@@ -90,40 +103,56 @@ export class ExplorarGridComponent implements OnInit {
     );
   }
 
+  /**
+   * Atualiza os modelos exibidos usando o serviço
+   */
   atualizarModelosPaginados() {
-    const startIndex = (this.paginaAtual - 1) * this.itensPorPagina;
-    const endIndex = startIndex + this.itensPorPagina;
-    this.modelosPaginados = this.modelosList.slice(startIndex, endIndex);
+    this.modelosPaginados = this.carregamentoService.carregarPagina(
+      this.modelosList,
+      this.paginaAtual
+    );
+
+    console.log(`Grid - Página ${this.paginaAtual}: ${this.modelosPaginados.length} de ${this.modelosList.length} itens`);
   }
 
   // Navegação entre páginas
   irParaPagina(pagina: number) {
-    if (pagina >= 1 && pagina <= this.totalPaginas) {
+    if (pagina >= 1 && pagina <= this.totalPaginas && !this.carregando) {
+      this.carregando = true;
       this.paginaAtual = pagina;
-      this.atualizarModelosPaginados();
-      this.atualizarPaginasParaExibir();
-      this.rolarParaTopo();
+
+      setTimeout(() => {
+        this.atualizarModelosPaginados();
+        this.atualizarPaginasParaExibir();
+        this.carregando = false;
+        this.rolarParaTopo();
+      }, 1000);
+      
     }
   }
 
   proximaPagina() {
-    if (this.paginaAtual < this.totalPaginas) {
+    if (this.paginaAtual < this.totalPaginas && !this.carregando) {
       this.irParaPagina(this.paginaAtual + 1);
     }
   }
 
   paginaAnterior() {
-    if (this.paginaAtual > 1) {
+    if (this.paginaAtual > 1 && !this.carregando) {
       this.irParaPagina(this.paginaAtual - 1);
     }
   }
 
   irParaPrimeiraPagina() {
-    this.irParaPagina(1);
+    if (!this.carregando) {
+      this.irParaPagina(1);
+    }
   }
 
   irParaUltimaPagina() {
-    this.irParaPagina(this.totalPaginas);
+    if (!this.carregando) {
+      this.irParaPagina(this.totalPaginas);
+    }
   }
 
   rolarParaTopo() {

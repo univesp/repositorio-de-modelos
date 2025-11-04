@@ -1,47 +1,57 @@
 <div class="explorarGrid">
-    <div *ngFor="let item of modelosPaginados" 
-         class="explorarGrid__item" 
-         (click)="redirectModeloPage(item.id, $event)"
-         >
-
-         <div class="explorarGrid__topo">
-            <div class="explorarGrid__info">
-              <div class="explorarGrid__detalhes">
-                <span>{{ item.date }}</span>
-                <span> | </span>
-                <span>{{ item.categorias.join(', ') }}</span>
-              </div>
-            </div>
-          
-            <mat-icon 
-              class="icon-bookmark" 
-              aria-hidden="false" 
-              aria-label="BookMark icon" 
-              [fontIcon]="item.isSalvo ? 'bookmark' : 'bookmark_border'" 
-              (click)="toggleBookmark(item, $event); $event.stopImmediatePropagation()"
-              *ngIf="isLoggedIn">
-            </mat-icon>
-          </div>
-
-          <div class="modelo-title">
-            <h2>{{ item.titulo }}</h2>
-          </div>
-
-        <div class="explorarGrid__imagem">
-            <img src="{{ item.img_lg }}" alt="">
-        </div>
-
-        <div class="modelo-tags">
-          <span *ngFor="let tag of item.tags" class="tag-item">
-            {{ tag }}
-          </span>
-        </div>
-
-        <p class="explorarGrid__descricao"> {{ item.descricao }} </p>
-
-        <p class="explorarGrid__autor">Enviado por:  <b>{{ item.autor }}</b> </p>
-        
+    <!-- Loading Overlay -->
+    <div *ngIf="carregando" class="grid-loading-overlay">
+      <div class="grid-loading-content">
+        <div class="grid-loading-spinner"></div>
+        <span>Carregando modelos...</span>
+      </div>
     </div>
+
+    
+    <div *ngFor="let item of modelosPaginados" 
+      class="explorarGrid__item" 
+      (click)="redirectModeloPage(item.id, $event)"
+      >
+
+      <div class="explorarGrid__topo">
+          <div class="explorarGrid__info">
+            <div class="explorarGrid__detalhes">
+              <span>{{ item.date }}</span>
+              <span> | </span>
+              <span>{{ item.categorias.join(', ') }}</span>
+            </div>
+          </div>
+        
+          <mat-icon 
+            class="icon-bookmark" 
+            aria-hidden="false" 
+            aria-label="BookMark icon" 
+            [fontIcon]="item.isSalvo ? 'bookmark' : 'bookmark_border'" 
+            (click)="toggleBookmark(item, $event); $event.stopImmediatePropagation()"
+            *ngIf="isLoggedIn">
+          </mat-icon>
+        </div>
+
+        <div class="modelo-title">
+          <h2>{{ item.titulo }}</h2>
+        </div>
+
+      <div class="explorarGrid__imagem">
+          <img src="{{ item.img_lg }}" alt="">
+      </div>
+
+      <div class="modelo-tags">
+        <span *ngFor="let tag of item.tags" class="tag-item">
+          {{ tag }}
+        </span>
+      </div>
+
+      <p class="explorarGrid__descricao"> {{ item.descricao }} </p>
+
+      <p class="explorarGrid__autor">Enviado por:  <b>{{ item.autor }}</b> </p>
+      
+    </div>
+    
 </div>
 
 <!-- PAGINAÇÃO -->

@@ -41,20 +41,42 @@
                 </a>
             </div>
 
-            <div class="modelo-action-buttons">
-
-                <div class="editar-modelo-button-container">
-                    <mat-icon class="icon-edit">edit</mat-icon>
-                    <button class="action-button-modelo editar-modelo-button">Editar Modelo</button>
-                </div>
-
-                <div class="adicionarDestaque-modelo-button-container">
-                    <button class="action-button-modelo adicionar-destaques-button">
-                        <mat-icon>add</mat-icon>
-                        Adicionar aos Destaques
+            <div class="modelo-action-buttons" *ngIf="isLoggedIn">
+                <!-- Botão de três pontos -->
+                <button class="menu-tres-pontos-button" 
+                        (click)="toggleMenuOpcoes()"
+                        aria-label="Opções do modelo">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+            
+                <!-- Menu de opções -->
+                <div class="menu-opcoes" *ngIf="menuOpcoesAberto">
+                    <button class="opcao-menu" (click)="editarModelo()">
+                        <mat-icon>edit</mat-icon>
+                        <span>Editar Modelo</span>
+                    </button>
+                    
+                    <button class="opcao-menu" 
+                            (click)="adicionarAoTopo()"
+                            *ngIf="(authService.userProfile$ | async)?.role === 'ADMIN'">
+                        <mat-icon>view_carousel</mat-icon>
+                        <span>Adicionar ao Topo</span>
+                    </button>
+                    
+                    <button class="opcao-menu" 
+                            (click)="adicionarAosDestaques()"
+                            *ngIf="(authService.userProfile$ | async)?.role === 'ADMIN'">
+                        <mat-icon>star</mat-icon>
+                        <span>Adicionar aos Destaques</span>
+                    </button>
+                    
+                    <button class="opcao-menu opcao-excluir" 
+                            (click)="excluirModelo()"
+                            *ngIf="(authService.userProfile$ | async)?.role === 'ADMIN'">
+                        <mat-icon>delete</mat-icon>
+                        <span>Excluir Modelo</span>
                     </button>
                 </div>
-
             </div>
         </div>
 

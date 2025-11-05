@@ -23,13 +23,16 @@ export class ModeloComponent implements OnInit, OnDestroy {
     imagemModal: string = '';
 
     isLoggedIn: boolean = false;
+
+    // Variável para controlar a abertura do menu
+    menuOpcoesAberto: boolean = false;
     
     constructor(
             private router: Router,
             private route: ActivatedRoute,
             private bookmarkService: BookmarkService,
             private modoExplorarService: ModoExplorarService,
-            private authService: AuthService
+            public authService: AuthService
         ) {
 
          // Verifica se o id passado na URL existe na lista de modelos
@@ -178,12 +181,47 @@ export class ModeloComponent implements OnInit, OnDestroy {
       document.body.style.overflow = 'auto';
     }
 
+    // Método para alternar o menu
+    toggleMenuOpcoes(): void {
+      this.menuOpcoesAberto = !this.menuOpcoesAberto;
+    }
+
+    // Métodos placeholder para as opções (por enquanto sem funcionalidade)
+    editarModelo(): void {
+      console.log('Editar Modelo clicado');
+      this.menuOpcoesAberto = false; // Fecha o menu após clicar
+    }
+
+    adicionarAoTopo(): void {
+      console.log('Adicionar ao Topo clicado');
+      this.menuOpcoesAberto = false;
+    }
+  
+    adicionarAosDestaques(): void {
+        console.log('Adicionar aos Destaques clicado');
+        this.menuOpcoesAberto = false;
+    }
+  
+    excluirModelo(): void {
+        console.log('Excluir Modelo clicado');
+        this.menuOpcoesAberto = false;
+    }
+
     // Fechar modal com ESC key
     @HostListener('document:keydown.escape', ['$event'])
     fecharModalComEsc(event: KeyboardEvent) {
       if (this.modalAberto) {
         this.fecharModalImagem();
       }
+    }
+
+    // Fechar menu ao clicar fora
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+        const target = event.target as HTMLElement;
+        if (!target.closest('.modelo-action-buttons')) {
+            this.menuOpcoesAberto = false;
+        }
     }
 
     ngOnDestroy() {

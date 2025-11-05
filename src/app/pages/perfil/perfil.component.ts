@@ -23,6 +23,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
   imageBlobUrl: SafeUrl | null = null;
   isImageLoading: boolean = false;
   hasImageError: boolean = false;
+  isLoggedIn: boolean = false;
   
   private imageSubscription: Subscription | null = null;
   private userProfileSubscription: Subscription | null = null;
@@ -35,6 +36,16 @@ export class PerfilComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.isLoggedIn = this.authService.isSignedIn();
+
+    this.authService.isAuthenticated().subscribe(loggedIn => {
+      this.isLoggedIn = loggedIn;
+    });
+
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/']);
+    }
+
     this.loadUserProfile();
     
     // OBSERVA mudanças no perfil do usuário

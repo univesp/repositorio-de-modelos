@@ -7,13 +7,13 @@
       </div>
     </div>
 
-    
-    <div *ngFor="let item of modelosPaginados" 
-      class="explorarGrid__item" 
-      (click)="redirectModeloPage(item.id, $event)"
-      >
+    <ng-container *ngIf="!carregando">
+      
+      <div *ngFor="let item of modelosPaginados" 
+           class="explorarGrid__item" 
+           (click)="redirectModeloPage(item.id, $event)">
 
-      <div class="explorarGrid__topo">
+        <div class="explorarGrid__topo">
           <div class="explorarGrid__info">
             <div class="explorarGrid__detalhes">
               <span>{{ item.date }}</span>
@@ -36,26 +36,27 @@
           <h2>{{ item.titulo }}</h2>
         </div>
 
-      <div class="explorarGrid__imagem">
-          <img src="{{ item.img_lg }}" alt="">
+        <div class="explorarGrid__imagem">
+            <img src="{{ item.img_lg }}" alt="">
+        </div>
+
+        <div class="modelo-tags">
+          <span *ngFor="let tag of item.tags" class="tag-item">
+            {{ tag }}
+          </span>
+        </div>
+
+        <p class="explorarGrid__descricao"> {{ item.descricao }} </p>
+
+        <p class="explorarGrid__autor">Enviado por:  <b>{{ item.autor }}</b> </p>
       </div>
 
-      <div class="modelo-tags">
-        <span *ngFor="let tag of item.tags" class="tag-item">
-          {{ tag }}
-        </span>
-      </div>
-
-      <p class="explorarGrid__descricao"> {{ item.descricao }} </p>
-
-      <p class="explorarGrid__autor">Enviado por:  <b>{{ item.autor }}</b> </p>
-      
-    </div>
+    </ng-container>
     
 </div>
 
 <!-- PAGINAÇÃO -->
-<div class="paginacao" *ngIf="totalPaginas > 1">
+<div class="paginacao" *ngIf="totalPaginas > 1 && !carregando">
   <button class="paginacao-btn" 
           (click)="irParaPrimeiraPagina()"
           [disabled]="paginaAtual === 1">

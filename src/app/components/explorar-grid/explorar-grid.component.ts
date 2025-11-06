@@ -5,6 +5,7 @@ import { Modeloslist } from '../../data/modelos-list';
 import { BookmarkService } from '../../services/bookmark.service'; 
 import { AuthService } from '../../services/auth.service';
 import { CarregamentoService } from '../../services/carregamento-modelos.service';
+import { PaginationService, PaginationConfig } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-explorar-grid',
@@ -15,17 +16,16 @@ export class ExplorarGridComponent implements OnInit {
   @Input({required: true}) modelosList: Modelo[] = Modeloslist;
 
   // Propriedades Paginação
-  paginaAtual: number = 1;
+  paginationConfig!: PaginationConfig;
   modelosPaginados: Modelo[] = [];
-  totalPaginas: number = 0;
-  paginasParaExibir: number[] = [];
   carregando: boolean = false;
 
   constructor(
       private router: Router,
       private bookmarkService: BookmarkService,
       private authService: AuthService,
-      private carregamentoService: CarregamentoService
+      private carregamentoService: CarregamentoService,
+      private paginationService: PaginationService
     ) { }
 
   @Output() modeloSelecionado = new EventEmitter<string>();
@@ -34,6 +34,9 @@ export class ExplorarGridComponent implements OnInit {
 
   ngOnInit() {
     this.isLoggedIn = this.authService.isSignedIn();
+
+    // INICIALIZAÇÃO SIMPLIFICADA - a paginação será tratada no ngOnChanges
+    this.paginationConfig = this.paginationService.inicializarPaginacao([], 9);
 
     this.authService.isAuthenticated().subscribe(loggedIn => {
       this.isLoggedIn = loggedIn;
@@ -45,15 +48,17 @@ export class ExplorarGridComponent implements OnInit {
         this.sincronizarBookmarks(profile.salvos || []);
       }
     });
-
-    this.inicializarPagina();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['modelosList']) {
-      this.paginaAtual = 1; // Reset para primeira página quando a lista muda
+      // FORÇA a reinicialização completa quando a lista muda
+      this.paginationConfig = this.paginationService.inicializarPaginacao(
+        this.modelosList, 
+        9
+      );
 
-      // NOVO: Sincroniza bookmarks quando a lista mudar
+      // Sincroniza bookmarks quando a lista mudar
       const currentProfile = this.authService.getCurrentUserProfile();
       if (currentProfile && currentProfile.salvos) {
         this.sincronizarBookmarks(currentProfile.salvos);
@@ -84,78 +89,36 @@ export class ExplorarGridComponent implements OnInit {
     this.carregando = true;
 
     setTimeout(() => {
-      this.calcularPaginas();
-      this.atualizarModelosPaginados();
+      // Atualiza a paginação com a lista atual
+      this.paginationConfig = this.paginationService.atualizarPaginacaoComNovosItens(
+        this.modelosList, 
+        this.paginationConfig
+      );
+      
+      this.modelosPaginados = this.paginationService.obterItensPaginados(
+        this.modelosList, 
+        this.paginationConfig
+      );
+
       this.carregando = false;
     }, 1000);
-  }
-
-  // Métodos de Paginação
-  calcularPaginas() {
-    this.totalPaginas = this.carregamentoService.getTotalPaginas(this.modelosList);
-    this.atualizarPaginasParaExibir();
-  }
-
-  atualizarPaginasParaExibir() {
-    const maxPaginasVisiveis = 5;
-    let startPage: number;
-    let endPage: number;
-
-    if (this.totalPaginas <= maxPaginasVisiveis) {
-      // Menos páginas que o máximo visível - mostra todas
-      startPage = 1;
-      endPage = this.totalPaginas;
-    } else {
-      // Mais páginas que o máximo visível - calcula o range
-      const maxPagesBeforeCurrent = Math.floor(maxPaginasVisiveis / 2);
-      const maxPagesAfterCurrent = Math.ceil(maxPaginasVisiveis / 2) - 1;
-
-      if (this.paginaAtual <= maxPagesBeforeCurrent) {
-        // Página atual perto do início
-        startPage = 1;
-        endPage = maxPaginasVisiveis;
-      } else if (this.paginaAtual + maxPagesAfterCurrent >= this.totalPaginas) {
-        // Página atual perto do fim
-        startPage = this.totalPaginas - maxPaginasVisiveis + 1;
-        endPage = this.totalPaginas;
-      } else {
-        // Página atual no meio
-        startPage = this.paginaAtual - maxPagesBeforeCurrent;
-        endPage = this.paginaAtual + maxPagesAfterCurrent;
-      }
-    }
-
-    this.paginasParaExibir = Array.from(
-      { length: (endPage - startPage) + 1},
-      (_, i) => startPage + i
-    );
-  }
-
-  /**
-   * Atualiza os modelos exibidos usando o serviço
-   */
-  atualizarModelosPaginados() {
-    this.modelosPaginados = this.carregamentoService.carregarPagina(
-      this.modelosList,
-      this.paginaAtual
-    );
-
-    console.log(`Grid - Página ${this.paginaAtual}: ${this.modelosPaginados.length} de ${this.modelosList.length} itens`);
   }
 
   // Navegação entre páginas
   irParaPagina(pagina: number) {
     if (pagina >= 1 && pagina <= this.totalPaginas && !this.carregando) {
       this.carregando = true;
-      this.paginaAtual = pagina;
+      
+      this.paginationConfig = this.paginationService.irParaPagina(pagina, this.paginationConfig);
+      this.modelosPaginados = this.paginationService.obterItensPaginados(
+        this.modelosList, 
+        this.paginationConfig
+      );
 
       setTimeout(() => {
-        this.atualizarModelosPaginados();
-        this.atualizarPaginasParaExibir();
         this.carregando = false;
         this.rolarParaTopo();
       }, 1000);
-      
     }
   }
 
@@ -185,6 +148,19 @@ export class ExplorarGridComponent implements OnInit {
 
   rolarParaTopo() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // MÉTODOS GETTER PARA O TEMPLATE
+  get paginaAtual(): number {
+    return this.paginationConfig.paginaAtual;
+  }
+
+  get totalPaginas(): number {
+    return this.paginationConfig.totalPaginas;
+  }
+
+  get paginasParaExibir(): number[] {
+    return this.paginationConfig.paginasParaExibir;
   }
 
   redirectModeloPage(id: string, event?: MouseEvent) {
@@ -224,8 +200,6 @@ export class ExplorarGridComponent implements OnInit {
     // Usa o BookmarkService atualizado
     this.bookmarkService.toggle(modelo.id);
     
-    // ATUALIZAÇÃO: Não atualiza visualmente aqui - vai atualizar via AuthService
-    // O estado será sincronizado automaticamente quando o perfil for atualizado
   }
 
 }

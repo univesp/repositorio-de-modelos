@@ -4,6 +4,7 @@ import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
 import { SalvosService } from '../../services/salvos.service';
 import { AuthService } from '../../services/auth.service';
+import { PaginationService, PaginationConfig } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-user-favourites',
@@ -21,20 +22,21 @@ export class UserFavouritesComponent implements OnInit {
   ordenacaoSelecionada: string = ''; // Default
 
   //Propriedades de paginação
-  paginaAtual: number = 1;
-  modelosPorPagina: number = 5;
-  totalPaginas: number = 0;
-  paginasParaExibir: number[] = [];
+  paginationConfig!: PaginationConfig;
 
   isLoading = true;
 
   constructor(
     private router: Router,
     private salvosService: SalvosService,
-    public authService: AuthService
+    public authService: AuthService,
+    private paginationService: PaginationService
   ) {}
 
   ngOnInit(): void {
+    // Inicializa a configuração de paginação
+    this.paginationConfig = this.paginationService.inicializarPaginacao([], 5);
+
     // Escuta mudanças diretas no serviço de salvos
     this.salvosService.modelosSalvos$.subscribe({
       next: (modelos) => {
@@ -42,7 +44,6 @@ export class UserFavouritesComponent implements OnInit {
         this.modelosSalvos = modelos;
         this.modelosFiltrados = [...modelos]; // Inicializa os modelos filtrados
         this.aplicarFiltros();                // Aplica filtros iniciais
-        this.atualizarPaginacao();
         this.isLoading = false;
       },
       error: (error) => {
@@ -59,89 +60,61 @@ export class UserFavouritesComponent implements OnInit {
       this.modelosSalvos = [];
       this.modelosFiltrados = [];
       this.isLoading = false;
+      // Atualiza a paginação mesmo com array vazio
+      this.atualizarPaginacao();
     }
   }
 
   // Métodos de paginação
   private atualizarPaginacao(): void {
-    // Calcula total de páginas
-    this.totalPaginas = Math.ceil(this.modelosFiltrados.length / this.modelosPorPagina);
-    
-    // Garante que página atual está dentro dos limites
-    if (this.paginaAtual > this.totalPaginas && this.totalPaginas > 0) {
-      this.paginaAtual = this.totalPaginas;
-    } else if (this.paginaAtual < 1) {
-      this.paginaAtual = 1;
-    }
-    
-    // Calcula índices para slice
-    const startIndex = (this.paginaAtual - 1) * this.modelosPorPagina;
-    const endIndex = startIndex + this.modelosPorPagina;
-    
-    // Atualiza modelos da página atual
-    this.modelosPaginados = this.modelosFiltrados.slice(startIndex, endIndex);
-    
-    // Atualiza páginas para exibir
-    this.atualizarPaginasParaExibir();
-  }
-
-  private atualizarPaginasParaExibir(): void {
-    const maxPaginasVisiveis = 5;
-    let startPage: number;
-    let endPage: number;
-
-    if (this.totalPaginas <= maxPaginasVisiveis) {
-      startPage = 1;
-      endPage = this.totalPaginas;
-    } else {
-      const maxPagesBeforeCurrent = Math.floor(maxPaginasVisiveis / 2);
-      const maxPagesAfterCurrent = Math.ceil(maxPaginasVisiveis / 2) - 1;
-
-      if (this.paginaAtual <= maxPagesBeforeCurrent) {
-        startPage = 1;
-        endPage = maxPaginasVisiveis;
-      } else if (this.paginaAtual + maxPagesAfterCurrent >= this.totalPaginas) {
-        startPage = this.totalPaginas - maxPaginasVisiveis + 1;
-        endPage = this.totalPaginas;
-      } else {
-        startPage = this.paginaAtual - maxPagesBeforeCurrent;
-        endPage = this.paginaAtual + maxPagesAfterCurrent;
-      }
-    }
-
-    this.paginasParaExibir = Array.from(
-      { length: (endPage - startPage) + 1 },
-      (_, i) => startPage + i
+    this.paginationConfig = this.paginationService.atualizarPaginacaoComNovosItens(
+      this.modelosFiltrados, 
+      this.paginationConfig
+    );
+    this.modelosPaginados = this.paginationService.obterItensPaginados(
+      this.modelosFiltrados, 
+      this.paginationConfig
     );
   }
 
   // Métodos de navegação
   irParaPagina(pagina: number): void {
-    if (pagina >= 1 && pagina <= this.totalPaginas) {
-      this.paginaAtual = pagina;
-      this.atualizarPaginacao();
-      this.rolarParaTopo();
-    }
+    this.paginationConfig = this.paginationService.irParaPagina(pagina, this.paginationConfig);
+    this.atualizarModelosPaginados();
+    this.rolarParaTopo();
   }
 
   proximaPagina(): void {
-    if (this.paginaAtual < this.totalPaginas) {
-      this.irParaPagina(this.paginaAtual + 1);
-    }
+    this.paginationConfig = this.paginationService.proximaPagina(this.paginationConfig);
+    this.atualizarModelosPaginados();
+    this.rolarParaTopo();
   }
 
   paginaAnterior(): void {
-    if (this.paginaAtual > 1) {
-      this.irParaPagina(this.paginaAtual - 1);
-    }
+    this.paginationConfig = this.paginationService.paginaAnterior(this.paginationConfig);
+    this.atualizarModelosPaginados();
+    this.rolarParaTopo();
   }
 
   irParaPrimeiraPagina(): void {
-    this.irParaPagina(1);
+    this.paginationConfig = this.paginationService.irParaPrimeiraPagina(this.paginationConfig);
+    this.atualizarModelosPaginados();
+    this.rolarParaTopo();
   }
+  
 
   irParaUltimaPagina(): void {
-    this.irParaPagina(this.totalPaginas);
+    this.paginationConfig = this.paginationService.irParaUltimaPagina(this.paginationConfig);
+    this.atualizarModelosPaginados();
+    this.rolarParaTopo();
+  }
+
+
+  private atualizarModelosPaginados(): void {
+    this.modelosPaginados = this.paginationService.obterItensPaginados(
+      this.modelosFiltrados, 
+      this.paginationConfig
+    );
   }
 
   private rolarParaTopo(): void {
@@ -154,54 +127,38 @@ export class UserFavouritesComponent implements OnInit {
       this.modelosSalvos = [];
       this.modelosFiltrados = [];
       this.isLoading = false;
+      // CORREÇÃO: Atualiza a paginação
+      this.atualizarPaginacao();
       return;
     }
-
+  
     const todosModelos: Modelo[] = Modeloslist;
     const modelosFiltrados = todosModelos.filter(modelo => 
       idsSalvos.includes(modelo.id)
     );
     
-    //console.log(' Modelos carregados:', modelosFiltrados.length);
     this.modelosSalvos = modelosFiltrados;
     this.modelosFiltrados = [...modelosFiltrados];
-    this.aplicarFiltros(); // Aplica ordenação inicial
+    this.aplicarFiltros();
     this.isLoading = false;
   }
 
   // Aplica filtros e ordenação
   aplicarFiltros(): void {
-    //console.log(' Aplicando filtros...');
-    //console.log(' Filtro texto:', this.filtroTexto);
-    //console.log(' Ordenação:', this.ordenacaoSelecionada);
-   // console.log(' Modelos antes do filtro:', this.modelosSalvos.length);
-
     let modelosFiltrados = [...this.modelosSalvos];
-
-    // 1. Aplica filtro de texto (busca por título)
+  
     if (this.filtroTexto.trim()) {
-        const termo = this.filtroTexto.toLowerCase().trim();
-        //console.log(' Buscando por:', termo);
-
-        modelosFiltrados = modelosFiltrados.filter(modelo => {
-          const inclui = modelo.titulo.toLowerCase().includes(termo);
-          //console.log(`   ${modelo.titulo} -> ${inclui ? 'INCLUÍDO' : 'FILTRADO'}`);
-          return inclui;
-        });
+      const termo = this.filtroTexto.toLowerCase().trim();
+      modelosFiltrados = modelosFiltrados.filter(modelo => 
+        modelo.titulo.toLowerCase().includes(termo)
+      );
     }
-
-    //console.log(' Modelos após filtro de texto:', modelosFiltrados.length);
-
-    // 2. Aplica ordenação
+  
     modelosFiltrados = this.aplicarOrdenacao(modelosFiltrados);
-
-    //console.log(' Modelos finais:', modelosFiltrados.length);
-    //console.log(' Primeiros títulos:', modelosFiltrados.slice(0, 3).map(m => m.titulo));
-
     this.modelosFiltrados = modelosFiltrados;
-
-    // Reseta para primeira página e atualiza paginação
-    this.paginaAtual = 1;
+  
+    // CORREÇÃO: Em vez de this.paginaAtual = 1, atualizamos a configuração
+    this.paginationConfig = this.paginationService.irParaPagina(1, this.paginationConfig);
     this.atualizarPaginacao();
   }
 
@@ -337,5 +294,18 @@ export class UserFavouritesComponent implements OnInit {
         //console.error('Erro ao remover dos salvos:', error);
       }
     });
+  }
+
+  // MÉTODOS GETTER PARA O TEMPLATE (importante!)
+  get paginaAtual(): number {
+    return this.paginationConfig.paginaAtual;
+  }
+
+  get totalPaginas(): number {
+    return this.paginationConfig.totalPaginas;
+  }
+
+  get paginasParaExibir(): number[] {
+    return this.paginationConfig.paginasParaExibir;
   }
 }

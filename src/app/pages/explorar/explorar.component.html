@@ -9,33 +9,41 @@
 
  <!-- Botões de visualização (copiados do ResultadosComponent) -->
  <div class="explorar__switch-view-buttons">
-   <button (click)="switchViewType('grid')">
-     <mat-icon
-       class="icon-viewType"
-       aria-label="Grid View icon"
-       [ngStyle]="{ 'opacity': (viewType === 'grid') ? opacityClicked : 0.6 }"
-     >grid_view</mat-icon>
-   </button>
-   <button (click)="switchViewType('list')">
-     <mat-icon
-       class="icon-viewType"
-       aria-label="List View icon"
-       [ngStyle]="{ 'opacity': (viewType === 'list') ? opacityClicked : 0.6 }"
-     >view_headline</mat-icon>
-   </button>
+  <!-- Contador de resultados -->
+  <div class="resultados-contador">
+    <span>Exibindo {{ modelosExibidos.length }} resultado(s)</span>
+  </div>
 
-   <!-- Select de Ordenação -->
-   <div class="ordenacao-container">
-     <select class="ordenacao-select" 
-             [(ngModel)]="ordenacaoSelecionada"
-             (change)="aplicarOrdenacao()">
-       <option value="">Ordenar Por:</option>
-       <option value="alfabetica">Ordem Alfabética</option>
-       <option value="recentes">Mais Recentes</option>
-     </select>
-     <mat-icon class="ordenacao-icon">arrow_drop_down</mat-icon>
-   </div>
- </div>
+  <!-- Container dos controles -->
+  <div class="controles-direita">
+      <!-- Select de Ordenação -->
+      <div class="ordenacao-container">
+        <select class="ordenacao-select" 
+              [(ngModel)]="ordenacaoSelecionada"
+              (change)="aplicarOrdenacao()">
+          <option value="">Ordenar Por:</option>
+          <option value="alfabetica">Ordem Alfabética</option>
+          <option value="recentes">Mais Recentes</option>
+        </select>
+        <mat-icon class="ordenacao-icon">arrow_drop_down</mat-icon>
+      </div>
+
+      <button (click)="switchViewType('list')">
+        <mat-icon
+          class="icon-viewType"
+          aria-label="List View icon"
+          [ngStyle]="{ 'opacity': (viewType === 'list') ? opacityClicked : 0.6 }"
+        >view_headline</mat-icon>
+      </button>  
+      <button (click)="switchViewType('grid')">
+        <mat-icon
+          class="icon-viewType"
+          aria-label="Grid View icon"
+          [ngStyle]="{ 'opacity': (viewType === 'grid') ? opacityClicked : 0.6 }"
+        >grid_view</mat-icon>
+      </button>  
+    </div>
+  </div>
 
  <!-- Lista de todos os modelos -->
  <div class="explorar__modelos-container">
@@ -53,7 +61,7 @@
      </app-explorar-list>
    </ng-container>
 
-   <!-- Mensagem se, por algum motivo, a lista estiver vazia (improvável para esta página) -->
+   <!-- Mensagem se, por algum motivo, a lista estiver vazia -->
    <div *ngIf="modelosExibidos.length === 0" class="no-models-message">
      <h2>Nenhum modelo disponível para exploração.</h2>
      <p>Parece que não há dados para exibir no momento.</p>

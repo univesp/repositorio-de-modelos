@@ -209,7 +209,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
 
     // Fechar modal com ESC key
     @HostListener('document:keydown.escape', ['$event'])
-    fecharModalComEsc(event: KeyboardEvent) {
+    fecharModalComEsc(event: Event) {
       if (this.modalAberto) {
         this.fecharModalImagem();
       }

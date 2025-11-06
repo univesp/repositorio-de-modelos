@@ -1,0 +1,168 @@
+<mat-tab-group>
+  <!-- ABA SALVOS -->
+  <mat-tab label="Salvos">
+    <div class="tab-content">
+      <h1 class="tab-title">SALVOS</h1>
+
+      <div class="filtros-container">
+        <!-- Campo de Busca -->
+        <div class="filtro-item">
+          <input 
+            type="text"
+            [(ngModel)]="filtroTexto"
+            (input)="aplicarFiltros()"
+            placeholder="Buscar por título..."
+            class="filtro-input">
+        </div>
+
+        <!-- Select de ordenação -->
+        <div class="filtro-item">
+          <select 
+            [(ngModel)]="ordenacaoSelecionada"
+            (change)="aplicarFiltros()"
+            class="filtro-select">
+            
+            <option value="">Ordenar por:</option>
+            <option value="salvos-recentes">Salvos mais recentes</option>
+            <option value="salvos-antigos">Salvos mais antigos</option>
+            <option value="alfabetica">Ordem Alfabética</option>
+            <option value="mais-recentes">Mais Recentes (data)</option>
+            <option value="mais-antigos">Mais Antigos (data)</option>
+          </select>
+        </div>
+
+        <!-- Contador de resultados -->
+        <div class="filtro-item resultado-contador">
+          <span>Exibindo {{ modelosPaginados.length }} de {{ modelosFiltrados.length }} modelo(s)</span>
+          <span>Página {{ paginaAtual }} de {{ totalPaginas }}</span>
+        </div>
+      </div>
+
+      <div class="modelos-list">
+        <!-- Loading state -->
+        <div *ngIf="isLoading" class="loading-state">
+          <p>Carregando modelos salvos...</p>
+        </div>
+
+        <!-- Modelos Salvos Paginados -->
+        <div class="modelo-card" *ngFor="let modelo of modelosPaginados">
+          <div class="modelo-imagem">
+            <img src="{{ modelo.img_lg }}" alt="">
+          </div>
+
+          <div class="modelo-header">
+            <h2 class="modelo-titulo">{{ modelo.titulo }}</h2>
+            <p class="modelo-descricao">
+              {{ modelo.descricao }}
+            </p>
+            <div class="modelo-actions">
+              <button class="btn-info" (click)="verMaisInformacoes(modelo.id)">
+                <mat-icon>info</mat-icon>
+                Mais Informações
+              </button>
+              <button class="btn-material" (click)="irParaMaterial(modelo.link)">
+                <mat-icon>open_in_new</mat-icon>
+                Ir para o Material
+              </button>
+            </div>
+          </div>
+          
+          <div class="modelo-salvos-right-container">
+            <button 
+              class="btn-remover" 
+              (click)="removerDosSalvos(modelo.id, $event)"
+              matTooltip="Remover dos salvos"
+              *ngIf="authService.isSignedIn()"
+              title="Remover dos Salvos">
+              <mat-icon class="icon-bookmark">bookmark</mat-icon>
+            </button>
+
+            <span>{{ modelo.date }}</span>
+          </div>
+          
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" *ngIf="!isLoading && modelosFiltrados.length === 0">
+          <mat-icon>bookmark_border</mat-icon>
+          <p *ngIf="filtroTexto">Nenhum modelo encontrado para "{{ filtroTexto }}"</p>
+          <p *ngIf="!filtroTexto">Nenhum modelo salvo ainda</p>
+          <p class="empty-subtitle" *ngIf="filtroTexto">Tente ajustar sua busca</p>
+          <p class="empty-subtitle" *ngIf="!filtroTexto">Os modelos que você salvar aparecerão aqui</p>
+        </div>
+
+        <!-- PAGINAÇÃO -->
+        <div class="paginacao" *ngIf="totalPaginas > 1 && !isLoading">
+          <button class="paginacao-btn" 
+                  (click)="irParaPrimeiraPagina()"
+                  [disabled]="paginaAtual === 1">
+              &lt;&lt;
+          </button>
+      
+          <button class="paginacao-btn" 
+                  (click)="paginaAnterior()"
+                  [disabled]="paginaAtual === 1">
+              &lt; Anterior
+          </button>
+      
+          <span *ngFor="let pagina of paginasParaExibir" 
+                class="paginacao-numero"
+                [class.paginacao-ativa]="pagina === paginaAtual"
+                (click)="irParaPagina(pagina)">
+              {{ pagina }}
+          </span>
+      
+          <button class="paginacao-btn" 
+                  (click)="proximaPagina()"
+                  [disabled]="paginaAtual === totalPaginas">
+              Próxima &gt;
+          </button>
+      
+          <button class="paginacao-btn" 
+                  (click)="irParaUltimaPagina()"
+                  [disabled]="paginaAtual === totalPaginas">
+              &gt;&gt;
+          </button>
+        </div>
+      </div>
+    </div> 
+  </mat-tab>
+
+  <!-- ABA MEUS MODELOS -->
+  <mat-tab label="Meus Modelos"> 
+    <div class="tab-content">
+      <h1 class="tab-title">MEUS MODELOS</h1>
+
+      <div class="modelos-list">
+        <!-- Conteúdo dos Meus Modelos (por enquanto estático) -->
+        <div class="modelo-card">
+          <div class="modelo-header">
+            <h2 class="modelo-titulo">Matris auctor pharetra cursus et</h2>
+          </div>
+
+          <p class="modelo-descricao">
+            Condimentum enim praesent tincidunt nunc euismod. Sit scelerisque...
+          </p>
+
+          <div class="modelo-actions">
+            <button class="btn-info">
+              <mat-icon>info</mat-icon>
+              Mais Informações
+            </button>
+            <button class="btn-material">
+              <mat-icon>open_in_new</mat-icon>
+              Ir para o Material
+            </button>
+          </div>
+        </div>
+
+        <!-- Empty state para Meus Modelos -->
+        <div class="empty-state" *ngIf="false">
+          <mat-icon>add_circle_outline</mat-icon>
+          <p>Nenhum modelo criado ainda</p>
+          <p class="empty-subtitle">Os modelos que você criar aparecerão aqui</p>
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>

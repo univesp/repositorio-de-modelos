@@ -135,7 +135,10 @@
       </div>
     </div> 
 
-    <div class="user-page user-bookmarks">
+    <div class="user-page user-bookmarks" *ngIf="userData && !isLoading">
+
+      <app-user-favourites></app-user-favourites>
+
     </div>
   </div>
 </div> 

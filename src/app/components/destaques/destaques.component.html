@@ -17,7 +17,7 @@
         </div>
 
         <div>
-          <span (click)="toggleBookmark(modelo)" *ngIf="isLoggedIn">
+          <span (click)="toggleBookmark(modelo, $event)" *ngIf="isLoggedIn">
             <mat-icon 
               class="icon-bookmark" 
               aria-hidden="false" 

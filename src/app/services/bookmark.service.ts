@@ -1,38 +1,38 @@
 import { Injectable } from '@angular/core';
+import { SalvosService } from './salvos.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
-  providedIn: 'root', // Torna o serviço acessível em toda a aplicação
+  providedIn: 'root',
 })
 export class BookmarkService {
-  private STORAGE_KEY = 'modelosSalvos'; // Nome da chave no localStorage
+  constructor(
+    private salvosService: SalvosService,
+    private authService: AuthService
+  ) {}
 
-  // Retorna os IDs salvos no localStorage (como array de numbers)
-  private getSalvos(): string[] {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : []; // Se não tiver nada, retorna array vazio
-  }
-
-  // Salva o array de IDs no localStorage
-  private saveSalvos(ids: string[]) {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(ids));
-  }
-
-  // Verifica se um ID está presente no array salvo
+  // Verifica se um modelo está salvo
   isSalvo(id: string): boolean {
-    return this.getSalvos().includes(id);
+    return this.salvosService.isModeloSalvo(id);
   }
 
-  // Adiciona ou remove um ID dos salvos
+  // Alterna entre salvar e remover dos salvos
   toggle(id: string): void {
-    const salvos = this.getSalvos();
-    const index = salvos.indexOf(id);
-
-    if (index > -1) {
-      salvos.splice(index, 1); // Se já existe, remove
-    } else {
-      salvos.push(id); // Se não existe, adiciona
+    if (!this.authService.isSignedIn()) {
+      console.log('Usuário precisa estar logado para salvar modelos');
+      return;
     }
 
-    this.saveSalvos(salvos); // Atualiza no localStorage
+    if (this.isSalvo(id)) {
+      this.salvosService.removerDosSalvos(id).subscribe({
+        next: () => console.log('✅ Modelo removido dos salvos'),
+        error: (error) => console.error('❌ Erro ao remover dos salvos:', error)
+      });
+    } else {
+      this.salvosService.adicionarAosSalvos(id).subscribe({
+        next: () => console.log('✅ Modelo adicionado aos salvos'),
+        error: (error) => console.error('❌ Erro ao adicionar aos salvos:', error)
+      });
+    }
   }
 }

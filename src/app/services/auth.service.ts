@@ -23,7 +23,6 @@ export interface LoginApiResponse {
   imagemUrl: string | null;
   instituicao: string;
   cargo: string;
-  salvos: string[];
 }
 
 // O que NÓS SALVAMOS no localStorage (apenas token e type)
@@ -45,6 +44,7 @@ export interface UserProfile {
   imagemUrl: string | null;
   instituicao: string;
   cargo: string;
+  criados: string[];
   salvos: string[];
 }
 
@@ -148,12 +148,14 @@ export class AuthService {
     const currentProfile = this.userProfileSubject.value;
     
     if (currentProfile) {
-      const newProfile = {
-        ...currentProfile,
-        ...updatedProfile
-      };
-      this.userProfileSubject.next(newProfile);
-     // console.log('🔄 Perfil atualizado localmente:', updatedProfile);
+       // Usa setTimeout para sair do ciclo atual e evitar race conditions
+      setTimeout(() => {
+        const newProfile = {
+          ...currentProfile,
+          ...updatedProfile
+        };
+        this.userProfileSubject.next(newProfile);
+      }, 0);
     }
   }
 
@@ -174,8 +176,16 @@ export class AuthService {
 
   // MÉTODOS DE AUTENTICAÇÃO
   logout(): void {
+    console.log('🚪 AuthService: Fazendo logout...');
+    
+    // 1. PRIMEIRO limpa o perfil do usuário
+    this.userProfileSubject.next(null);
+    
+    // 2. DEPOIS limpa a autenticação
     this.setAuthentication(false);
     localStorage.removeItem('authData');
+    
+    console.log('✅ AuthService: Logout concluído');
   }
 
   private setAuthentication(status: boolean): void {

@@ -39,14 +39,42 @@ export class ExplorarGridComponent implements OnInit {
       this.isLoggedIn = loggedIn;
     });
 
+    //Sincroniza o estado dos bookmarks com o perfil do usuário
+    this.authService.userProfile$.subscribe(profile => {
+      if (profile && this.modelosList) {
+        this.sincronizarBookmarks(profile.salvos || []);
+      }
+    });
+
     this.inicializarPagina();
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['modelosList']) {
       this.paginaAtual = 1; // Reset para primeira página quando a lista muda
+
+      // NOVO: Sincroniza bookmarks quando a lista mudar
+      const currentProfile = this.authService.getCurrentUserProfile();
+      if (currentProfile && currentProfile.salvos) {
+        this.sincronizarBookmarks(currentProfile.salvos);
+      }
+
       this.inicializarPagina();
     }    
+  }
+
+  // Método para sincronizar os bookmarks visuais
+  private sincronizarBookmarks(idsSalvos: string[]): void {
+    this.modelosList.forEach(modelo => {
+      modelo.isSalvo = idsSalvos.includes(modelo.id);
+    });
+    
+    // Se estiver usando paginação, atualiza também os modelos paginados
+    if (this.modelosPaginados.length > 0) {
+      this.modelosPaginados.forEach(modelo => {
+        modelo.isSalvo = idsSalvos.includes(modelo.id);
+      });
+    }
   }
 
   /**
@@ -186,8 +214,18 @@ export class ExplorarGridComponent implements OnInit {
 
   toggleBookmark(modelo: Modelo, event: MouseEvent): void {
     event.stopPropagation(); // impede o clique no card
-    this.bookmarkService.toggle(modelo.id); // salva ou remove do localStorage
-    modelo.isSalvo = this.bookmarkService.isSalvo(modelo.id); // atualiza visual
+    
+    // Verifica se está logado
+    if (!this.isLoggedIn) {
+      console.log('Usuário precisa estar logado para salvar modelos');
+      return;
+    }
+  
+    // Usa o BookmarkService atualizado
+    this.bookmarkService.toggle(modelo.id);
+    
+    // ATUALIZAÇÃO: Não atualiza visualmente aqui - vai atualizar via AuthService
+    // O estado será sincronizado automaticamente quando o perfil for atualizado
   }
 
 }

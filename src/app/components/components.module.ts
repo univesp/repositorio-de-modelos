@@ -18,6 +18,7 @@ import { DestaquesComponent } from './destaques/destaques.component';
 import { ExplorarGridComponent } from "./explorar-grid/explorar-grid.component";
 import { ExplorarListComponent } from "./explorar-list/explorar-list.component";
 import { CustomSelectComponent } from './custom-select/custom-select.component';
+import { UserFavouritesComponent } from './user-favourites/user-favourites.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { CustomSelectComponent } from './custom-select/custom-select.component';
     ExplorarGridComponent,
     ExplorarListComponent,
     CustomSelectComponent,
+    UserFavouritesComponent,
   ],
   imports: [
     CommonModule,
@@ -52,6 +54,7 @@ import { CustomSelectComponent } from './custom-select/custom-select.component';
     ExplorarGridComponent,
     ExplorarListComponent,
     CustomSelectComponent,
+    UserFavouritesComponent,
   ]
 })
 export class ComponentsModule { }

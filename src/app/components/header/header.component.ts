@@ -1,9 +1,8 @@
-// header.component.ts - VERSÃO CORRIGIDA
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
-import { combineLatest, Subscription } from 'rxjs';
+import { combineLatest, Subject } from 'rxjs';
 import { NavigationEnd, Router, Event as RouterEvent } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { AuthService, UserProfile } from '../../services/auth.service'; 
 import { ImageService } from '../../services/image.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -24,12 +23,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   
   userProfile: UserProfile | null = null;
   imageBlobUrl: SafeUrl | null = null;
-  private userProfileSubscription: Subscription | null = null;
-  private imageSubscription: Subscription | null = null;
-  private authSubscription: Subscription | null = null;
 
   isImageLoading: boolean = false;
   hasImageError: boolean = false;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private modoExplorarService: ModoExplorarService,
@@ -42,82 +40,82 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.checkAuthStatus();
 
-    // CORREÇÃO: Observa mudanças de autenticação E carrega a imagem quando loga
-    this.authSubscription = this.authService.isAuthenticated().subscribe(isAuthenticated => {
-      this.isLoggedIn = isAuthenticated;
-      this.updateUserInfo();
-      
-      // CORREÇÃO IMPORTANTE: Se acabou de logar, força o carregamento da imagem
-      if (isAuthenticated && this.userProfile) {
-        //console.log('🔐 Login detectado, carregando imagem...');
-        this.loadProfileImage();
-      }
-    });
-
-    // Observa mudanças no perfil do usuário
-    this.userProfileSubscription = this.authService.userProfile$.subscribe(profile => {
-      this.userProfile = profile;
-      if (profile) {
-        this.userName = profile.nome;
-        this.userInitial = profile.nome.charAt(0).toUpperCase();
+    // CORREÇÃO: Usa takeUntil para todas as subscriptions
+    this.authService.isAuthenticated()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isAuthenticated => {
+        console.log('🔐 Header: Status autenticação ->', isAuthenticated);
+        this.isLoggedIn = isAuthenticated;
         
-        // CORREÇÃO: Sempre carrega a imagem quando o perfil é atualizado
-       // console.log('🔄 Perfil atualizado no header, carregando imagem...');
-        this.loadProfileImage();
-      } else {
-        this.userName = '';
-        this.userInitial = '';
-        this.imageBlobUrl = null;
-      }
-    });
+        if (isAuthenticated) {
+          this.authService.getUserProfile().subscribe();
+        } else {
+          this.resetUserInfo();
+        }
+      });
 
-    // Resto do código permanece igual...
+    this.authService.userProfile$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(profile => {
+        console.log('👤 Header: Perfil atualizado ->', profile ? 'Com perfil' : 'Sem perfil');
+        
+        if (profile) {
+          this.userProfile = profile;
+          this.userName = profile.nome;
+          this.userInitial = profile.nome.charAt(0).toUpperCase();
+          this.loadProfileImage();
+        } else {
+          this.resetUserInfo();
+        }
+      });
+
+    // Router events com takeUntil
     this.router.events
-    .pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd)
-    )
-    .subscribe((event: NavigationEnd) => {
-      const url = event.urlAfterRedirects;
-      
-      if (url === '/') {
-        this.modoExplorarService.setModoExplorarAtivo(false);
-        this.modoExplorarService.setModeloId(null);
-        this.modoExplorarService.setFiltrosAtuais({});
-        this.lastListPageUrl = null;
-      } else if (url.startsWith('/resultados')) {
-        this.modoExplorarService.setModoExplorarAtivo(true);
-        this.modoExplorarService.setModeloId(null);
-        this.lastListPageUrl = url;
-      } else if (url.startsWith('/explorar')) {
-        this.modoExplorarService.setModoExplorarAtivo(true);
-        this.modoExplorarService.setModeloId(null);
-        this.modoExplorarService.setFiltrosAtuais({});
-        this.lastListPageUrl = url;
-      }
-      else if (url.startsWith('/cadastro-novo-modelo')) {
-        this.modoExplorarService.setModoExplorarAtivo(false);
-        this.modoExplorarService.setModeloId(null);
-        this.modoExplorarService.setFiltrosAtuais({});
-        this.lastListPageUrl = url;
-      }
-      else if (url.startsWith('/perfil')) {
-        this.modoExplorarService.setModoExplorarAtivo(false);
-        this.modoExplorarService.setModeloId(null);
-        this.modoExplorarService.setFiltrosAtuais({});
-      }
-      else {
-        this.modoExplorarService.setModoExplorarAtivo(false);
-      }
-    });
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((event: NavigationEnd) => {
+        const url = event.urlAfterRedirects;
+        
+        if (url === '/') {
+          this.modoExplorarService.setModoExplorarAtivo(false);
+          this.modoExplorarService.setModeloId(null);
+          this.modoExplorarService.setFiltrosAtuais({});
+          this.lastListPageUrl = null;
+        } else if (url.startsWith('/resultados')) {
+          this.modoExplorarService.setModoExplorarAtivo(true);
+          this.modoExplorarService.setModeloId(null);
+          this.lastListPageUrl = url;
+        } else if (url.startsWith('/explorar')) {
+          this.modoExplorarService.setModoExplorarAtivo(true);
+          this.modoExplorarService.setModeloId(null);
+          this.modoExplorarService.setFiltrosAtuais({});
+          this.lastListPageUrl = url;
+        } else if (url.startsWith('/cadastro-novo-modelo')) {
+          this.modoExplorarService.setModoExplorarAtivo(false);
+          this.modoExplorarService.setModeloId(null);
+          this.modoExplorarService.setFiltrosAtuais({});
+          this.lastListPageUrl = url;
+        } else if (url.startsWith('/perfil')) {
+          this.modoExplorarService.setModoExplorarAtivo(false);
+          this.modoExplorarService.setModeloId(null);
+          this.modoExplorarService.setFiltrosAtuais({});
+        } else {
+          this.modoExplorarService.setModoExplorarAtivo(false);
+        }
+      });
 
-    // Lógica para gerar os breadcrumbs
+    // Breadcrumbs com takeUntil
     combineLatest([
       this.modoExplorarService.modoExplorarAtivo$,
       this.modoExplorarService.modeloId$,
       this.router.events.pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd)
       )
-    ]).subscribe(([explorarAtivo, modeloId, navEvent]) => {
+    ])
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(([explorarAtivo, modeloId, navEvent]) => {
       const crumbs = ['Home'];
       const currentUrl = navEvent.urlAfterRedirects;
 
@@ -129,8 +127,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           crumbs.push('Resultados');
         } else if (this.lastListPageUrl?.startsWith('/explorar')) {
           crumbs.push('Explorar');
-        }
-        else if (this.lastListPageUrl?.startsWith('/cadastro-novo-modelo')) {
+        } else if (this.lastListPageUrl?.startsWith('/cadastro-novo-modelo')) {
           crumbs.push('Cadastro de Modelo');
         }
         crumbs.push(`Modelo #${idFromUrl}`);
@@ -141,11 +138,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         } else if (currentUrl.startsWith('/explorar')) {
           crumbs.push('Explorar');
           this.lastListPageUrl = currentUrl;
-        }
-        else if (currentUrl.startsWith('/cadastro-novo-modelo')) {
+        } else if (currentUrl.startsWith('/cadastro-novo-modelo')) {
           crumbs.push('Cadastro de Modelo');
-        }
-        else if (currentUrl.startsWith('/perfil')) {
+        } else if (currentUrl.startsWith('/perfil')) {
           crumbs.push('Perfil');
         }
       }
@@ -155,54 +150,50 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Limpa todas as subscriptions
-    if (this.userProfileSubscription) {
-      this.userProfileSubscription.unsubscribe();
-    }
-    if (this.imageSubscription) {
-      this.imageSubscription.unsubscribe();
-    }
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
+    // CORREÇÃO: Limpa todas as subscriptions de uma vez
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private resetUserInfo(): void {
+    console.log('🧹 Header: Resetando informações do usuário');
+    this.userProfile = null;
+    this.userName = '';
+    this.userInitial = '';
+    this.imageBlobUrl = null;
+    this.isImageLoading = false;
+    this.hasImageError = false;
   }
 
   private loadProfileImage(): void {
-    // Limpa subscription anterior
+    // Limpa subscription anterior se existir
     if (this.imageSubscription) {
       this.imageSubscription.unsubscribe();
     }
 
     if (this.userProfile?.mongoId && this.userHasImage()) {
-     // console.log('🖼️ Header: Carregando imagem para:', this.userProfile.mongoId);
-
-       // Inicia loading
-       this.isImageLoading = true;
-       this.hasImageError = false;
+      this.isImageLoading = true;
+      this.hasImageError = false;
       
-      this.imageSubscription = this.imageService.getProfileImage(this.userProfile.mongoId).subscribe({
-        next: (secureUrl) => {
-          this.imageBlobUrl = secureUrl;
-          this.isImageLoading = false;
-        //  console.log('✅ Header: Imagem carregada com sucesso');
-        },
-        error: (error) => {
-          console.error('❌ Header: Erro ao carregar imagem:', error);
-          this.imageBlobUrl = null;
-          this.isImageLoading = false;
-          this.hasImageError = true;
-          
-          // Se for 404, o usuário realmente não tem imagem
-          if (error.status === 404) {
-           // console.log('ℹ️ Header: Usuário não tem imagem (404)');
+      // CORREÇÃO: Também usa takeUntil para a subscription da imagem
+      this.imageService.getProfileImage(this.userProfile.mongoId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (secureUrl) => {
+            this.imageBlobUrl = secureUrl;
+            this.isImageLoading = false;
+          },
+          error: (error) => {
+            console.error('❌ Header: Erro ao carregar imagem:', error);
+            this.imageBlobUrl = null;
+            this.isImageLoading = false;
+            this.hasImageError = true;
           }
-        }
-      });
+        });
     } else {
       this.imageBlobUrl = null;
       this.isImageLoading = false;
       this.hasImageError = false;
-     // console.log('ℹ️ Header: Usuário não tem imagem ou mongoId não disponível');
     }
   }
 
@@ -213,47 +204,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private checkAuthStatus(): void {
     this.isLoggedIn = this.authService.isSignedIn();
+    console.log('🔍 Header: Status inicial ->', this.isLoggedIn);
     this.updateUserInfo();
   }
 
-  // MÉTODO ATUALIZADO: Mais inteligente
   private updateUserInfo(): void {
-    if(this.isLoggedIn) {
-      // Se já temos um perfil (via userProfile$), não precisa buscar de novo
+    if (this.isLoggedIn) {
+      console.log('🔄 Header: Atualizando informações do usuário logado');
       const currentProfile = this.authService.getCurrentUserProfile();
       
       if (currentProfile) {
-        // Já temos o perfil em cache, usa ele
         this.userProfile = currentProfile;
         this.userName = currentProfile.nome;
         this.userInitial = currentProfile.nome.charAt(0).toUpperCase();
-        
-        // CORREÇÃO: Carrega a imagem imediatamente
-       // console.log('👤 Header: Perfil em cache, carregando imagem...');
         this.loadProfileImage();
       } else {
-        // Precisa buscar o perfil
-        this.authService.getUserProfile().subscribe({
-          next: (profile) => {
-            // O userProfile$ vai ser atualizado automaticamente pelo AuthService
-            // que por sua vez vai disparar loadProfileImage()
-          },
-          error: () => {
-            this.userName = 'Usuário';
-            this.userInitial = 'U';
-            this.imageBlobUrl = null;
-          }
-        });
+        this.authService.getUserProfile().subscribe();
       }
     } else {
-      this.userName = '';
-      this.userInitial = '';
-      this.imageBlobUrl = null;
-      this.userProfile = null;
+      this.resetUserInfo();
     }
   }
 
-  // Métodos existentes permanecem iguais...
   goToLogin(): void {
     this.router.navigate(['/login']);
   }
@@ -263,12 +235,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
+    console.log('🚪 Header: Iniciando logout...');
     this.authService.logout();
-    this.isLoggedIn = false;
-    this.userName = '';
-    this.userInitial = '';
-    this.imageBlobUrl = null;
-    this.userProfile = null;
     this.router.navigate(['/']);
   }
 
@@ -278,31 +246,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onClickHome() {
-    // Primeiro, para todas as subscriptions que podem interferir
-    if (this.userProfileSubscription) {
-      this.userProfileSubscription.unsubscribe();
-    }
-    if (this.imageSubscription) {
-      this.imageSubscription.unsubscribe();
-    }
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
-  
-    // Reseta o serviço de modo explorar COMPLETAMENTE
+    // CORREÇÃO: Não precisa mais desinscrever manualmente - o takeUntil cuida disso
     this.modoExplorarService.resetAll();
-    
-    // Limpa qualquer estado residual
     this.lastListPageUrl = null;
     
-    // Navega para home de forma CLEAN
     this.router.navigate(['/'], {
       replaceUrl: true,
       queryParams: {},
       queryParamsHandling: ''
-    }).then(() => {
-      // Força um reload se necessário
-      window.dispatchEvent(new Event('locationchange'));
     });
   }
+
+  // CORREÇÃO: Adiciona a propriedade imageSubscription que estava faltando
+  private imageSubscription: any;
 }

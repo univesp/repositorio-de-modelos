@@ -184,14 +184,11 @@
           (cancelar)="onCancelarCriacao()">
         </app-criar-usuario>
         
-        <!-- VISUALIZAR USUÁRIOS (placeholder por enquanto) -->
-        <div *ngSwitchCase="'visualizar-usuarios'" class="placeholder-view">
-          <h3>Visualizar Usuários</h3>
-          <p>Esta funcionalidade será implementada em breve.</p>
-          <button class="btn-voltar" (click)="showFavoritos()">
-            Voltar para Meus Salvos
-          </button>
-        </div>
+        <!-- VISUALIZAR USUÁRIOS -->
+        <app-visualizar-usuarios 
+          *ngSwitchCase="'visualizar-usuarios'"
+          (cancelar)="showFavoritos()">
+        </app-visualizar-usuarios>
         
       </ng-container>
 

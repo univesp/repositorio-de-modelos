@@ -20,6 +20,7 @@ import { ExplorarListComponent } from "./explorar-list/explorar-list.component";
 import { CustomSelectComponent } from './custom-select/custom-select.component';
 import { UserFavouritesComponent } from './user-favourites/user-favourites.component';
 import { CriarUsuarioComponent } from './criar-usuario/criar-usuario.component';
+import { VisualizarUsuariosComponent } from './visualizar-usuarios/visualizar-usuarios.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { CriarUsuarioComponent } from './criar-usuario/criar-usuario.component';
     CustomSelectComponent,
     UserFavouritesComponent,
     CriarUsuarioComponent,
+    VisualizarUsuariosComponent,
   ],
   imports: [
     CommonModule,
@@ -59,6 +61,7 @@ import { CriarUsuarioComponent } from './criar-usuario/criar-usuario.component';
     CustomSelectComponent,
     UserFavouritesComponent,
     CriarUsuarioComponent,
+    VisualizarUsuariosComponent,
   ]
 })
 export class ComponentsModule { }

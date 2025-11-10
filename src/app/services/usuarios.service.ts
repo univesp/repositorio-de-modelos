@@ -35,6 +35,15 @@ export interface Usuario {
   credentialsNonExpired: boolean;
 }
 
+export interface AtualizarUsuario {
+  firstname: string;
+  lastname: string;
+  role: string;
+  instituicao: string;
+  cargo: string;
+  password?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -67,42 +76,42 @@ export class UsuariosService {
   /**
    * Lista todos os usuários (apenas ADMIN)
    */
-  /*
+  
   listarUsuarios(): Observable<Usuario[]> {
     const headers = this.getAuthHeaders();
     return this.http.get<Usuario[]>(this.apiUrl, { headers });
   }
-  */
+  
 
   /**
    * Busca um usuário específico por ID
    */
-  /*
+  
   buscarUsuarioPorId(id: string): Observable<Usuario> {
     const headers = this.getAuthHeaders();
     return this.http.get<Usuario>(`${this.apiUrl}/${id}`, { headers });
   }
-  */
+  
 
   /**
    * Atualiza um usuário
    */
-  /*
-  atualizarUsuario(id: string, dados: Partial<NovoUsuario>): Observable<Usuario> {
+  
+  atualizarUsuario(id: string, dados: AtualizarUsuario): Observable<Usuario> {
     const headers = this.getAuthHeaders();
     return this.http.put<Usuario>(`${this.apiUrl}/${id}`, dados, { headers });
   }
-  */
+  
 
   /**
    * Remove um usuário
    */
-  /*
+  
   removerUsuario(id: string): Observable<any> {
     const headers = this.getAuthHeaders();
     return this.http.delete(`${this.apiUrl}/${id}`, { headers });
   }
-  */
+  
 
   /**
    * Helper para obter headers de autenticação

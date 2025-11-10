@@ -61,8 +61,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
         
         if (profile) {
           this.userProfile = profile;
-          this.userName = profile.nome;
-          this.userInitial = profile.nome.charAt(0).toUpperCase();
+          this.userName = this.getUserName(profile);
+          this.userInitial = this.getUserInitial(profile);
           this.loadProfileImage();
         } else {
           this.resetUserInfo();
@@ -153,6 +153,37 @@ export class HeaderComponent implements OnInit, OnDestroy {
     // CORREÇÃO: Limpa todas as subscriptions de uma vez
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+   // Método para obter o nome completo
+   private getUserName(profile: UserProfile): string {
+    // Se tiver nome, usa nome, senão usa firstname + lastname
+    if (profile.nome && profile.nome.trim() !== '') {
+      return profile.nome;
+    } else if (profile.firstname && profile.lastname) {
+      return `${profile.firstname} ${profile.lastname}`;
+    } else if (profile.firstname) {
+      return profile.firstname;
+    } else {
+      // Fallback: usa o email sem o domínio
+      return profile.email.split('@')[0];
+    }
+  }
+
+  // Método para obter a inicial
+  private getUserInitial(profile: UserProfile): string {
+    // Se tiver nome, usa a primeira letra do nome
+    if (profile.nome && profile.nome.trim() !== '') {
+      return profile.nome.charAt(0).toUpperCase();
+    } 
+    // Se tiver firstname, usa a primeira letra do firstname
+    else if (profile.firstname) {
+      return profile.firstname.charAt(0).toUpperCase();
+    } 
+    // Fallback: usa a primeira letra do email
+    else {
+      return profile.email.charAt(0).toUpperCase();
+    }
   }
 
   private resetUserInfo(): void {

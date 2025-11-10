@@ -1,0 +1,131 @@
+<div class="criar-usuario-container">
+  <div class="criar-usuario-header">
+    <h2>Criar Novo Usuário</h2>
+    <p>Preencha os dados abaixo para criar um novo usuário no sistema</p>
+  </div>
+
+  <form [formGroup]="usuarioForm" (ngSubmit)="onSubmit()" class="usuario-form">
+    
+    <!-- Nome e Sobrenome -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="firstname">Nome *</label>
+        <input 
+          type="text" 
+          id="firstname" 
+          formControlName="firstname"
+          placeholder="Digite o nome"
+          [class.error]="firstname?.invalid && firstname?.touched">
+        <div class="error-message" *ngIf="firstname?.invalid && firstname?.touched">
+          <span *ngIf="firstname?.errors?.['required']">Nome é obrigatório</span>
+          <span *ngIf="firstname?.errors?.['minlength']">Mínimo 2 caracteres</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lastname">Sobrenome *</label>
+        <input 
+          type="text" 
+          id="lastname" 
+          formControlName="lastname"
+          placeholder="Digite o sobrenome"
+          [class.error]="lastname?.invalid && lastname?.touched">
+        <div class="error-message" *ngIf="lastname?.invalid && lastname?.touched">
+          <span *ngIf="lastname?.errors?.['required']">Sobrenome é obrigatório</span>
+          <span *ngIf="lastname?.errors?.['minlength']">Mínimo 2 caracteres</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email">Email Institucional *</label>
+      <input 
+        type="email" 
+        id="email" 
+        formControlName="email"
+        placeholder="usuario@exemplo.com"
+        [class.error]="email?.invalid && email?.touched">
+      <div class="error-message" *ngIf="email?.invalid && email?.touched">
+        <span *ngIf="email?.errors?.['required']">Email é obrigatório</span>
+        <span *ngIf="email?.errors?.['email']">Digite um email válido</span>
+      </div>
+    </div>
+
+    <!-- Senha -->
+    <div class="form-group">
+      <label for="password">Senha *</label>
+      <input 
+        type="password" 
+        id="password" 
+        formControlName="password"
+        placeholder="Digite a senha"
+        [class.error]="password?.invalid && password?.touched">
+      <div class="error-message" *ngIf="password?.invalid && password?.touched">
+        <span *ngIf="password?.errors?.['required']">Senha é obrigatória</span>
+        <span *ngIf="password?.errors?.['minlength']">Mínimo 6 caracteres</span>
+      </div>
+    </div>
+
+    <!-- Cargo e Nível de Acesso -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="cargo">Cargo *</label>
+        <input 
+          type="text" 
+          id="cargo" 
+          formControlName="cargo"
+          placeholder="Ex: Professor, Coordenador"
+          [class.error]="cargo?.invalid && cargo?.touched">
+        <div class="error-message" *ngIf="cargo?.invalid && cargo?.touched">
+          Cargo é obrigatório
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="role">Nível de Acesso *</label>
+        <select 
+          id="role" 
+          formControlName="role"
+          [class.error]="role?.invalid && role?.touched">
+          <option value="USER">Editor</option>
+          <option value="ADMIN">Administrador</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Instituição -->
+    <div class="form-group">
+      <label for="instituicao">Instituição *</label>
+      <input 
+        type="text" 
+        id="instituicao" 
+        formControlName="instituicao"
+        placeholder="Nome da instituição"
+        [class.error]="instituicao?.invalid && instituicao?.touched">
+      <div class="error-message" *ngIf="instituicao?.invalid && instituicao?.touched">
+        Instituição é obrigatória
+      </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="form-actions">
+      <button 
+        type="button" 
+        class="btn-cancel" 
+        (click)="onCancel()"
+        [disabled]="isLoading">
+        Cancelar
+      </button>
+      <button 
+        type="submit" 
+        class="btn-submit" 
+        [disabled]="isLoading || usuarioForm.invalid">
+        <div class="button-content">
+          <span *ngIf="isLoading" class="loading-spinner-small"></span>
+          <span>{{ isLoading ? 'Criando...' : 'Criar Usuário' }}</span>
+        </div>
+      </button>
+    </div>
+  </form>
+</div>

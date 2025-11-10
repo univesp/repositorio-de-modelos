@@ -118,7 +118,18 @@ export class UserFavouritesComponent implements OnInit {
   }
 
   private rolarParaTopo(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      const elemento = document.querySelector('.user-bookmarks');
+      if (elemento) {
+        elemento.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      } else {
+        // Fallback para topo da página
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
   }
 
   // Carrega os modelos completos baseado nos IDs salvos

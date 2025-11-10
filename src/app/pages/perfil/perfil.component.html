@@ -98,7 +98,7 @@
 
         <div class="profile-userName">
           <span>{{ getUserName() }}</span>
-          <span>{{ userData.nome }}</span>
+          <span>{{ userData.firstname + ' ' + userData.lastname }}</span>
         </div>
       </div>
 
@@ -127,6 +127,41 @@
         </div>
       </div>
 
+      <span class="title-admin-tools"
+            *ngIf="isLoggedIn && (authService.userProfile$ | async)?.role === 'ADMIN'">
+        Ferramentas do Administrador
+      </span>
+      <div class="profile-other-info-box"
+           *ngIf="isLoggedIn && (authService.userProfile$ | async)?.role === 'ADMIN'">
+        
+          <div class="admin-buttons">
+            <button 
+              class="admin-btn" 
+              [class.active]="currentView === 'favoritos'"
+              (click)="showFavoritos()">
+              <mat-icon>bookmark</mat-icon>
+              <span>Meus Salvos</span>
+            </button>
+            
+            <button 
+              class="admin-btn" 
+              [class.active]="currentView === 'criar-usuario'"
+              (click)="showCriarUsuario()">
+              <mat-icon>person_add</mat-icon>
+              <span>Criar novo usuário</span>
+            </button>
+            
+            <button 
+              class="admin-btn" 
+              [class.active]="currentView === 'visualizar-usuarios'"
+              (click)="showVisualizarUsuarios()">
+              <mat-icon>people</mat-icon>
+              <span>Visualizar usuários</span>
+            </button>
+          </div>
+
+      </div>
+
       <div class="logout-perfil-page">
         <button mat-menu-item (click)="logout()">
           <mat-icon>logout</mat-icon>
@@ -137,7 +172,28 @@
 
     <div class="user-page user-bookmarks" *ngIf="userData && !isLoading">
 
-      <app-user-favourites></app-user-favourites>
+      <ng-container [ngSwitch]="currentView">
+    
+        <!-- VIEW PADRÃO - FAVORITOS -->
+        <app-user-favourites *ngSwitchCase="'favoritos'"></app-user-favourites>
+        
+        <!-- CRIAR USUÁRIO -->
+        <app-criar-usuario 
+          *ngSwitchCase="'criar-usuario'"
+          (usuarioCriado)="onUsuarioCriado()"
+          (cancelar)="onCancelarCriacao()">
+        </app-criar-usuario>
+        
+        <!-- VISUALIZAR USUÁRIOS (placeholder por enquanto) -->
+        <div *ngSwitchCase="'visualizar-usuarios'" class="placeholder-view">
+          <h3>Visualizar Usuários</h3>
+          <p>Esta funcionalidade será implementada em breve.</p>
+          <button class="btn-voltar" (click)="showFavoritos()">
+            Voltar para Meus Salvos
+          </button>
+        </div>
+        
+      </ng-container>
 
     </div>
   </div>

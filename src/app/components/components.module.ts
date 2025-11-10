@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CommonModule } from "@angular/common";
 
@@ -19,6 +19,7 @@ import { ExplorarGridComponent } from "./explorar-grid/explorar-grid.component";
 import { ExplorarListComponent } from "./explorar-list/explorar-list.component";
 import { CustomSelectComponent } from './custom-select/custom-select.component';
 import { UserFavouritesComponent } from './user-favourites/user-favourites.component';
+import { CriarUsuarioComponent } from './criar-usuario/criar-usuario.component';
 
 @NgModule({
   declarations: [
@@ -34,13 +35,15 @@ import { UserFavouritesComponent } from './user-favourites/user-favourites.compo
     ExplorarListComponent,
     CustomSelectComponent,
     UserFavouritesComponent,
+    CriarUsuarioComponent,
   ],
   imports: [
     CommonModule,
     PipesModule,
     AngularMaterialModule,
     BrowserAnimationsModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
   ],
   exports: [
     HeaderComponent,
@@ -55,6 +58,7 @@ import { UserFavouritesComponent } from './user-favourites/user-favourites.compo
     ExplorarListComponent,
     CustomSelectComponent,
     UserFavouritesComponent,
+    CriarUsuarioComponent,
   ]
 })
 export class ComponentsModule { }

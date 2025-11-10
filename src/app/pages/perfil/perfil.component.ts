@@ -24,13 +24,15 @@ export class PerfilComponent implements OnInit, OnDestroy {
   isImageLoading: boolean = false;
   hasImageError: boolean = false;
   isLoggedIn: boolean = false;
+
+  currentView: 'favoritos' | 'criar-usuario' | 'visualizar-usuarios' = 'favoritos';
   
   private imageSubscription: Subscription | null = null;
   private userProfileSubscription: Subscription | null = null;
 
   constructor(
     private router: Router,
-    private authService: AuthService,
+    public authService: AuthService,
     private imageService: ImageService,
     private sanitizer: DomSanitizer
   ) {}
@@ -236,6 +238,30 @@ export class PerfilComponent implements OnInit, OnDestroy {
     });
   }
 
+  showFavoritos(): void {
+    this.currentView = 'favoritos';
+    this.rolarParaConteudo();
+  }
+
+  showCriarUsuario(): void {
+    this.currentView = 'criar-usuario';
+    this.rolarParaConteudo();
+  }
+
+  showVisualizarUsuarios(): void {
+    this.currentView = 'visualizar-usuarios';
+    this.rolarParaConteudo();
+  }
+
+  onUsuarioCriado(): void {
+    // Pode adicionar lógica adicional se necessário
+    this.showFavoritos(); // Volta para favoritos após criar
+  }
+
+  onCancelarCriacao(): void {
+    this.showFavoritos();
+  }
+
   toggleImageMenu(): void {
     this.showImageMenu = !this.showImageMenu;
   }
@@ -253,5 +279,21 @@ export class PerfilComponent implements OnInit, OnDestroy {
   getUserInitial(): string {
     if(!this.userData?.nome) return 'U';
     return this.userData.nome.charAt(0).toUpperCase();
+  }
+
+  // MÉTODO - Scroll para área específica
+  private rolarParaConteudo(): void {
+    setTimeout(() => {
+      const elemento = document.querySelector('.user-bookmarks');
+      if (elemento) {
+        elemento.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      } else {
+        // Fallback para topo da página
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
   }
 }

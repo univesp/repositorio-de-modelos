@@ -604,5 +604,29 @@ export const Modeloslist = [
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
     licenca: 'Alguns direitos reservados'
+  },
+  {
+    id: '021',
+    titulo: "Modelo EP Sed",
+    recurso: "Programação",
+    date: "Out 22, 2024",
+    curso: ['Engenharia de Computação', 'Ciência de Dados', 'Tecnologia da Informação'],
+    disciplina: "EDU400",
+    area: ['Tecnologia da Informação'],
+    categorias: ["Jogo", "Interativo", "RA", "RV"],
+    tipo: ['Interativo', 'Abas', 'Accordions', 'Lightbox'],
+    img_sm: "https://assets.univesp.br/repositorio-de-modelos/card-sm3.png",
+    img_md: "https://assets.univesp.br/repositorio-de-modelos/img-md2.png",
+    img_lg: "https://assets.univesp.br/repositorio-de-modelos/card-lg8.png",
+    descricao: "Curabitur ornare magna arcu, eu vehicula nibh tincidunt eu. Duis auctor tortor at ornare consectetur. Vestibulum mi dolor, feugiat eget euismod id, euismod et orci. Proin consequat, est eu congue mattis...",
+    autor: "Amet Lorem",
+    formato: 'Recurso de Programação',
+    tecnologia: ['HTML5'],
+    isDestaque: false,
+    hasMobile: true,
+    hasCodigo: true,
+    hasEquipe: false,
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    licenca: 'Uso educacional'
   }
 ];

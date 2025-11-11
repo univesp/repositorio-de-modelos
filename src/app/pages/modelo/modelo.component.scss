@@ -83,7 +83,8 @@
     font-size: 36px;
     margin-top: 5px;
     margin-bottom: 5px;
-    color: #595959;
+    color: #555;
+    font-weight: 300;
 }
 
 .title-and-bookmark {
@@ -119,16 +120,17 @@
     padding: 30px;
     border-radius: 5px;
     box-shadow: 0px 5px 5px #d9d7d7;
-    color: #595959;
+    color: #555;
   }
 
   .modelo-info-descricao > h3 {
-    font-size: 42px;
-    font-weight: lighter;
+    font-size: 46px;
+    color: #555;
+    font-weight: 300;
   }
 
   .modelo-info-descricao > div {
-    color: #333;
+    color: #555;
   }
 
   .modelo-col-2 {
@@ -163,6 +165,7 @@
 
   .other-info-title {
     font-weight: bold;
+    color: #000;
   }
 
   .modelo-equipe-responsavel {
@@ -253,9 +256,9 @@
 
     &__titulo {
         font-size: 46px;
-        color: #595959;
+        color: #555;
         margin-bottom: 30px;
-        font-weight: 600;
+        font-weight: 300;
     }
 
     &__lista {

@@ -21,7 +21,7 @@ export class CarouselComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.slides = this.modelosList.slice(0, 2);
+    this.slides = this.modelosList.slice(0, 5);
   }
   
   
@@ -32,6 +32,8 @@ export class CarouselComponent implements OnInit {
     "autoplaySpeed": 5000,
     "pauseOnHover": true,
     "infinite": true,
+    "dots": true,
+    "dotsClass": "slick-dots custom-dots",
     "responsive": [
       {
         "breakpoint": 992,
@@ -39,7 +41,8 @@ export class CarouselComponent implements OnInit {
           "arrows": true,
           "infinite": true,
           "slidesToShow": 1,
-          "slidesToScroll": 1
+          "slidesToScroll": 1,
+          "dots": true
         }
       }
     ]

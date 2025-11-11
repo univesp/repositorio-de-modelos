@@ -18,7 +18,7 @@ html, body {
 
 body {
   margin: 0;
-  font-family: 'Roboto', "Helvetica Neue", sans-serif;
+  font-family: 'Lexend Deca', sans-serif;
 }
 
 a {
@@ -27,6 +27,37 @@ a {
 
 .slick-prev:before, .slick-next:before {
   color: #000 !important;
+  z-index: 1000 !important;
+}
+
+.carousel > button.slick-next::before, .carousel > button.slick-prev::before {
+  font-size: 60px;
+  position: relative;
+  color: #fff !important;
+}
+
+.carousel > button.slick-next::before {
+  left: 17px;
+}
+
+.carousel > button.slick-prev::before {
+  right: 17px;
+}
+
+.carousel .slick-prev,
+.carousel .slick-next {
+  width: 80px !important;  /* Área clicável maior */
+  height: 80px !important; /* Área clicável maior */
+  z-index: 1000 !important;
+  cursor: pointer !important;
+}
+
+.carousel .slick-prev {
+  left: 10px !important; /* Ajuste fino na posição */
+}
+
+.carousel .slick-next {
+  right: 10px !important; /* Ajuste fino na posição */
 }
 
 .novidades-cards > button.slick-next::before, .novidades-cards > button.slick-prev::before {

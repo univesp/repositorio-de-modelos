@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { Modeloslist } from '../../data/modelos-list';
 import { FilterConfigList } from '../../data/filterConfig-list'; 
 import { FiltroConfig } from '../../interfaces/filter/filterConfig.interface';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
@@ -17,6 +18,8 @@ export class FilterComponent implements OnInit, OnDestroy {
   authSub!: Subscription;
 
   isLoggedIn: boolean = false;
+
+  qtdeModelos: number = Modeloslist.length;
 
   ngOnInit(): void {
     this.filtrosSub = this.modoExplorarService.filtrosAtuais$.subscribe(filtros => {
@@ -279,6 +282,31 @@ export class FilterComponent implements OnInit, OnDestroy {
       this.filtros[f.key] = f.placeholder;
     });
     this.emitirMudancas();
+  }
+
+  // Método para formatar o texto do placeholder
+  getTextoPlaceholder(): string {
+    const total = this.qtdeModelos;
+    
+    // Regra 1: Se for 5 ou menos
+    if (total <= 5) {
+      return `Explore ${total} modelo${total !== 1 ? 's' : ''} disponível${total !== 1 ? 's' : ''}`;
+    }
+    
+    // Regra 2: Se for exatamente 100
+    if (total === 100) {
+      return 'Explore mais de 100 modelos disponíveis...';
+    }
+    
+    // Regra 3: Se for menor que 100 (arredonda para baixo de 5 em 5)
+    if (total < 100) {
+      const arredondado = Math.floor((total - 1) / 5) * 5;
+      return `Explore mais de ${arredondado} modelos disponíveis...`;
+    }
+    
+    // Regra 4: Se for mais de 100 (arredonda para baixo de 50 em 50)
+    const arredondado = Math.floor((total - 1) / 50) * 50;
+    return `Explore mais de ${arredondado} modelos disponíveis...`;
   }
   
 }

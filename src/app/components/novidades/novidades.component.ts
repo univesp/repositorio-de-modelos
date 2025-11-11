@@ -21,7 +21,7 @@ export class NovidadesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.cards = this.modelosList.slice(0, 10);
+    this.cards = this.modelosList.slice(0, 5);
   }
 
   

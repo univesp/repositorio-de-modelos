@@ -1,5 +1,92 @@
 .carousel-container {
   margin-top: 50px;
+  position: relative;
+  height: 520px;
+}
+
+// Estilos para os dots (bolinhas) - VERSÃO CORRIGIDA
+::ng-deep .custom-dots {
+  position: absolute !important;
+  bottom: -70px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px;
+  list-style: none !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  width: auto !important;
+  
+  li {
+    margin: 0 !important;
+    position: relative !important;
+    
+    button {
+      width: 15px !important;
+      height: 15px !important;
+      border-radius: 50% !important;
+      border: 2px solid #fff !important;
+      background: transparent !important;
+      cursor: pointer;
+      font-size: 0 !important;
+      padding: 0 !important;
+      transition: all 0.3s ease;
+      display: block !important;
+      position: relative !important;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.5) !important;
+      }
+      
+      // Remove o conteúdo padrão do Slick
+      &::before {
+        content: none !important;
+      }
+    }
+    
+    &.slick-active {
+      button {
+        background: #fff !important;
+        transform: scale(1.2);
+        
+        // Remove qualquer conteúdo interno do Slick
+        &::before {
+          content: none !important;
+          opacity: 0 !important;
+        }
+      }
+    }
+  }
+}
+
+// Remove completamente os estilos padrão do Slick
+::ng-deep .slick-dots {
+  li {
+    button {
+      &::before {
+        content: none !important;
+        display: none !important;
+      }
+    }
+  }
+}
+
+// Se preferir dots com fundo escuro para melhor contraste
+::ng-deep .custom-dots.dark-dots {
+  li button {
+    border-color: #7155d8;
+    background: transparent;
+    
+    &:hover {
+      background: rgba(113, 85, 216, 0.5);
+    }
+  }
+  
+  li.slick-active button {
+    background: #7155d8;
+  }
 }
 
 .slide {
@@ -23,11 +110,12 @@
 .info-modelo-carousel > h1 {
   font-size: 42px;
   margin-bottom: 30px;
+  font-weight: 200;
 }
 .info-modelo-carousel > p {
   font-size: 26px;
   line-height: 1.5;
-  font-weight: lighter;
+  font-weight: 200;
   margin-bottom: 30px;
   width: 85%;
 }
@@ -85,5 +173,15 @@
     padding: 10px;
     margin-bottom: 45px;
     font-size: 14px;
+  }
+  
+  // Ajuste dos dots para mobile
+  ::ng-deep .custom-dots {
+    bottom: 10px;
+    
+    li button {
+      width: 10px;
+      height: 10px;
+    }
   }
 }

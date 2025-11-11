@@ -33,7 +33,7 @@
           type="text" 
           [(ngModel)]="searchTerm"
           (keydown.enter)="emitirMudancas()"
-          placeholder="Explore mais de 200 modelos disponíveis..."
+          [placeholder]="getTextoPlaceholder()"
         >
         <button 
           class="icon-button"

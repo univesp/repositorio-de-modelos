@@ -22,7 +22,8 @@ export class ResultadosComponent implements OnInit, OnDestroy {
   modelosFiltrados: Modelo[] = [];
   viewType: 'grid' | 'list' = 'grid';
   opacityClicked = 1;
-  ordenacaoSelecionada: string = ''; // Nova propriedade para o select
+  ordenacaoSelecionada: string = '';
+  filtrosAtivos: string[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -84,8 +85,54 @@ export class ResultadosComponent implements OnInit, OnDestroy {
       isSalvo: this.bookmarkService.isSalvo(modelo.id)
     })) as Modelo[];
 
+    // Atualiza os filtros ativos para exibição
+    this.atualizarFiltrosAtivos(params);
+
     this.modoExplorarService.setModoExplorarAtivo(true);
     this.modoExplorarService.setFiltrosAtuais(params);
+  }
+
+  /**
+ * Atualiza a lista de filtros ativos para exibição
+ */
+  private atualizarFiltrosAtivos(params: Params): void {
+    this.filtrosAtivos = [];
+    
+    // Mapeamento de chaves para labels mais amigáveis
+    const labels: { [key: string]: string } = {
+      'search': 'Busca',
+      'tags': 'Tag',
+      'area': 'Área',
+      'curso': 'Curso',
+      'disciplina': 'Disciplina',
+      'categorias': 'Categoria',
+      'tipo': 'Tipo',
+      'tecnologia': 'Tecnologia',
+      'acessibilidade': 'Acessibilidade',
+      'formato': 'Formato'
+    };
+
+    Object.entries(params).forEach(([chave, valor]) => {
+      // Ignora valores vazios, nulos ou placeholders
+      if (valor && valor !== '' && valor !== '[Selecione]' && valor !== 'null' && valor !== 'undefined') {
+        const label = labels[chave] || chave; // Usa label amigável ou a própria chave
+        this.filtrosAtivos.push(`${label}: "${valor}"`);
+      }
+    });
+  }
+
+     /**
+   * Gera o texto dinâmico para exibição dos resultados
+   */
+  getTextoResultados(): string {
+    const quantidade = this.modelosFiltrados.length;
+    
+    if (this.filtrosAtivos.length === 0) {
+      return `Exibindo ${quantidade} resultado(s) encontrado(s)`;
+    } else {
+      const filtrosTexto = this.filtrosAtivos.join(', ');
+      return `Exibindo ${quantidade} resultado(s) para ${filtrosTexto}`;
+    }
   }
 
   /**

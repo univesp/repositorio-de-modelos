@@ -17,7 +17,7 @@
 
   /* === Botões de visualização (Grid / List) === */
   &__switch-view-buttons {
-    margin: 50px 80px 30px 0;
+    margin: 50px 80px 50px 0;
     display: flex;
     gap: 8px;
     flex-direction: row-reverse;
@@ -33,6 +33,21 @@
   &__resultados-container {
     margin-top: 20px;
     height: 100%;
+  }
+}
+
+/* CONTADOR DE RESULTADOS - ALINHADO À ESQUERDA */
+.resultados-contador {
+  font-size: 16px;
+  color: #7155d8;
+  font-weight: 500;
+  margin-right: auto; // Empurra todo o resto para a direita
+  margin-left: 50px;
+  
+  span {
+    background: transparent;
+    padding: 8px 16px;
+    font-size: 22px;
   }
 }
 

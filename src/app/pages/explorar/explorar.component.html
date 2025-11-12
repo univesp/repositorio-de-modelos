@@ -8,10 +8,13 @@
   </app-filter>
 
  <!-- Botões de visualização (copiados do ResultadosComponent) -->
- <div class="explorar__switch-view-buttons">
+ <div class="explorar__switch-view-buttons" *ngIf="!isLoading">
   <!-- Contador de resultados -->
   <div class="resultados-contador">
     <span>Exibindo {{ modelosExibidos.length }} resultado(s) encontrados</span>
+    <span *ngIf="viewType === 'grid' && totalPaginas >= 1 && !isLoading" class="info-paginacao">
+      Página {{ paginaAtual }} de {{ totalPaginas }}
+    </span>
   </div>
 
   <!-- Container dos controles -->
@@ -51,7 +54,9 @@
      <app-explorar-grid
        *ngIf="viewType === 'grid'"
        [modelosList]="modelosExibidos"
-       (modeloSelecionado)="abrirModelo($event)">
+       (modeloSelecionado)="abrirModelo($event)"
+       (paginacaoAtualizada)="onPaginacaoAtualizada($event)"
+       (carregamentoAtualizado)="onCarregamentoAtualizado($event)">
      </app-explorar-grid>
 
      <app-explorar-list

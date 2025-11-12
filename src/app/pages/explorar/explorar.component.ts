@@ -23,6 +23,11 @@ export class ExplorarComponent implements OnInit, OnDestroy {
   opacityClicked = 1;
   ordenacaoSelecionada: string = '';
 
+  paginaAtual: number = 1;
+  totalPaginas: number = 1;
+
+  isLoading: boolean = false;
+
   constructor(
     private router: Router,
     private modoExplorarService: ModoExplorarService,
@@ -30,6 +35,8 @@ export class ExplorarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     this.modoExplorarService.resetAll();
 
     const savedViewType = localStorage.getItem('viewType');
@@ -100,6 +107,21 @@ export class ExplorarComponent implements OnInit, OnDestroy {
     const idNumber = Number(id);
     this.modoExplorarService.setModeloId(idNumber);
     this.router.navigate(['/modelo', id]);
+  }
+
+  /**
+   * Método para receber as informações de paginação do grid
+   */
+  onPaginacaoAtualizada(info: { paginaAtual: number; totalPaginas: number }) {
+    this.paginaAtual = info.paginaAtual;
+    this.totalPaginas = info.totalPaginas;
+  }
+
+   /**
+   * Recebe o estado de carregamento do grid
+   */
+   onCarregamentoAtualizado(carregando: boolean) {
+    this.isLoading = carregando;
   }
 
   ngOnDestroy(): void {

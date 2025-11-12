@@ -30,7 +30,14 @@ export class ExplorarGridComponent implements OnInit {
 
   @Output() modeloSelecionado = new EventEmitter<string>();
 
-    isLoggedIn: boolean = false;
+  @Output() paginacaoAtualizada = new EventEmitter<{
+    paginaAtual: number;
+    totalPaginas: number;
+  }>();
+
+  @Output() carregamentoAtualizado = new EventEmitter<boolean>();
+
+  isLoggedIn: boolean = false;
 
   ngOnInit() {
     this.isLoggedIn = this.authService.isSignedIn();
@@ -52,6 +59,10 @@ export class ExplorarGridComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['modelosList']) {
+      // Emite que começou a carregar
+      this.carregando = true;
+      this.emitirCarregamentoAtualizado();
+
       // FORÇA a reinicialização completa quando a lista muda
       this.paginationConfig = this.paginationService.inicializarPaginacao(
         this.modelosList, 
@@ -87,6 +98,7 @@ export class ExplorarGridComponent implements OnInit {
    */
   private inicializarPagina(): void {
     this.carregando = true;
+    this.emitirCarregamentoAtualizado(); // EMITE QUE COMEÇOU A CARREGAR
 
     setTimeout(() => {
       // Atualiza a paginação com a lista atual
@@ -100,14 +112,27 @@ export class ExplorarGridComponent implements OnInit {
         this.paginationConfig
       );
 
+      // EMITE AS INFORMAÇÕES DE PAGINAÇÃO NA INICIALIZAÇÃO
+      this.emitirPaginacaoAtualizada();
+
       this.carregando = false;
+      this.emitirCarregamentoAtualizado(); // EMITE QUE TERMINOU DE CARREGAR
     }, 1000);
+  }
+
+  // Método para emitir as informações de paginação
+  private emitirPaginacaoAtualizada(): void {
+    this.paginacaoAtualizada.emit({
+      paginaAtual: this.paginaAtual,
+      totalPaginas: this.totalPaginas
+    });
   }
 
   // Navegação entre páginas
   irParaPagina(pagina: number) {
     if (pagina >= 1 && pagina <= this.totalPaginas && !this.carregando) {
       this.carregando = true;
+      this.emitirCarregamentoAtualizado();
       
       this.paginationConfig = this.paginationService.irParaPagina(pagina, this.paginationConfig);
       this.modelosPaginados = this.paginationService.obterItensPaginados(
@@ -115,11 +140,20 @@ export class ExplorarGridComponent implements OnInit {
         this.paginationConfig
       );
 
-      setTimeout(() => {
+    // EMITE AS INFORMAÇÕES DE PAGINAÇÃO
+    this.emitirPaginacaoAtualizada();
+
+    setTimeout(() => {
         this.carregando = false;
+        this.emitirCarregamentoAtualizado();
         this.rolarParaTopo();
       }, 1000);
     }
+  }
+
+  // Método para emitir o estado de carregamento
+  private emitirCarregamentoAtualizado(): void {
+    this.carregamentoAtualizado.emit(this.carregando);
   }
 
   proximaPagina() {

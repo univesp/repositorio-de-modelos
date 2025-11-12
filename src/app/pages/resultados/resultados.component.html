@@ -36,9 +36,26 @@
       <mat-icon class="ordenacao-icon">arrow_drop_down</mat-icon>
     </div>
 
-    <!-- Contador de resultados DINÂMICO -->
+    <!-- Contador de resultados com badges interativos -->
     <div class="resultados-contador">
-      <span>{{ getTextoResultados() }}</span>
+      <div class="contador-texto">
+        Exibindo {{ modelosFiltrados.length }} resultado(s) para:
+      </div>
+      <div class="filtros-badges" *ngIf="filtrosAtivos.length > 0">
+        <span class="filtro-badge" *ngFor="let filtro of filtrosAtivos; let i = index">
+          {{ getTextoBadge(filtro) }}
+          <button 
+            class="badge-close" 
+            (click)="removerFiltro(filtro, $event)" 
+            aria-label="Remover filtro"
+            title="Remover filtro">
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      </div>
+      <div class="contador-texto" *ngIf="filtrosAtivos.length === 0">
+        Exibindo {{ modelosFiltrados.length }} resultado(s) encontrado(s)
+      </div>
     </div>
   </div>
 

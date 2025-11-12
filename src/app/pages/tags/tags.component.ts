@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Modeloslist } from '../../data/modelos-list';
 
 @Component({
@@ -16,10 +16,12 @@ export class TagsComponent implements OnInit {
   ordenacaoSelecionada: string = 'populares';
   termoPesquisa: string = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute) {}
 
   ngOnInit() {
-    window.scrollTo(0,0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     this.carregarTodasAsTags();
   }
 
@@ -104,9 +106,18 @@ export class TagsComponent implements OnInit {
    * Redireciona para a página de resultados filtrando pela tag selecionada
    */
   onTagClick(tag: string) {
-    // Navega para a página de resultados com o filtro de tag
+    // Obter parâmetros atuais (se houver) para combinar com a nova tag
+    const paramsAtuais = { ...this.route.snapshot.queryParams };
+    
+    // Combina parâmetros atuais com a nova tag
+    const queryParams = {
+      ...paramsAtuais,
+      tags: tag
+    };
+  
+    // Navega para a página de resultados com o filtro de tag combinado com filtros existentes
     this.router.navigate(['/resultados'], { 
-      queryParams: { tags: tag } 
+      queryParams: queryParams 
     });
   }
 

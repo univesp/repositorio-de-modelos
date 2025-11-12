@@ -48,12 +48,16 @@
   font-weight: 500;
   white-space: nowrap;
   margin-left: 11.5%;
+  display: flex;
+  flex-direction: column;
   
   span {
     padding: 6px 12px;
-    border-radius: 6px;
-    border: 1px solid #e9ecef;
   }
+}
+
+.info-paginacao {
+  font-size: 18px;
 }
 
 // Container para controles à direita

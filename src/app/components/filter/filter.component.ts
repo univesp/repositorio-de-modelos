@@ -22,28 +22,37 @@ export class FilterComponent implements OnInit, OnDestroy {
   qtdeModelos: number = Modeloslist.length;
 
   ngOnInit(): void {
+    // ESCUTA MUDANÇAS NO SERVIÇO E NA URL SIMULTANEAMENTE
     this.filtrosSub = this.modoExplorarService.filtrosAtuais$.subscribe(filtros => {
-      if (Object.keys(filtros).length === 0) {
-        // Reset visual quando os filtros forem esvaziados
-        this.searchTerm = '';
-        this.filtrosConfig.forEach(f => {
+      console.log('FilterComponent: Filtros atualizados via serviço', filtros); // DEBUG
+      
+      // SINCRONIZAÇÃO MELHORADA: Atualiza todos os selects baseado nos filtros atuais
+      this.filtrosConfig.forEach(f => {
+        const valorNoServico = filtros[f.key];
+        
+        if (valorNoServico && valorNoServico.trim() !== '' && valorNoServico !== f.placeholder) {
+          // Se há um valor válido no serviço, atualiza o select
+          this.filtros[f.key] = valorNoServico;
+        } else {
+          // Se não há valor ou foi removido, volta para o placeholder
           this.filtros[f.key] = f.placeholder;
-        });
-      } else {
-         // ATUALIZAÇÃO: Mantém os valores visuais dos filtros que existem
-        // Isso previne que filtros fiquem vazios visualmente
-        for (const key in filtros) {
-          if (filtros[key] && this.filtros.hasOwnProperty(key)) {
-            this.filtros[key] = filtros[key];
-          }
         }
-      }
+      });
+      
+      // Também sincroniza o searchTerm
+      this.searchTerm = filtros['search'] || '';
     });
-
+  
+    // ESCUTA MUDANÇAS DIRETAS NA URL (backup)
+    this.route.queryParams.subscribe(params => {
+      console.log('FilterComponent: Parâmetros da URL atualizados', params); // DEBUG
+      this.sincronizarComUrl(params);
+    });
+  
     // Verificar dados de autenticação
     this.checkAuthStatus();
-
-    // Obeserva mudanças no estado de autenticação
+  
+    // Observa mudanças no estado de autenticação
     this.authSub = this.authService.isAuthenticated().subscribe(isAuthenticated => {
       this.isLoggedIn = isAuthenticated;
     });
@@ -126,17 +135,42 @@ export class FilterComponent implements OnInit, OnDestroy {
     } 
   }
 
+  /**
+   * Sincroniza os selects com os parâmetros da URL
+  */
+  private sincronizarComUrl(params: any) {
+    this.filtrosConfig.forEach(f => {
+      const valorNaUrl = params[f.key];
+      
+      if (valorNaUrl && valorNaUrl.trim() !== '' && valorNaUrl !== f.placeholder) {
+        this.filtros[f.key] = valorNaUrl;
+      } else {
+        this.filtros[f.key] = f.placeholder;
+      }
+    });
+    
+    // Sincroniza o searchTerm
+    this.searchTerm = params['search'] || '';
+  }
+
   private checkAuthStatus(): void {
     this.isLoggedIn = this.authService.isSignedIn();
   }
 
   /**
-   * Verifica se há filtros ativos (diferentes do placeholder)
+   * Verifica se há filtros ativos (diferentes do placeholder) OU parâmetros na URL
    */
   temFiltrosAtivos(): boolean {
-    return this.filtrosConfig.some(f => 
+    // Verifica filtros visuais ativos
+    const filtrosVisuaisAtivos = this.filtrosConfig.some(f => 
       this.filtros[f.key] !== f.placeholder
     ) || !!this.searchTerm.trim();
+  
+    // Verifica se há parâmetros na URL (como tags)
+    const paramsAtuais = this.route.snapshot.queryParams;
+    const parametrosUrlAtivos = Object.keys(paramsAtuais).length > 0;
+  
+    return filtrosVisuaisAtivos || parametrosUrlAtivos;
   }
 
   /**
@@ -202,15 +236,15 @@ export class FilterComponent implements OnInit, OnDestroy {
   // Função que emite o evento para o componente pai com os filtros e busca atualizados
   emitirMudancas() {
     const filtrosValidos: { [key: string]: string } = {};
-  
+
     // Verifica filtros válidos e detecta quando foi limpo
     for (const chave in this.filtros) {
       const valor = this.filtros[chave];
       const placeholder = this.getPlaceholder(chave);
 
       // Se o valor é diferente do placeholder [Selecione], inclui nos filtros válidos
-      if (valor && valor !== placeholder) {
-        filtrosValidos[chave] = valor ;
+      if (valor && valor !== placeholder && valor.trim() !== '') {
+        filtrosValidos[chave] = valor;
       }
     }
 
@@ -218,8 +252,7 @@ export class FilterComponent implements OnInit, OnDestroy {
     const hasSearchTerm = !!this.searchTerm?.trim();
     const hasValidFilters = Object.keys(filtrosValidos).length > 0;
 
-     // Mesmo sem critérios válidos, emite para recarregar todos os resultados
-    //  Isso permite que quando o usuário limpar um filtro, o sistema mostre todos os modelos
+    // Mesmo sem critérios válidos, emite para recarregar todos os resultados
     if (!hasSearchTerm && !hasValidFilters) {
       // Limpa os filtros no serviço
       this.modoExplorarService.setFiltrosAtuais({});
@@ -230,35 +263,47 @@ export class FilterComponent implements OnInit, OnDestroy {
         searchTerm: ''
       });
 
-      // Navega para explorar (todos os modelos)
+      // Navega para explorar (todos os modelos) - SEM parâmetros
       this.router.navigate(['/explorar']);
       return;
     }
 
-    // Prepara os parâmetros da URL
+    // CORREÇÃO: Obter parâmetros atuais da URL
+    const paramsAtuais = { ...this.route.snapshot.queryParams };
+    
+    // Remove parâmetros que correspondem aos nossos filtros (para evitar duplicação)
+    // Isso garante que quando um filtro é limpo, ele seja removido da URL
+    this.filtrosConfig.forEach(filtro => {
+      if (filtrosValidos[filtro.key] === undefined) {
+        // Se o filtro não está nos válidos, remove da URL
+        delete paramsAtuais[filtro.key];
+      }
+    });
+
+    // Também remove 'search' se não há termo de busca
+    if (!hasSearchTerm) {
+      delete paramsAtuais['search'];
+    }
+
+    // Combina todos os parâmetros
     const queryParams = {
-      ...filtrosValidos,
-      ...(hasSearchTerm ? { search: this.searchTerm.trim() } : {})
+      ...paramsAtuais, // Parâmetros existentes (tags, etc.)
+      ...filtrosValidos, // Novos filtros dos selects
+      ...(hasSearchTerm ? { search: this.searchTerm.trim() } : {}) // Termo de busca
     };
 
-
-    this.modoExplorarService.setFiltrosAtuais(this.filtros);
+    this.modoExplorarService.setFiltrosAtuais(queryParams);
 
     // Emite os dados para o componente pai
     this.filtrosChanged.emit({
-      filtros: filtrosValidos,
+      filtros: queryParams,
       searchTerm: this.searchTerm
     });
 
-    // Lógica de navegação
-    if (this.router.url.startsWith('/resultados')) {
-      this.router.navigate([], {
-        queryParams: queryParams,
-        queryParamsHandling: 'merge',
-      });
-    } else {
-      this.router.navigate(['/resultados'], { queryParams: queryParams });
-    }
+    // Navega para resultados com todos os parâmetros
+    this.router.navigate(['/resultados'], { 
+      queryParams: queryParams
+    });
   }
   
 

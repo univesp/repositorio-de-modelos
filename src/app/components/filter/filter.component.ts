@@ -175,6 +175,20 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.router.navigate(['/explorar'])
   }
 
+  handleTags() {
+    // Só executa se NÃO estiver na página Tags
+    if (!this.router.url.startsWith('/tags')) {
+      this.searchTerm = '';  // Limpa a busca
+      this.filtrosConfig.forEach(f => {
+        this.filtros[f.key] = f.placeholder;
+      });
+    }
+
+    this.emitirMudancas();  // dispara os valores limpos
+    this.explorarClicked.emit();  // comunica ao componente pai
+    this.router.navigate(['/tags'])
+  }
+
   handleCadastro() {
     this.router.navigate(['/cadastro-novo-modelo'])
   }

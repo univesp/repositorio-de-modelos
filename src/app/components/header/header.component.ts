@@ -101,9 +101,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.modoExplorarService.setModoExplorarAtivo(false);
           this.modoExplorarService.setModeloId(null);
           this.modoExplorarService.setFiltrosAtuais({});
+        } else if (url.startsWith('/tags')) {
+          this.modoExplorarService.setModoExplorarAtivo(false);
+          this.modoExplorarService.setModeloId(null);
+          this.modoExplorarService.setFiltrosAtuais({});
         } else {
           this.modoExplorarService.setModoExplorarAtivo(false);
-        }
+        }   
+        
       });
 
     // Breadcrumbs com takeUntil
@@ -142,6 +147,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
           crumbs.push('Cadastro de Modelo');
         } else if (currentUrl.startsWith('/perfil')) {
           crumbs.push('Perfil');
+        } else if (currentUrl.startsWith('/tags')) {
+          crumbs.push('Tags');
         }
       }
 

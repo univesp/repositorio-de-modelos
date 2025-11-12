@@ -64,7 +64,7 @@ export const Modeloslist = [
       layout: 'Alexandre Tavares dos Santos',
       programacao: 'Gabriel Gallo'
     },
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "Ipsum", "Dolor", "consectetur"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
     licenca: 'Domínio Público'
@@ -91,7 +91,7 @@ export const Modeloslist = [
     hasCodigo: true,
     isDestaque: false,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
+    tags: ["Lorem", "Ipsum", "Amet", "adipiscing", "elit"],
     licenca: 'Uso educacional'
   },
   {
@@ -115,7 +115,7 @@ export const Modeloslist = [
     hasCodigo: true,
     isDestaque: false,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "Ipsum", "Amet", "adipiscing", "elit"],
     licenca: 'Uso irrestrito / CCO'
   },
   {
@@ -148,7 +148,7 @@ export const Modeloslist = [
       layout: 'Alexandre Tavares dos Santos',
       programacao: 'Gabriel Gallo'
     },
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
+    tags: ["Lorem", "dictum", "Nulla", "fringilla"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
     licenca: 'Uso restrito'
@@ -175,7 +175,7 @@ export const Modeloslist = [
     hasMobile: true,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "Ipsum", "Dolor", "velit", "feugiat"],
     licenca: 'Alguns direitos reservados'
   },
   {
@@ -208,7 +208,7 @@ export const Modeloslist = [
       layout: 'Alexandre Tavares dos Santos',
       programacao: 'Gabriel Gallo'
     },
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet", "feugiat"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
     licenca: 'Domínio Público'
@@ -234,7 +234,7 @@ export const Modeloslist = [
     hasMobile: true,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "erat", "Dolor", "justo"],
     licenca: 'Uso educacional'
   },
   {
@@ -303,7 +303,7 @@ export const Modeloslist = [
       layout: 'Alexandre Tavares dos Santos',
       programacao: 'Gabriel Gallo'
     },
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "Ipsum", "dapibus", "vitae"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
     licenca: 'Uso restrito'
@@ -337,7 +337,7 @@ export const Modeloslist = [
       layout: 'Alexandre Tavares dos Santos',
       programacao: 'Gabriel Gallo'
     },
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
+    tags: ["Lorem", "Ipsum", "facilisis", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     licenca: 'Alguns direitos reservados'
   },
@@ -363,7 +363,7 @@ export const Modeloslist = [
     isDestaque: false,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "Ipsum", "Dolor", "venenatis"],
     licenca: 'Domínio Público'
   },
   {
@@ -388,7 +388,7 @@ export const Modeloslist = [
     isDestaque: false,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
+    tags: ["Lorem", "Ipsum", "Dolor", "magna", "Amet"],
     licenca: 'Uso educacional'
   },
   {
@@ -421,7 +421,7 @@ export const Modeloslist = [
       layout: 'Alexandre Tavares dos Santos',
       programacao: 'Gabriel Gallo'
     },
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "magna"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
     licenca: 'Uso irrestrito / CCO'
@@ -456,7 +456,7 @@ export const Modeloslist = [
       layout: 'Alexandre Tavares dos Santos',
       programacao: 'Gabriel Gallo'
     },
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
+    tags: ["Lorem", "Ipsum", "facilisis", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
     licenca: 'Alguns direitos reservados'
@@ -491,7 +491,7 @@ export const Modeloslist = [
       layout: 'Alexandre Tavares dos Santos',
       programacao: 'Gabriel Gallo'
     },
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "sapien", "feugiat", "tempus"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
     licenca: 'Domínio Público'
@@ -518,7 +518,7 @@ export const Modeloslist = [
     hasCodigo: true,
     isDestaque: false,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
+    tags: ["Lorem", "Ipsum", "feugiat", "Sit", "Amet"],
     licenca: 'Uso educacional'
   },
   {
@@ -575,7 +575,7 @@ export const Modeloslist = [
       layout: 'Alexandre Tavares dos Santos',
       programacao: 'Gabriel Gallo'
     },
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
+    tags: ["Lorem", "Ipsum", "Dolor", "Sit", "magna"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
     licenca: 'Uso restrito'
@@ -602,7 +602,7 @@ export const Modeloslist = [
     hasMobile: true,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "Ipsum", "luctus", "vitae"],
     licenca: 'Alguns direitos reservados'
   },
   {
@@ -626,7 +626,7 @@ export const Modeloslist = [
     hasMobile: true,
     hasCodigo: true,
     hasEquipe: false,
-    tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
+    tags: ["Lorem", "Ipsum", "Dolor", "vitae"],
     licenca: 'Uso educacional'
   }
 ];

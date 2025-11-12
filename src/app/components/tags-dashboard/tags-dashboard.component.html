@@ -1,8 +1,18 @@
 <div class="tags-populares-container">
   <h1>Tags Populares</h1>
-  <div class="tags-items-container" *ngFor="let tag of tagsPopulares">
-    <span class="tag-item" *ngFor="let tag of tag.tags">
-      {{ tag }}
+  <div class="tags-items-container">
+    <span 
+      class="tag-item" 
+      *ngFor="let tagInfo of tagsPopulares"
+      [title]="'Encontrada em ' + tagInfo.count + ' modelo(s). Clique para filtrar.'"
+      (click)="onTagClick(tagInfo.tag)">
+      {{ tagInfo.tag }} ({{ tagInfo.count }})
     </span>
+
+    <!-- Botão Ver Todas as Tags -->
+    <button class="btn-ver-todas" (click)="verTodasAsTags()">
+      Ver todas as tags
+      <mat-icon>arrow_forward</mat-icon>
+    </button>
   </div>
 </div>

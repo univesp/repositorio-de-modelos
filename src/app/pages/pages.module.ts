@@ -13,7 +13,8 @@ import { ResultadosComponent } from './resultados/resultados.component';
 import { ExplorarComponent } from './explorar/explorar.component';
 import { CadastroModeloComponent } from './cadastro-modelo/cadastro-modelo.component';
 import { QuillModule } from 'ngx-quill';
-import { PerfilComponent } from './perfil/perfil.component'; 
+import { PerfilComponent } from './perfil/perfil.component';
+import { TagsComponent } from './tags/tags.component'; 
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { PerfilComponent } from './perfil/perfil.component';
     ResultadosComponent,
     ExplorarComponent,
     CadastroModeloComponent,
-    PerfilComponent
+    PerfilComponent,
+    TagsComponent
   ],
   imports: [
     ComponentsModule,
@@ -42,7 +44,8 @@ import { PerfilComponent } from './perfil/perfil.component';
     ResultadosComponent,
     ExplorarComponent,
     CadastroModeloComponent,
-    PerfilComponent
+    PerfilComponent,
+    TagsComponent
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })

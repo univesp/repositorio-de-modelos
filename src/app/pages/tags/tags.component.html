@@ -1,0 +1,67 @@
+<div class="tags-container">
+  <!-- Filtro reutilizado -->
+  <app-filter
+   class="tags-container__filter"
+   (filtrosChanged)="null"
+   (explorarClicked)="null">
+  </app-filter>
+
+  <div class="tags-container__contentBox">
+    <div class="tags-header">
+      <span class="tags-container__title">
+        {{ textoExibicao }}
+      </span>
+      
+      <div class="controles-container">
+        <!-- Campo de Pesquisa -->
+        <div class="pesquisa-container">
+          <div class="search-wrapper">
+            <input 
+              type="text" 
+              [(ngModel)]="termoPesquisa"
+              (input)="onPesquisaChange()"
+              placeholder="Pesquisar tags..."
+              class="pesquisa-input"
+            >
+            <button 
+              *ngIf="termoPesquisa"
+              (click)="limparPesquisa()"
+              class="clear-button"
+              type="button">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Select de Ordenação -->
+        <div class="ordenacao-container">
+          <label for="ordenacao">Ordenar por:</label>
+          <select 
+            id="ordenacao" 
+            [(ngModel)]="ordenacaoSelecionada"
+            (change)="onOrdenacaoChange()"
+            class="ordenacao-select">
+            <option value="populares">Mais populares</option>
+            <option value="alfabetica">Ordem Alfabética</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="tags-container__items">
+      <span 
+        class="tag-item" 
+        *ngFor="let tagInfo of tagsOrdenadas"
+        [title]="'Encontrada em ' + tagInfo.count + ' modelo(s). Clique para filtrar.'"
+        (click)="onTagClick(tagInfo.tag)">
+        {{ tagInfo.tag }} <span style="font-weight: 200;">({{ tagInfo.count }})</span>
+      </span>
+    </div>
+
+    <!-- Mensagem quando não encontra resultados -->
+    <div *ngIf="tagsExibidas === 0" class="sem-resultados">
+      <mat-icon>search_off</mat-icon>
+      <p>Nenhuma tag encontrada para "{{ termoPesquisa }}"</p>
+    </div>
+  </div>
+</div>

@@ -46,7 +46,6 @@ export class FiltroService {
 
         // Ignora filtros vazios ou inválidos, que não devem afetar a filtragem
         if (valorFiltro === null || valorFiltro === undefined || valorFiltro === '' || valorFiltro === '[Selecione]') {
-          
           return; // Continua para o próximo filtro
         }
 
@@ -75,6 +74,26 @@ export class FiltroService {
             match = false;
           }
           return; // Já processou o filtro 'search', passa para o próximo
+        }
+
+        // Filtro especial para TAGS (busca dentro do array de tags)
+        if (chave === 'tags') {
+          const tagBuscada = this.normalizeString(valorFiltro);
+          const tagsDoModelo = modelo['tags'] || [];
+          
+          let encontrouTag = false;
+          for (const tag of tagsDoModelo) {
+            const tagNormalizada = this.normalizeString(tag);
+            if (tagNormalizada.includes(tagBuscada)) {
+              encontrouTag = true;
+              break;
+            }
+          }
+          
+          if (!encontrouTag) {
+            match = false;
+          }
+          return; // Já processou o filtro 'tags', passa para o próximo
         }
 
         // Para os demais filtros (não 'search'), realiza a comparação direta da propriedade

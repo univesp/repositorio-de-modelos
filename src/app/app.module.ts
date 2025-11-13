@@ -10,13 +10,17 @@ import { ComponentsModule } from './components/components.module';
 import { authFunctionalInterceptor } from './interceptors/auth.functional.interceptor';
 import { authInterceptor } from './interceptors/auth.interceptor';
 
+import { ApiStatusOverlayComponent } from './components/api-status-overlay/api-status-overlay.component';
+import { apiHealthInterceptor } from './interceptors/api-health.interceptor';
+
 import { QuillModule } from 'ngx-quill';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ApiStatusOverlayComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +33,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserAnimationsModule
   ],
   providers: [
-    provideHttpClient(withInterceptors([authFunctionalInterceptor, authInterceptor])),
+    provideHttpClient(withInterceptors([
+      authFunctionalInterceptor, 
+      authInterceptor,
+      apiHealthInterceptor
+    ])),
   ],
   bootstrap: [AppComponent]
 })

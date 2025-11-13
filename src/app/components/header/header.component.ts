@@ -6,6 +6,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { AuthService, UserProfile } from '../../services/auth.service'; 
 import { ImageService } from '../../services/image.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-header',
@@ -34,7 +35,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private imageService: ImageService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private http: HttpClient
   ){}
 
   ngOnInit(): void {
@@ -44,7 +46,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.authService.isAuthenticated()
       .pipe(takeUntil(this.destroy$))
       .subscribe(isAuthenticated => {
-        console.log('🔐 Header: Status autenticação ->', isAuthenticated);
+        //console.log('🔐 Header: Status autenticação ->', isAuthenticated);
         this.isLoggedIn = isAuthenticated;
         
         if (isAuthenticated) {
@@ -57,7 +59,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.authService.userProfile$
       .pipe(takeUntil(this.destroy$))
       .subscribe(profile => {
-        console.log('👤 Header: Perfil atualizado ->', profile ? 'Com perfil' : 'Sem perfil');
+        //console.log('👤 Header: Perfil atualizado ->', profile ? 'Com perfil' : 'Sem perfil');
         
         if (profile) {
           this.userProfile = profile;
@@ -194,7 +196,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   private resetUserInfo(): void {
-    console.log('🧹 Header: Resetando informações do usuário');
+    //console.log('🧹 Header: Resetando informações do usuário');
     this.userProfile = null;
     this.userName = '';
     this.userInitial = '';
@@ -242,13 +244,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private checkAuthStatus(): void {
     this.isLoggedIn = this.authService.isSignedIn();
-    console.log('🔍 Header: Status inicial ->', this.isLoggedIn);
+    //console.log('🔍 Header: Status inicial ->', this.isLoggedIn);
     this.updateUserInfo();
   }
 
   private updateUserInfo(): void {
     if (this.isLoggedIn) {
-      console.log('🔄 Header: Atualizando informações do usuário logado');
+      //console.log('🔄 Header: Atualizando informações do usuário logado');
       const currentProfile = this.authService.getCurrentUserProfile();
       
       if (currentProfile) {
@@ -273,7 +275,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    console.log('🚪 Header: Iniciando logout...');
+   // console.log('🚪 Header: Iniciando logout...');
     this.authService.logout();
     this.router.navigate(['/']);
   }
@@ -297,4 +299,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   // CORREÇÃO: Adiciona a propriedade imageSubscription que estava faltando
   private imageSubscription: any;
+
+
+  // header.component.ts - ADICIONE TEMPORARIAMENTE
+  /*
+testTokenExpired(): void {
+  this.authService.showTokenExpiredWarning();
+}
+
+testApiError(): void {
+  // Simula uma requisição que retorna 401
+  this.http.get('/api/test-401').subscribe({
+    error: (error) => {
+      console.log('Erro simulado:', error);
+    }
+  });
+}
+*/
 }

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import Swal from 'sweetalert2';
 
 export interface LoginRequest {
   email: string;
@@ -68,11 +69,275 @@ export class AuthService {
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.isSignedIn());
 
+  // CONTROLE PARA EVITAR MÚLTIPLAS RECARREGAS
+  private isCheckingResume = false;
+
+  // ✅ CONTROLE para evitar múltiplos avisos de token expirado
+  private warningShown = false;
+
   constructor(
     private http: HttpClient, 
     private router: Router, 
     private snackBar: MatSnackBar
-    ) {}
+    ) {
+      // Verifica se precisa recarregar página quando volta da suspensão
+      this.setupResumeDetection();
+      
+      // ✅ INICIA MONITORAMENTO do token
+      this.startTokenMonitor();
+    }
+
+  // ✅ MÉTODOS NOVOS PARA CONTROLE DE TOKEN EXPIRADO
+
+  /**
+   * DECODIFICA O JWT PARA VERIFICAR EXPIRAÇÃO
+   */
+  private decodeJWT(token: string): any {
+    try {
+      const payload = token.split('.')[1];
+      return JSON.parse(atob(payload));
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * VERIFICA SE O TOKEN ESTÁ EXPIRADO
+   */
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+    
+    const payload = this.decodeJWT(token);
+    if (!payload || !payload.exp) return false;
+    
+    const now = Date.now() / 1000;
+    const isExpired = payload.exp < now;
+    
+    console.log('🔐 Verificação token expirado:', {
+      expirado: isExpired,
+      expiraEm: new Date(payload.exp * 1000),
+      agora: new Date()
+    });
+    
+    return isExpired;
+  }
+
+  /**
+   * MONITORAMENTO PERIÓDICO DO TOKEN
+   */
+  private startTokenMonitor(): void {
+    // Verifica a cada 1 minuto
+    setInterval(() => {
+      if (this.isSignedIn() && this.isTokenExpired() && !this.warningShown) {
+        this.showTokenExpiredWarning();
+      }
+    }, 60 * 1000); // 1 minuto
+  }
+
+  /**
+   * AVISO DE TOKEN EXPIRADO (NÃO DESLOGA AUTOMATICAMENTE)
+   */
+  showTokenExpiredWarning(): void {
+    if (this.warningShown) return;
+    
+    this.warningShown = true;
+    console.log('⚠️ Token expirado - Mostrando aviso SweetAlert2');
+
+    Swal.fire({
+      icon: 'warning',
+      title: 'Sessão Expirada',
+      html: `
+        <div style="text-align: left;">
+          <p>Sua sessão expirou. Algumas funcionalidades podem não funcionar corretamente.</p>
+          <ul style="margin: 10px 0; padding-left: 20px;">
+            <li>Você pode continuar navegando</li>
+            <li>Funcionalidades que exigem API podem falhar</li>
+            <li>Recomendamos fazer login novamente</li>
+          </ul>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Fazer Login',
+      cancelButtonText: 'Continuar Navegando',
+      confirmButtonColor: '#2196F3',
+      cancelButtonColor: '#6c757d',
+      backdrop: true,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      customClass: {
+        popup: 'token-expired-swal',
+        confirmButton: 'swal-confirm-btn',
+        cancelButton: 'swal-cancel-btn'
+      }
+    }).then((result) => {
+      this.warningShown = false;
+      
+      if (result.isConfirmed) {
+        // ✅ AGORA FAZ LOGOUT E REDIRECIONA PARA LOGIN
+        this.redirectToLoginWithLogout();
+      }
+    });
+
+    // Reseta o aviso após 15 segundos
+    setTimeout(() => {
+      this.warningShown = false;
+    }, 15000);
+  }
+
+   /**
+   * ✅ NOVO MÉTODO: FAZ LOGOUT E REDIRECIONA PARA LOGIN
+   */
+   private redirectToLoginWithLogout(): void {
+    const currentUrl = this.router.url;
+    console.log('🔀 Redirecionando para login com logout, voltará para:', currentUrl);
+    
+    // Faz logout para limpar tudo
+    this.logout();
+    
+    // Redireciona para login com returnUrl
+    this.router.navigate(['/login'], { 
+      queryParams: { returnUrl: currentUrl } 
+    });
+  }
+
+  /**
+   * SÓ DESLOGA QUANDO A API REJEITAR (401)
+   */
+  handleTokenExpired(): void {
+    console.log('🔐 API rejeitou token expirado, fazendo logout...');
+    
+    this.logout();
+    this.snackBar.open('Sessão expirada. Faça login novamente.', 'OK', {
+      duration: 3000,
+      panelClass: ['error-snackbar']
+    });
+    
+    this.router.navigate(['/login']);
+  }
+
+   /**
+   * ✅ DETECÇÃO ROBUSTA DE SUSPENSÃO/RETORNO
+   */
+   private setupResumeDetection(): void {
+    let suspendTime: number | null = null;
+    
+    // Evento quando a página está prestes a ser suspensa
+    window.addEventListener('beforeunload', () => {
+      suspendTime = Date.now();
+    });
+
+    // MÚLTIPLOS eventos para detectar retorno da suspensão
+    const resumeEvents = [
+      'focus',
+      'mouseenter',
+      'mousemove',
+      'keydown',
+      'touchstart'
+    ];
+
+    resumeEvents.forEach(eventType => {
+      window.addEventListener(eventType, () => {
+        this.handlePossibleResume();
+      }, { once: true, passive: true });
+    });
+
+    // Também usa visibilitychange como backup
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        this.handlePossibleResume();
+      }
+    });
+
+    // Verificação periódica de segurança
+    setInterval(() => {
+      this.checkAuthConsistency();
+    }, 30000); // A cada 30 segundos
+  }
+
+  /**
+   * ✅ VERIFICA SE PRECISA RECARREGAR
+   */
+  private handlePossibleResume(): void {
+    if (this.isCheckingResume) return;
+    
+    this.isCheckingResume = true;
+    
+    // Pequeno delay para garantir que os eventos estabilizaram
+    setTimeout(() => {
+      this.checkAuthConsistency();
+      this.isCheckingResume = false;
+    }, 1000);
+  }
+
+  /**
+   * ✅ VERIFICA CONSISTÊNCIA E RECARREGA SE NECESSÁRIO
+   */
+  private checkAuthConsistency(): void {
+    const hasToken = this.isSignedIn();
+    const hasProfile = this.userProfileSubject.value !== null;
+    
+    //console.log('🔍 Verificação de consistência:');
+    //console.log('  - Tem token:', hasToken);
+    //console.log('  - Tem perfil:', hasProfile);
+
+    // CRITÉRIO PRINCIPAL: Tem token mas não tem perfil = estado inconsistente
+    if (hasToken && !hasProfile) {
+      //console.log('🔄 Estado inconsistente detectado, recarregando página...');
+      this.triggerPageReload();
+      return;
+    }
+
+    // CRITÉRIO SECUNDÁRIO: Se tem perfil mas alguma página está com erro
+    // Podemos verificar se há elementos de erro na página
+    if (hasToken && hasProfile) {
+      this.checkForPageErrors();
+    }
+  }
+
+  /**
+   * ✅ VERIFICA SE HÁ ELEMENTOS DE ERRO NA PÁGINA
+   */
+  private checkForPageErrors(): void {
+    // Verifica se há mensagens de erro comuns
+    const errorSelectors = [
+      '.error-message',
+      '.loading-error',
+      '[class*="error"]',
+      '[class*="fail"]',
+      'mat-error'
+    ];
+
+    const hasVisibleErrors = errorSelectors.some(selector => {
+      const elements = document.querySelectorAll(selector);
+      return Array.from(elements).some(el => {
+        const style = window.getComputedStyle(el);
+        return style.display !== 'none' && style.visibility !== 'hidden';
+      });
+    });
+
+    if (hasVisibleErrors) {
+      //console.log('🔄 Erros visíveis detectados na página, recarregando...');
+      this.triggerPageReload();
+    }
+  }
+
+  /**
+   * ✅ DISPARA RECARGA DA PÁGINA COM FEEDBACK
+   */
+  private triggerPageReload(): void {
+    // Mostra feedback visual para o usuário
+    this.snackBar.open('Restaurando aplicação...', 'Fechar', {
+      duration: 3000,
+      panelClass: ['reload-snackbar']
+    });
+
+    // Recarrega após um pequeno delay para o usuário ver a mensagem
+    setTimeout(() => {
+      //console.log('🔄 Recarregando página...');
+      window.location.reload();
+    }, 1000);
+  }
 
   login(credentials: LoginRequest): Observable<LoginApiResponse> {
    // console.log('Enviando login para:', this.apiUrl);
@@ -101,6 +366,9 @@ export class AuthService {
          // CORREÇÃO: Carrega o perfil automaticamente após login
        // console.log('🔐 Login bem-sucedido, carregando perfil...');
         this.getUserProfile().subscribe(); // Dispara o carregamento do perfil
+        
+        // ✅ RESETA aviso ao fazer novo login
+        this.warningShown = false;
         })
       );
   }
@@ -176,7 +444,7 @@ export class AuthService {
 
   // MÉTODOS DE AUTENTICAÇÃO
   logout(): void {
-    console.log('🚪 AuthService: Fazendo logout...');
+    //console.log('🚪 AuthService: Fazendo logout...');
     
     // 1. PRIMEIRO limpa o perfil do usuário
     this.userProfileSubject.next(null);
@@ -185,7 +453,10 @@ export class AuthService {
     this.setAuthentication(false);
     localStorage.removeItem('authData');
     
-    console.log('✅ AuthService: Logout concluído');
+    // ✅ RESETA aviso ao fazer logout
+    this.warningShown = false;
+    
+   // console.log('✅ AuthService: Logout concluído');
   }
 
   private setAuthentication(status: boolean): void {

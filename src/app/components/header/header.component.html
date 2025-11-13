@@ -71,6 +71,18 @@
   </div>
 </div>
 
+<!-- header.component.html - ADICIONE TEMPORARIAMENTE -->
+<!--
+<div *ngIf="isLoggedIn" class="test-buttons" style="position: fixed; top: 10px; right: 10px; z-index: 1000; background: white; padding: 10px; border: 1px solid #ccc;">
+  <button (click)="testTokenExpired()" style="background: orange; color: white; border: none; padding: 5px 10px; margin: 5px;">
+    🧪 Testar Token Expirado
+  </button>
+  <button (click)="testApiError()" style="background: red; color: white; border: none; padding: 5px 10px; margin: 5px;">
+    🧪 Testar Erro 401
+  </button>
+</div>
+-->
+
 <div class="breadcrumbs" *ngIf="breadcrumbs.length > 0 && !isnoBreadCrumbsPath()">
   <ng-container *ngFor="let crumb of breadcrumbs; let i = index; let last = last">
 

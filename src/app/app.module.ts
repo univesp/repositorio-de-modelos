@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { PagesModule } from './pages/pages.module';
 import { ComponentsModule } from './components/components.module';
 import { authFunctionalInterceptor } from './interceptors/auth.functional.interceptor';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 import { QuillModule } from 'ngx-quill';
 
@@ -28,7 +29,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserAnimationsModule
   ],
   providers: [
-    provideHttpClient(withInterceptors([authFunctionalInterceptor])),
+    provideHttpClient(withInterceptors([authFunctionalInterceptor, authInterceptor])),
   ],
   bootstrap: [AppComponent]
 })

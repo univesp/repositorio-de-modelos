@@ -24,7 +24,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // ESCUTA MUDANÇAS NO SERVIÇO E NA URL SIMULTANEAMENTE
     this.filtrosSub = this.modoExplorarService.filtrosAtuais$.subscribe(filtros => {
-      console.log('FilterComponent: Filtros atualizados via serviço', filtros); // DEBUG
+      //console.log('FilterComponent: Filtros atualizados via serviço', filtros); // DEBUG
       
       // SINCRONIZAÇÃO MELHORADA: Atualiza todos os selects baseado nos filtros atuais
       this.filtrosConfig.forEach(f => {
@@ -45,7 +45,7 @@ export class FilterComponent implements OnInit, OnDestroy {
   
     // ESCUTA MUDANÇAS DIRETAS NA URL (backup)
     this.route.queryParams.subscribe(params => {
-      console.log('FilterComponent: Parâmetros da URL atualizados', params); // DEBUG
+      //console.log('FilterComponent: Parâmetros da URL atualizados', params); // DEBUG
       this.sincronizarComUrl(params);
     });
   

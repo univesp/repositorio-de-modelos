@@ -45,7 +45,8 @@
         </div>
 
         <!-- Modelos Salvos Paginados -->
-        <div class="modelo-card" *ngFor="let modelo of modelosPaginados">
+        <div class="modelo-card" *ngFor="let modelo of modelosPaginados; let last = last">
+          
           <div class="modelo-imagem">
             <img src="{{ modelo.img_lg }}" alt="">
           </div>

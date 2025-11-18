@@ -54,7 +54,6 @@ export class ModeloComponent implements OnInit, OnDestroy {
           })
     }
 
-
     ngOnInit() {
       this.isLoggedIn = this.authService.isSignedIn();
 
@@ -92,15 +91,37 @@ export class ModeloComponent implements OnInit, OnDestroy {
 
       // Carrega modelos similares
       this.carregarModelosSimilares();
-  }
+    }
+
+    // 👇 NOVOS MÉTODOS PARA CODEPEN
+    isCodePenUrl(url: string): boolean {
+      return url?.includes('codepen.io');
+    }
+
+    getCodePenId(url: string): string {
+      if (!this.isCodePenUrl(url)) return '';
+      
+      // Extrai o ID do CodePen da URL
+      // Exemplo: https://codepen.io/CaioPaiola/pen/nojJmQ → nojJmQ
+      const match = url.match(/codepen\.io\/[^/]+\/pen\/([^/?]+)/);
+      return match ? match[1] : '';
+    }
+
+    getCodePenUser(url: string): string {
+      if (!this.isCodePenUrl(url)) return '';
+      
+      // Extrai o usuário do CodePen da URL
+      // Exemplo: https://codepen.io/CaioPaiola/pen/nojJmQ → CaioPaiola
+      const match = url.match(/codepen\.io\/([^/]+)\/pen\//);
+      return match ? match[1] : '';
+    }
 
     toggleBookmark(modelo: Modelo) {
         modelo.isSalvo = !modelo.isSalvo;
+        this.bookmarkService.toggle(modelo.id);
+    }
 
-        this.bookmarkService.toggle(modelo.id);  // Alterna no localStorage
-      }
-
-      carregarModelosSimilares() {
+    carregarModelosSimilares() {
         if (!this.currentModelo || !this.modelosList) return;
     
         const modelosFiltrados = this.modelosList.filter(modelo => 
@@ -111,13 +132,11 @@ export class ModeloComponent implements OnInit, OnDestroy {
             )
         );
     
-        // Se tiver 4 ou menos, retorna todos
         if (modelosFiltrados.length <= 4) {
             this.modelosSimilares = modelosFiltrados;
             return;
         }
     
-        // Se tiver mais de 4, embaralha e pega 4 aleatórios
         this.modelosSimilares = this.embaralharArray(modelosFiltrados).slice(0, 4);
     }
     
@@ -132,8 +151,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
         return arrayEmbaralhado;
     }
 
-      private temCategoriaComum(modelo: Modelo): boolean {
-        // Verifica se compartilham pelo menos uma categoria em comum
+    private temCategoriaComum(modelo: Modelo): boolean {
         if (!this.currentModelo.categorias || !modelo.categorias) return false;
 
         const categoriasAtual = Array.isArray(this.currentModelo.categorias)
@@ -147,10 +165,9 @@ export class ModeloComponent implements OnInit, OnDestroy {
         return categoriasAtual.some((cat: string) => 
             categoriasModelo.includes(cat)
         );
-      }
+    }
 
-      private temTagsComuns(modelo: Modelo): boolean {
-        // Verifica se compartilham pelo menos uma tag
+    private temTagsComuns(modelo: Modelo): boolean {
         if (!this.currentModelo.tags || !modelo.tags) return false;
         
         return this.currentModelo.tags.some((tag: string) => 
@@ -168,28 +185,22 @@ export class ModeloComponent implements OnInit, OnDestroy {
     abrirModalImagem(imagemUrl: string) {
       this.imagemModal = imagemUrl;
       this.modalAberto = true;
-
-      // Previne scroll do body quando modal está aberto
       document.body.style.overflow = 'hidden';
     }
 
     fecharModalImagem() {
       this.modalAberto = false;
       this.imagemModal = '';
-
-      // Restaura scroll do body
       document.body.style.overflow = 'auto';
     }
 
-    // Método para alternar o menu
     toggleMenuOpcoes(): void {
       this.menuOpcoesAberto = !this.menuOpcoesAberto;
     }
 
-    // Métodos placeholder para as opções (por enquanto sem funcionalidade)
     editarModelo(): void {
       console.log('Editar Modelo clicado');
-      this.menuOpcoesAberto = false; // Fecha o menu após clicar
+      this.menuOpcoesAberto = false;
     }
 
     adicionarAoTopo(): void {
@@ -207,7 +218,6 @@ export class ModeloComponent implements OnInit, OnDestroy {
         this.menuOpcoesAberto = false;
     }
 
-    // Fechar modal com ESC key
     @HostListener('document:keydown.escape', ['$event'])
     fecharModalComEsc(event: Event) {
       if (this.modalAberto) {
@@ -215,7 +225,6 @@ export class ModeloComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Fechar menu ao clicar fora
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
         const target = event.target as HTMLElement;
@@ -227,5 +236,5 @@ export class ModeloComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
       this.destroy$.next();
       this.destroy$.complete();
-  }
+    }
 }

@@ -1,0 +1,72 @@
+<div class="code-pen-viewer">
+  <div class="viewer-header">
+    <h2 class="viewer-title">
+      <mat-icon class="title-icon">code</mat-icon>
+      Visualização do Código
+    </h2>
+    
+    <button class="open-external-btn" (click)="openInCodePen()" matTooltip="Abrir no CodePen">
+      <mat-icon>open_in_new</mat-icon>
+      Abrir no CodePen
+    </button>
+  </div>
+
+  <div class="viewer-container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Carregando CodePen...</p>
+      <small>Isso pode levar alguns segundos</small>
+    </div>
+
+    <!-- Error State MELHORADO -->
+    <div *ngIf="hasError && !isLoading" class="error-state">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3>Não foi possível carregar o CodePen</h3>
+      <p>{{ errorMessage }}</p>
+      
+      <div class="error-actions">
+        <button class="retry-btn" (click)="loadCodePenEmbed()">
+          <mat-icon>refresh</mat-icon>
+          Tentar Novamente
+        </button>
+        
+        <button class="test-btn" (click)="testInNewTab()">
+          <mat-icon>open_in_new</mat-icon>
+          Testar em Nova Aba
+        </button>
+      </div>
+      
+      <div class="troubleshooting">
+        <h4>Possíveis causas:</h4>
+        <ul>
+          <li>O CodePen pode estar temporariamente indisponível</li>
+          <li>O código específico pode ter sido excluído</li>
+          <li>Problemas de conexão com a internet</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CodePen Embed -->
+    <div *ngIf="embedUrl && !hasError" class="embed-wrapper">
+      <iframe 
+        [src]="embedUrl"
+        (load)="onIframeLoad()"
+        (error)="onIframeError()"
+        class="code-pen-iframe"
+        scrolling="no"
+        frameborder="no"
+        allowtransparency="true"
+        allowfullscreen="true"
+        title="CodePen Embed">
+      </iframe>
+    </div>
+  </div>
+
+  <div class="viewer-footer">
+    <p class="footer-note">
+      <mat-icon>info</mat-icon>
+      Esta é uma visualização embedada do CodePen. Para editar o código, clique em "Abrir no CodePen".
+    </p>
+  </div>
+</div>

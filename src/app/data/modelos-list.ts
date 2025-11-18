@@ -92,7 +92,8 @@ export const Modeloslist = [
     isDestaque: false,
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "Amet", "adipiscing", "elit"],
-    licenca: 'Uso educacional'
+    licenca: 'Uso educacional',
+    github: "https://codepen.io/CaioPaiola/pen/nojJmQ",
   },
   {
     id: '004',

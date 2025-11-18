@@ -203,6 +203,13 @@
 
         </div>
 
+        <!-- VISUALIZADOR CODEPEN -->
+        <app-code-pen-viewer 
+            *ngIf="isCodePenUrl(currentModelo?.github)"
+            [codepenId]="getCodePenId(currentModelo.github)"
+            [codepenUser]="getCodePenUser(currentModelo.github)">
+        </app-code-pen-viewer>
+
         <!-- Seção Modelos Similares -->
         <div class="modelos-similares" *ngIf="modelosSimilares && modelosSimilares.length > 0">
             <h2 class="modelos-similares__titulo">Modelos similares</h2>

@@ -21,6 +21,7 @@ import { CustomSelectComponent } from './custom-select/custom-select.component';
 import { UserFavouritesComponent } from './user-favourites/user-favourites.component';
 import { CriarUsuarioComponent } from './criar-usuario/criar-usuario.component';
 import { VisualizarUsuariosComponent } from './visualizar-usuarios/visualizar-usuarios.component';
+import { CodePenViewerComponent } from './code-pen-viewer/code-pen-viewer.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { VisualizarUsuariosComponent } from './visualizar-usuarios/visualizar-us
     UserFavouritesComponent,
     CriarUsuarioComponent,
     VisualizarUsuariosComponent,
+    CodePenViewerComponent,
   ],
   imports: [
     CommonModule,
@@ -62,6 +64,7 @@ import { VisualizarUsuariosComponent } from './visualizar-usuarios/visualizar-us
     UserFavouritesComponent,
     CriarUsuarioComponent,
     VisualizarUsuariosComponent,
+    CodePenViewerComponent,
   ]
 })
 export class ComponentsModule { }

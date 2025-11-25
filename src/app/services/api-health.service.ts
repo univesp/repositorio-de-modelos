@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
+import { AuthService } from './auth.service'; //
 
 @Injectable({
   providedIn: 'root'
@@ -15,16 +16,27 @@ export class ApiHealthService {
   private lastError: string = '';
   private hasCheckedInitially = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   checkHealth(): Observable<any> {
+    // VERIFICAR SE TOKEN ESTÁ EXPIRADO ANTES DE FAZER HEALTH CHECK
+    if (this.authService.isTokenExpired()) {
+      console.log('🔐 Health check ignorado - token expirado');
+      return of(true); // Retorna sucesso sem fazer requisição
+    }
+
     return this.http.get(this.healthUrl, { responseType: 'text' }).pipe(
       tap(() => {
+        console.log('✅ API Health: Online');
         this.isApiHealthySubject.next(true);
         this.lastError = '';
         this.hasCheckedInitially = true;
       }),
       catchError(error => {
+        console.log('❌ API Health: Offline -', error.status);
         this.isApiHealthySubject.next(false);
         this.lastError = this.getErrorMessage(error);
         this.hasCheckedInitially = true;

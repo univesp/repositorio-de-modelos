@@ -94,7 +94,7 @@ export class DestaquesComponent implements OnInit, OnDestroy {
       {
         "breakpoint": 992,
         "settings": {
-          "arrows": true,
+          "arrows": false,
           "infinite": true,
           "slidesToShow": 1,
           "slidesToScroll": 1

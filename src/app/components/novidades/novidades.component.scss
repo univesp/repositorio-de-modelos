@@ -1,64 +1,244 @@
-.carousel-container > h1 {
-  font-weight: lighter;
-  font-size: 48px;
-  margin-bottom: 30px;
+.novidades-container {
+  padding: 0 20px;
+  margin: 50px 0;
+  
+  > h1 {
+    font-weight: lighter;
+    font-size: 48px;
+    margin-bottom: 30px;
+    color: #333;
+  }
 }
 
-.cards {
+.novidades-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  justify-content: center;
+}
+
+// ESTILO BASE DOS CARDS (MANTIDO IGUAL)
+.card {
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
 }
 
-.cards > img {
-  width: 320px;
+.card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: 0.3s ease;
+  display: block;
 }
 
 /* Camada escura */
-.cards::after {
+.card::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3), transparent);
   opacity: 0;
   transition: 0.3s ease;
   z-index: 1;
+  border-radius: 12px;
 }
 
 .card-title {
   position: absolute;
-  bottom: 65px;
+  bottom: 20px;
   left: 0;
   right: 0;
-  padding: 12px;
+  padding: 15px;
   color: white;
   text-align: center;
   opacity: 0;
   transition: 0.3s ease;
-  width: 320px;
-  font-size: 28px;
+  font-size: 18px;
   font-weight: bold;
   z-index: 2;
-  pointer-events: auto; /* garante que pode interagir */
+  transform: translateY(20px);
 }
 
-/* Hover em todo o card, incluindo quando mouse estiver sobre o título */
-.cards:hover::after {
+/* Hover em todo o card */
+.card:hover::after {
   opacity: 1;
 }
 
-.cards:hover .card-title {
+.card:hover .card-title {
   opacity: 1;
+  transform: translateY(0);
 }
 
-@media (max-width: 1300px) {
-  .carousel-container > h1 {
-    font-size: 40px
+// ========== MEDIA QUERIES - GRID RESPONSIVO ==========
+
+// LG - ≥1200px até 1399px
+@media(min-width: 1200px) and (max-width: 1399px) {
+  .novidades-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .card:nth-child(n+5) {
+    display: none !important;
+  }
+}
+
+// MD - ≥992px até 1199px
+@media (max-width: 1199px) {
+  .novidades-container {
+    margin: 40px 0;
+    padding: 0 15px;
+    
+    > h1 {
+      font-size: 42px;
+      margin-bottom: 25px;
+    }
   }
   
-  .cards > img {
-    width: 200px;
+  .novidades-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  
+  // TÍTULO SEMPRE VISÍVEL EM TABLET/MOBILE
+  .card::after {
+    opacity: 1 !important;
+  }
+  
+  .card-title {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    font-size: 16px;
+    bottom: 15px;
+    padding: 12px;
+  }
+
+  
+}
+
+// SM - ≥768px até 991px (GRID 3x2 - 3 EM CIMA, 2 EMBAIXO)
+@media (max-width: 991px) {
+  .novidades-container {
+    margin: 30px 0;
+    
+    > h1 {
+      font-size: 38px;
+      margin-bottom: 20px;
+    }
+  }
+  
+  .novidades-grid {
+    grid-template-columns: repeat(3, 1fr); // ⭐ 3 COLUNAS ⭐
+    grid-template-rows: auto auto;         // ⭐ 2 LINHAS ⭐
+    gap: 15px;
+  }
+  
+  // POSICIONA OS ÚLTIMOS 2 CARDS NA SEGUNDA LINHA
+  .card:nth-child(4) {
+    grid-column: 1; // PRIMEIRA COLUNA
+  }
+  
+  .card:nth-child(5) {
+    grid-column: 2; // SEGUNDA COLUNA
+  }
+  
+  .card-title {
+    font-size: 14px;
+    bottom: 12px;
+    padding: 10px;
   }
 }
 
+// XS - ≥576px até 767px (GRID 2x3 - 2 EM CIMA, 2 MEIO, 1 EMBAIXO)
+@media (max-width: 767px) {
+  .novidades-container {
+    margin: 25px 0;
+    padding: 0 10px;
+    
+    > h1 {
+      font-size: 48px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+  }
+  
+  .novidades-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto auto;     
+    gap: 12px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  // POSICIONA OS CARDS NA GRID 2x3
+  .card:nth-child(1),
+  .card:nth-child(2) {
+    grid-row: 1;
+  }
+  
+  .card:nth-child(3),
+  .card:nth-child(4) {
+    grid-row: 2;
+  }
+  
+  .card:nth-child(5) {
+    grid-column: 1 / span 2; // ⭐ ÚLTIMO CARD OCUPA 2 COLUNAS ⭐
+    grid-row: 3;
+    max-width: 50%; // METADE DA LARGURA
+    justify-self: center; // CENTRALIZA
+  }
+  
+  .card-title {
+    font-size: 13px;
+    bottom: 10px;
+    padding: 8px;
+  }
+
+  .card:nth-child(n+5) {
+    display: none !important;
+  }
+}
+
+// XXS - <576px (2 EM CIMA, 2 MEIO, 1 EMBAIXO - COMPACTO)
+@media (max-width: 575px) {
+  .novidades-container {
+    margin: 20px 0;
+    padding: 0 8px;
+    
+    > h1 {
+      font-size: 48px;
+      margin-bottom: 40px;
+    }
+  }
+  
+  .novidades-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+    max-width: 450px;
+  }
+  
+  .card:nth-child(5) {
+    grid-column: 1 / span 2;
+    max-width: 50%;
+    justify-self: center;
+  }
+  
+  .card-title {
+    font-size: 12px;
+    bottom: 8px;
+    padding: 6px;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+  }
+}

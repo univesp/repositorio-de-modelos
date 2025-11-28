@@ -30,6 +30,7 @@
 .button-adicionar > button {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background: #FFF;
   border: none;
@@ -204,6 +205,33 @@
   }
 }
 
+// BOTÃO TOGGLE PARA FILTROS (MOBILE)
+.filtros-toggle {
+  display: none; // Escondido por padrão
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  width: 100%;
+  font-weight: 500;
+  font-size: 14px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  mat-icon {
+    transition: transform 0.3s ease;
+  }
+}
+
+// ========== MEDIA QUERIES - FILTER COMPONENT ==========
+
 @media (max-width: 1300px) {
   .filter-elements {
     margin-bottom: 20px;
@@ -226,5 +254,296 @@
     padding: 7px;
     font-size: 25px;
     width: 130px;
+  }
+}
+
+// LG - ≥992px até 1199px (AQUI MUDAMOS A ESTRUTURA!)
+@media (max-width: 1199px) {
+  .filter-elements {
+    flex-direction: column; // BOTÕES EM CIMA, PESQUISA EMBAIXO
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    width: 90%;
+  }
+
+  // LINHA SUPERIOR COM BOTÕES
+  .explorar-tags {
+    order: 1;
+    font-size: 22px;
+    gap: 8px;
+  }
+
+  .button-adicionar {
+    order: 2;
+    
+    > button {
+      font-size: 18px;
+      height: 45px;
+      padding: 6px 14px;
+    }
+  }
+
+  // BARRA DE PESQUISA - AGORA EM LINHA SEPARADA
+  .barra-pesquisa {
+    order: 3;
+    flex: none;
+    width: 100%;
+    min-width: auto;
+    max-width: 600px;
+  }
+
+  .search-wrapper {
+    width: 100%;
+    padding: 8px 16px;
+  }
+
+  .search-wrapper input {
+    padding: 12px;
+    font-size: 15px;
+  }
+}
+
+// MD - ≥768px até 991px
+@media (max-width: 991px) {
+  .filter-elements {
+    width: 95%;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .explorar-tags {
+    font-size: 20px;
+    gap: 6px;
+  }
+
+  .button-adicionar > button {
+    font-size: 16px;
+    height: 40px;
+    padding: 5px 12px;
+  }
+
+  .barra-pesquisa {
+    max-width: 500px;
+  }
+
+  .search-wrapper {
+    padding: 6px 14px;
+  }
+
+  .search-wrapper input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .icone-circular {
+    width: 35px;
+    height: 35px;
+    
+    mat-icon {
+      font-size: 22px;
+    }
+  }
+
+  .icon-button mat-icon {
+    font-size: 24px;
+  }
+
+  // FILTROS SELECTS RESPONSIVOS
+  .filtros-selects {
+    gap: 12px 20px;
+    padding: 15px;
+  }
+
+  .filtro select {
+    min-width: 130px;
+    max-width: 130px;
+    font-size: 13px;
+  }
+
+  .filtro label {
+    font-size: 13px;
+  }
+}
+
+// SM - ≥576px até 767px
+@media (max-width: 767px) {
+  .filter-elements {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .explorar-tags {
+    font-size: 18px;
+    gap: 4px;
+  }
+
+  .button-adicionar > button {
+    font-size: 14px;
+    height: 36px;
+    padding: 4px 10px;
+    
+    .plus {
+      font-size: 18px;
+    }
+  }
+
+  .barra-pesquisa {
+    max-width: 100%;
+  }
+
+  .search-wrapper {
+    padding: 5px 12px;
+  }
+
+  .search-wrapper input {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .icone-circular {
+    width: 32px;
+    height: 32px;
+    
+    mat-icon {
+      font-size: 20px;
+    }
+  }
+
+  .icon-button mat-icon {
+    font-size: 22px;
+  }
+
+  // FILTROS SELECTS - MAIS COMPACTOS
+  .filtros-selects {
+    gap: 10px 15px;
+    padding: 12px;
+  }
+
+  .filtro select {
+    min-width: 120px;
+    max-width: 120px;
+    font-size: 12px;
+    padding: 5px 28px 5px 8px;
+  }
+
+  .filtro label {
+    font-size: 12px;
+    margin-left: 6px;
+  }
+
+  .clear-all-filters {
+    min-width: 100px;
+    padding: 5px 10px;
+    font-size: 11px;
+    
+    mat-icon {
+      font-size: 14px;
+    }
+  }
+}
+
+// XS - <576px
+@media (max-width: 575px) {
+  .filter-elements {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .explorar-tags {
+    font-size: 16px;
+    gap: 3px;
+  }
+
+  .button-adicionar > button {
+    font-size: 13px;
+    height: 34px;
+    padding: 3px 8px;
+    
+    .plus {
+      font-size: 16px;
+    }
+  }
+
+  .search-wrapper {
+    padding: 4px 10px;
+    border-radius: 25px;
+  }
+
+  .search-wrapper input {
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  .icone-circular {
+    width: 30px;
+    height: 30px;
+    
+    mat-icon {
+      font-size: 18px;
+    }
+  }
+
+  .icon-button mat-icon {
+    font-size: 20px;
+  }
+
+  // FILTROS SELECTS - UMA COLUNA EM MOBILE
+  .filtros-toggle {
+    display: flex; // Mostra apenas em mobile
+  }
+
+  .filtros-selects {
+    display: none; // Escondido por padrão em mobile
+    flex-direction: column;
+    gap: 12px;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    
+    // Quando estiver aberto
+    &.filtros-abertos {
+      display: flex;
+      max-height: 500px; // Altura suficiente para conter todos os filtros
+      padding: 15px;
+      background-color: #5c4bc5;
+    }
+  }
+
+  .filtro {
+    width: 100%;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    
+    .filtros-abertos & {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    // Delay para animação em cascata
+    @for $i from 1 through 10 {
+      &:nth-child(#{$i}) {
+        transition-delay: #{$i * 0.05}s;
+      }
+    }
+  }
+
+  .filtro select {
+    min-width: 100%;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .filtro label {
+    margin-left: 0;
+    margin-bottom: 3px;
+  }
+
+  .clear-all-filters {
+    width: 100%;
+    margin-top: 5px;
   }
 }

@@ -31,9 +31,9 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
-  position: relative;
-  top: 20px;
-  right: 130px;
+  position: absolute;
+  top: 21%;
+  left: 7%;
   font-size: 18px;
 
   /* Estilo base para todos os itens */
@@ -112,9 +112,15 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  position: relative;
-  left: 200px;
+  position: absolute;
+  left: 90%;
   top: 15px;
+  z-index: 1000;
+
+   // Quando tem apenas o BOTÃO LOGIN (elemento menor)
+   &:has(.login-header-button) {
+    left: 85%; // Mais centralizado pois o botão é menor
+  }
 }
 
 .login-header-button {
@@ -129,7 +135,7 @@
   font-weight: bold;
   width: 150px;
   font-size: 16px;
-
+  
   &:hover {
     background: rgba(113, 85, 216, 0.9);
   }
@@ -333,7 +339,7 @@
   display: none;
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 1450px) {
   .header__image-container {
     width: 220px;
     height: 100px;
@@ -350,4 +356,81 @@
   .header > h1 {
     font-size: 2.8em;
   }
+
+  .header-auth-section {
+    position: absolute;
+    left: 90%;
+    top: 15px;
+  }
+}
+
+
+@media (max-width: 1199px) {
+  .header {
+    flex-direction: column;
+
+    &__image-container {
+      position: initial;
+    }
+
+    > h1 {
+      position: initial;
+    }
+  }
+
+  .header-auth-section {
+    position: absolute;
+    left: 90%;
+    top: 15px;
+
+    &:has(.login-header-button) {
+      left: 80%;
+    }
+  }
+
+  .breadcrumbs {
+    top: 24%;
+  }
+}
+
+@media (max-width: 767px) {
+  .header {
+    > h1 {
+      font-size: 2.2em;
+    }
+  }
+
+  .header-auth-section {
+    position: absolute;
+    left: 80%;
+    top: 15px;
+
+    &:has(.login-header-button) {
+      left: 73%;
+    }
+  }
+}
+
+@media (max-width: 575px) {
+  .header {
+    > h1 {
+      font-size: 1.6em;
+    }
+  }
+
+  .header-auth-section {
+    position: absolute;
+    left: 80%;
+    top: 15px;
+
+    &:has(.login-header-button) {
+      left: 70%;
+    }
+  }
+
+  .login-header-button {
+    width: 120px;
+    padding: 6px 9px;
+  }
+
 }

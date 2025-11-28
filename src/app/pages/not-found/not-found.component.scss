@@ -4,6 +4,7 @@
   justify-content: center;
   align-items: center;  
   margin-top: 50px;
+  text-align: center;
 }
 
 .not-found > h1 {
@@ -20,7 +21,153 @@
 
 .not-found > p {
   font-size: 20px;
+  //max-width: 600px;
+  line-height: 1.5;
 }
 .not-found > p:nth-last-child(2) {
   margin-bottom: 10px;
+}
+
+
+// ========== MEDIA QUERIES - 404 NOT FOUND ==========
+
+// LG - ≥992px até 1199px
+@media (max-width: 1199px) {
+  .not-found > h1 {
+    font-size: 180px;
+  }
+  
+  .not-found > h2 {
+    font-size: 32px;
+  }
+  
+  .not-found > p {
+    font-size: 18px;
+    max-width: 850px;
+  }
+}
+
+// MD - ≥768px até 991px
+@media (max-width: 991px) {
+  .not-found {
+    margin-top: 40px;
+    padding: 0 15px;
+  }
+  
+  .not-found > h1 {
+    font-size: 150px;
+    margin-bottom: 15px;
+  }
+  
+  .not-found > h2 {
+    font-size: 28px;
+    margin-bottom: 25px;
+  }
+  
+  .not-found > p {
+    font-size: 17px;
+    max-width: 700px;
+  }
+  
+  .u-button-default {
+    margin-bottom: 90px;
+    
+    button {
+      width: 280px;
+      padding: 14px 28px;
+      font-size: 17px;
+    }
+  }
+}
+
+// SM - ≥576px até 767px
+@media (max-width: 767px) {
+  .not-found {
+    margin-top: 30px;
+    padding: 0 15px;
+    min-height: 50vh;
+  }
+  
+  .not-found > h1 {
+    font-size: 120px;
+    margin-bottom: 12px;
+  }
+  
+  .not-found > h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .not-found > p {
+    font-size: 16px;
+    max-width: 500px;
+  }
+  
+  .u-button-default {
+    margin-bottom: 70px;
+    
+    button {
+      width: 250px;
+      padding: 12px 24px;
+      font-size: 16px;
+    }
+  }
+}
+
+// XS - <576px
+@media (max-width: 575px) {
+  .not-found {
+    margin-top: 20px;
+    padding: 0 10px;
+    min-height: 40vh;
+  }
+  
+  .not-found > h1 {
+    font-size: 80px;
+    margin-bottom: 10px;
+  }
+  
+  .not-found > h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+  
+  .not-found > p {
+    font-size: 14px;
+    max-width: 100%;
+  }
+  
+  .not-found > p:nth-last-child(2) {
+    margin-bottom: 8px;
+  }
+  
+  .u-button-default {
+    margin-bottom: 50px;
+    
+    button {
+      width: 200px;
+      padding: 10px 20px;
+      font-size: 14px;
+    }
+  }
+}
+
+// EXTRA SMALL - <400px (para telas muito pequenas)
+@media (max-width: 399px) {
+  .not-found > h1 {
+    font-size: 60px;
+  }
+  
+  .not-found > h2 {
+    font-size: 18px;
+  }
+  
+  .not-found > p {
+    font-size: 13px;
+  }
+  
+  .u-button-default button {
+    width: 180px;
+    font-size: 13px;
+  }
 }

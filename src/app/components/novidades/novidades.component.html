@@ -1,13 +1,13 @@
-<div class="carousel-container">
+<div class="novidades-container">
   <h1>Novidades</h1>
-  <ngx-slick-carousel class="novidades-cards"
-  #slickModal="slick-carousel"
-  [config]="slideConfig">
-
-    <div ngxSlickItem *ngFor="let card of cards" class="cards" (click)="redirectModeloPage(card.id)">
-      <img src="{{ card.img_sm }}" alt="" class="img-style">
+  
+  <div class="novidades-grid">
+    <div 
+      *ngFor="let card of cards" 
+      class="card" 
+      (click)="redirectModeloPage(card.id)">
+      <img src="{{ card.img_sm }}" alt="" class="card-image">
       <p class="card-title"> {{ card.titulo }} </p>
     </div>
-
-  </ngx-slick-carousel>
+  </div>
 </div>

@@ -8,6 +8,10 @@
   margin-bottom: 5px;
 }
 
+.inputs-login {
+  width: 500px;
+}
+
 .check-remember{
   display: flex;
   align-items: end;
@@ -43,4 +47,19 @@ input[type='checkbox'] {
 }
 .submit-button > button:hover {
   transform: scale(1.1);
+}
+
+
+// XS - <576px
+@media (max-width: 575px) {
+  .inputs-login {
+    width: 350px;
+  }
+}
+
+// XXS - <380px
+@media (max-width: 379px) {
+  .inputs-login {
+    width: 100%;
+  }
 }

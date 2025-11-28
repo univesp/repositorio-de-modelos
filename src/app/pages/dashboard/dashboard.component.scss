@@ -35,15 +35,45 @@
     margin-top: 80px;
    /* margin-top: -120px; */
   }
-
-  &__novidades {
-    margin-left: 20px;
-  }
 }
 
 
-@media (max-width: 1300px) {
-  .dashboard__destaques {
-    height: 200vh;
+
+
+// ========== MEDIA QUERIES - TAGS PAGE ==========
+
+// LG - ≥992px até 1199px
+@media (max-width: 1199px) {
+  .dashboard {
+    &__filter {
+      margin-top: 30px;
+    }
+  }
+}
+
+// MD - ≥768px até 991px
+@media (max-width: 991px) {
+  .dashboard {
+    &__filter {
+      margin-top: 30px;
+    }
+  }
+}
+
+// SM - ≥576px até 767px
+@media (max-width: 767px) {
+  .dashboard {
+    &__filter {
+      margin-top: 30px;
+    }
+  }
+}
+
+// XS - <576px
+@media (max-width: 575px) {
+  .dashboard {
+    &__filter {
+      margin-top: 30px;
+    }
   }
 }

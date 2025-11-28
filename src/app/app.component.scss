@@ -15,7 +15,7 @@
 
   &__footer {
     width: 100%;
-    height: 50vh;
+    height: 100%;
     background-color: #333333;
     margin-top: 70px;
   }
@@ -28,5 +28,12 @@
 
   .container__footer {
     height: 60vh;
+  }
+}
+
+// XS - <576px
+@media (max-width: 575px) {
+  .container__footer {
+    height: 100%;
   }
 }

@@ -50,8 +50,14 @@
 
   </div>
 
+  <!-- BOTÃO PARA EXPANDIR/RETRAIR FILTROS (visível apenas em mobile) -->
+  <div class="filtros-toggle" *ngIf="isMobileView()" (click)="toggleFiltros()">
+    <span>{{ filtrosAbertos ? 'Ocultar Filtros' : 'Expandir Filtros' }}</span>
+    <mat-icon>{{ filtrosAbertos ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </div>
+
   <!-- Filtros -->
-  <div class="filtros-selects">
+  <div class="filtros-selects" [class.filtros-abertos]="filtrosAbertos">
     <div class="filtro" *ngFor="let filtro of filtrosConfig">
       <label>{{ filtro.label }}</label>
       <select [(ngModel)]="filtros[filtro.key]" (change)="emitirMudancas()">

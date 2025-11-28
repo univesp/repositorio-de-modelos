@@ -21,6 +21,8 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   qtdeModelos: number = Modeloslist.length;
 
+  filtrosAbertos = false;
+
   ngOnInit(): void {
     // ESCUTA MUDANÇAS NO SERVIÇO E NA URL SIMULTANEAMENTE
     this.filtrosSub = this.modoExplorarService.filtrosAtuais$.subscribe(filtros => {
@@ -366,6 +368,16 @@ export class FilterComponent implements OnInit, OnDestroy {
     // Regra 4: Se for mais de 100 (arredonda para baixo de 50 em 50)
     const arredondado = Math.floor((total - 1) / 50) * 50;
     return `Explore mais de ${arredondado} modelos disponíveis...`;
+  }
+
+  // Detecta se está em view mobile
+  isMobileView(): boolean {
+    return window.innerWidth <= 575;
+  }
+  
+  // Alterna estado dos filtros
+  toggleFiltros(): void {
+    this.filtrosAbertos = !this.filtrosAbertos;
   }
   
 }

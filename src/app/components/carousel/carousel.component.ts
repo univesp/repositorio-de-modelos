@@ -34,15 +34,32 @@ export class CarouselComponent implements OnInit {
     "infinite": true,
     "dots": true,
     "dotsClass": "slick-dots custom-dots",
-    "responsive": [
+    responsive: [
       {
-        "breakpoint": 992,
-        "settings": {
-          "arrows": true,
-          "infinite": true,
-          "slidesToShow": 1,
-          "slidesToScroll": 1,
-          "dots": true
+        breakpoint: 1200, 
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: false,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 992,   
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: false,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 768,   
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          arrows: false,
+          dots: true
         }
       }
     ]

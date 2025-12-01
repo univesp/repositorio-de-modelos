@@ -1,16 +1,13 @@
 <div class="destaques-container">
   <h1>Destaques</h1>
 
-  <ngx-slick-carousel class="modelos-cards"
-  #slickModal="slick-carousel"
-  [config]="modelosConfig">
-
-    <div ngxSlickItem *ngFor="let modelo of modelosDestaque" 
-         class="modelo-items-container"
+  <div class="modelos-grid">
+    <div *ngFor="let modelo of modelosDestaque" 
+         class="modelo-card"
          (click)="redirectModeloPage(modelo.id)">
       
       <div class="modelo-detalhes">
-        <div>
+        <div class="modelo-metadata">
           <span>{{ modelo.date }}</span> 
           <span> | </span> 
           <span>{{ modelo.formato }}</span>
@@ -18,8 +15,8 @@
           <span>{{ modelo.categorias.join(', ') }}</span>
         </div>
 
-        <div>
-          <span (click)="toggleBookmark(modelo, $event)" *ngIf="isLoggedIn">
+        <div class="modelo-bookmark" *ngIf="isLoggedIn">
+          <span (click)="toggleBookmark(modelo, $event)">
             <mat-icon 
               class="icon-bookmark" 
               aria-hidden="false" 
@@ -35,7 +32,7 @@
       </div>
 
       <div class="modelo-imagem">
-        <img src="{{ modelo.img_lg }}" alt="">
+        <img src="{{ modelo.img_lg }}" alt="{{ modelo.titulo }}">
       </div>
 
       <div class="modelo-tags">
@@ -49,8 +46,6 @@
       <div class="modelo-footer">
         <p class="modelo-autor">Enviado por: <b>{{ modelo.autor }}</b></p>
       </div>
-      
     </div>
-
-  </ngx-slick-carousel>
+  </div>
 </div>

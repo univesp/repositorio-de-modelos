@@ -1,12 +1,44 @@
-.destaques-container > h1 {
-  font-weight: lighter;
-  font-size: 48px;
-  margin-bottom: 20px;
+.destaques-container {
+  padding: 0 20px;
+  margin: 50px 0;
+  
+  > h1 {
+    font-weight: lighter;
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #333;
+  }
 }
 
-.modelos-cards {
+// GRID PRINCIPAL
+.modelos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); // ⭐ 3 CARDS LADO A LADO NO DESKTOP ⭐
+  gap: 25px;
+  justify-content: center;
+}
+
+// ESTILOS DOS CARDS (MANTIDOS IGUAIS)
+.modelo-card {
   display: flex;
-  align-items: stretch;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.2rem;
+  border-radius: 12px;
+  height: 100%;
+  min-height: 550px;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  background-color: #FFF;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  }
 }
 
 .modelo-detalhes {
@@ -16,82 +48,55 @@
   margin-bottom: 5px;
 }
 
-.modelo-items-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1.2rem;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 550px;
-  border: 1px solid #e0e0e0;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  margin: 0 10px;
-  background-color: #FFF;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  }
-}
-
 .modelo-title {
   margin-bottom: 20px;
-}
-
-.modelo-items-container > h2 {
-  font-size: 28px;
-  margin-bottom: 5px;
-  margin-left: 30px;
+  
+  h2 {
+    font-size: 28px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    line-height: 1.2;
+  }
 }
 
 .modelo-descricao {
   margin-top: 20px;
   font-size: 18px;
   width: 95%;
-  margin-left: 20px;
+  margin-left: 10px;
   margin-bottom: 40px;
   line-height: 1.4;
   flex: 1;
   display: -webkit-box;
-  -webkit-line-clamp: 4; // NÚMERO DE LINHAS
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   max-height: calc(1.4em * 4);
 }
 
-.modelo-imagem > img {
+.modelo-imagem {
   width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    
+    .modelo-card:hover & {
+      transform: scale(1.05);
+    }
+  }
 }
 
 .modelo-autor {
-  margin-left: 20px;
+  margin-left: 10px;
   font-size: 18px;
   flex-grow: 1;
-}
-
-.modelo-button-destaques {
-  width: 45%;
-  background-color: transparent;
-  border: 1px solid #7155d8;
-  color: #7155d8;
-  font-weight: bold;
-  font-size: 20px;
-  padding: 15px;
-  margin-top: auto;
-  border-radius: 7px;
-  cursor: pointer;
-  &:hover {
-    background-color: #7155d8;
-    color: #FFF;
-    border: none;
-  }
 }
 
 .icon-bookmark {
@@ -120,40 +125,171 @@
     border-radius: 5px;
     font-size: 14px;
     font-weight: 500;
-    backdrop-filter: blur(10px);
   }
 }
 
+// ========== MEDIA QUERIES - GRID RESPONSIVO ==========
 
+// LG - ≥1200px até 1399px (3 CARDS - MESMA CONFIG)
+@media (max-width: 1399px) {
+  .modelos-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
 
-
-
-@media (max-width: 1300px) {
+// MD - ≥992px até 1199px (2 CARDS) ⭐ NOVO ⭐
+@media (max-width: 1199px) {
   .destaques-container {
-    margin-top: 50px;
+    margin: 40px 0;
+    padding: 0 15px;
+    
+    > h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
   }
-
-  .destaques-container > h1 {
-    font-size: 40px;
+  
+  .modelos-grid {
+    grid-template-columns: repeat(2, 1fr); // ⭐ 2 CARDS ⭐
+    gap: 20px;
   }
+  
+  .modelo-title h2 {
+    font-size: 24px;
+  }
+  
+  .modelo-descricao {
+    font-size: 16px;
+  }
+  
+  .modelo-autor {
+    font-size: 16px;
+  }
+}
 
+// SM - ≥768px até 991px (2 CARDS - COMPACTO) ⭐ MANTÉM 2 ⭐
+@media (max-width: 991px) {
+  .destaques-container {
+    margin: 30px 0;
+    
+    > h1 {
+      font-size: 48px;
+    }
+  }
+  
+  .modelos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+  
+  .modelo-card {
+    min-height: 500px;
+    padding: 1rem;
+  }
+  
+  .modelo-title h2 {
+    font-size: 22px;
+    margin-left: 5px;
+  }
+  
+  .modelo-descricao {
+    font-size: 15px;
+    margin-left: 5px;
+    -webkit-line-clamp: 3;
+  }
+  
+  .modelo-imagem {
+    height: 180px;
+  }
+}
+
+// XS - ≥576px até 767px (1 CARD) ⭐ NOVO ⭐
+@media (max-width: 767px) {
+  .destaques-container {
+    margin: 25px 0;
+    padding: 0 10px;
+    
+    > h1 {
+      font-size: 48px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+  }
+  
+  .modelos-grid {
+    grid-template-columns: 1fr; // ⭐ 1 CARD POR LINHA ⭐
+    gap: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .modelo-card {
+    min-height: auto;
+    max-width: 450px;
+    margin: 0 auto;
+    
+    &:hover {
+      transform: translateY(-3px);
+    }
+  }
+  
+  .modelo-title h2 {
+    font-size: 20px;
+  }
+  
   .modelo-descricao {
     font-size: 14px;
+    -webkit-line-clamp: 3;
   }
-
+  
   .modelo-autor {
-    font-size: 15px;
-  }
-
-  .modelo-items-container > h2 {
-    font-size: 22px;
-  }
-
-  .modelo-detalhes {
     font-size: 14px;
   }
+}
 
-  .modelo-imagem > img {
-    width: 350px;
+// XXS - <576px (1 CARD - COMPACTO) ⭐ MANTÉM 1 ⭐
+@media (max-width: 575px) {
+  .destaques-container {
+    margin: 20px 0;
+    padding: 0 8px;
+    
+    > h1 {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+  }
+  
+  .modelos-grid {
+    gap: 12px;
+    max-width: 400px;
+  }
+  
+  .modelo-card {
+    padding: 0.8rem;
+    min-height: 500px;
+  }
+  
+  .modelo-title h2 {
+    font-size: 18px;
+  }
+  
+  .modelo-descricao {
+    font-size: 13px;
+    -webkit-line-clamp: 2;
+    margin-bottom: 20px;
+  }
+  
+  .modelo-tags .tag-item {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+  
+  .modelo-autor {
+    font-size: 13px;
+  }
+  
+  .modelo-detalhes {
+    font-size: 12px;
   }
 }

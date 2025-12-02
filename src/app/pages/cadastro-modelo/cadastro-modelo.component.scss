@@ -283,7 +283,6 @@ form {
   margin-top: 5px;
   margin-left: 3px;
   color: #7155d8;
-  font-weight: lighter;
 }
 
 .image-preview-container {
@@ -373,5 +372,340 @@ form {
   
   .ql-toolbar {
     border-bottom: 2px solid #ff5555 !important;
+  }
+}
+
+
+
+// ========== MEDIA QUERIES - CADASTRO MODELO ==========
+
+// LG - ≥1200px até 1399px
+@media (max-width: 1399px) {
+  .cadastro-modelo {
+    &__container {
+      margin-left: 250px;
+      margin-right: 50px;
+    }
+    
+    &__formato-container,
+    .tags-input-container,
+    .input-text,
+    .quill-editor-container {
+      width: 75%; // Largura um pouco maior
+    }
+    
+    &__titulo-secao {
+      font-size: 26px;
+    }
+
+    &__filter {
+      margin-top: 25px;
+    }
+  }
+
+  .detalhe-campo-forms {
+    width: 75%;
+  }
+}
+
+// MD - ≥992px até 1199px
+@media (max-width: 1199px) {
+  .cadastro-modelo {
+    &__container {
+      margin-left: 200px;
+      margin-right: 40px;
+    }
+    
+    &__container > h1 {
+      font-size: 2.2em;
+    }
+    
+    &__container > span {
+      font-size: 16px;
+    }
+    
+    &__formato-container,
+    .tags-input-container,
+    .input-text,
+    .quill-editor-container,
+    .custom-select {
+      width: 80%; // Mais largura para ocupar espaço disponível
+    }
+
+    .quill-editor-container {
+      min-height: 300px;
+    }
+    
+    &__titulo-secao {
+      font-size: 24px;
+    }
+    
+    &__botoes-submit > button {
+      font-size: 20px;
+      padding: 12px;
+    }
+  }
+  
+  .titulo-info {
+    font-size: 16px;
+  }
+  
+  .input-text,
+  .custom-select,
+  .quill-editor-container,
+  .tags-input-container {
+    font-size: 16px;
+    padding: 11px;
+  }
+}
+
+// SM - ≥768px até 991px
+@media (max-width: 991px) {
+  .cadastro-modelo {
+    &__container {
+      margin-left: 150px;
+      margin-right: 30px;
+    }
+    
+    &__container > h1 {
+      font-size: 2em;
+    }
+    
+    &__container > span {
+      font-size: 15px;
+    }
+    
+    &__formato-container,
+    .tags-input-container,
+    .input-text,
+    .quill-editor-container,
+    .custom-select {
+      width: 85%; // Ainda mais largura
+    }
+    
+    &__titulo-secao {
+      font-size: 22px;
+    }
+    
+    &__botoes-submit {
+      flex-direction: column;
+      gap: 15px;
+      align-items: flex-start;
+      
+      > button {
+        width: 450px;
+        font-size: 18px;
+        padding: 10px;
+      }
+    }
+  }
+  
+  .titulo-info {
+    font-size: 15px;
+    margin-top: 25px;
+  }
+  
+  .input-text,
+  .custom-select,
+  .quill-editor-container,
+  .tags-input-container {
+    font-size: 15px;
+    padding: 10px;
+  }
+  
+  .detalhe-campo-forms {
+    font-size: 14px;
+    width: 85%;
+  }
+}
+
+// XS - ≥576px até 767px
+@media (max-width: 767px) {
+  .cadastro-modelo {
+    &__container {
+      margin-left: 50px;
+      margin-right: 20px;
+      margin-top: 30px;
+    }
+    
+    &__container > h1 {
+      font-size: 1.8em;
+    }
+    
+    &__container > span {
+      font-size: 14px;
+    }
+    
+    &__formato-container,
+    .tags-input-container,
+    .input-text,
+    .quill-editor-container,
+    .custom-select {
+      width: 95%; // Quase toda largura disponível
+    }
+    
+    &__titulo-secao {
+      font-size: 20px;
+    }
+    
+    // Formato container em coluna
+    &__formato-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      width: 100%;
+      
+      div {
+        width: 100%;
+      }
+    }
+
+    &__botoes-submit {
+      gap: 10px;
+      margin: 70px auto 0 auto;
+      
+      > button {
+        width: 350px;
+        font-size: 16px;
+        padding: 10px;
+      }
+    }
+  }
+  
+  form {
+    margin-top: 30px;
+  }
+  
+  .titulo-info {
+    font-size: 14px;
+    margin-top: 20px;
+  }
+  
+  .input-text,
+  .custom-select,
+  .quill-editor-container,
+  .tags-input-container {
+    font-size: 14px;
+    padding: 9px;
+    width: 100%;
+  }
+  
+  .quill-editor-container {
+    min-height: 200px;
+    width: 100%;
+  }
+  
+  .detalhe-campo-forms {
+    font-size: 13px;
+    width: 95%;
+  }
+  
+  .radio-buttons-group {
+    flex-direction: column;
+    gap: 10px;
+    top: 0;
+    margin-top: 10px;
+  }
+  
+  .formato-radio-inline-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+// XXS - <576px
+@media (max-width: 575px) {
+  .cadastro-modelo {
+    &__container {
+      margin-left: 20px;
+      margin-right: 20px;
+      margin-top: 20px;
+    }
+    
+    &__container > h1 {
+      font-size: 1.6em;
+    }
+    
+    &__container > span {
+      font-size: 13px;
+    }
+    
+    &__titulo-secao {
+      font-size: 18px;
+    }
+    
+    &__botoes-submit {
+      gap: 10px;
+      margin: 70px auto 0 auto;
+      
+      > button {
+        width: 350px;
+        font-size: 16px;
+        padding: 10px;
+      }
+    }
+  }
+  
+  form {
+    margin-top: 20px;
+  }
+  
+  .titulo-info {
+    font-size: 13px;
+    margin-top: 15px;
+  }
+  
+  .input-text,
+  .custom-select,
+  .quill-editor-container,
+  .tags-input-container {
+    font-size: 13px;
+    padding: 8px;
+  }
+  
+  .quill-editor-container {
+    min-height: 180px;
+    
+    .ql-toolbar {
+      padding: 5px;
+      
+      .ql-formats {
+        margin-right: 5px;
+      }
+      
+      button {
+        width: 24px;
+        height: 24px;
+        padding: 2px;
+      }
+    }
+  }
+  
+  
+  .detalhe-campo-forms {
+    font-size: 12px;
+  }
+  
+  // Tags container mais compacto
+  .tags-input-container {
+    padding: 6px;
+    min-height: 36px;
+    
+    .tag-chip {
+      font-size: 12px;
+      padding: 3px 8px;
+      margin-right: 4px;
+      margin-bottom: 4px;
+    }
+    
+    .tags-input {
+      font-size: 13px;
+      height: 28px;
+    }
+  }
+  
+  .cadastro-modelo__equipe {
+    margin-top: 40px;
   }
 }

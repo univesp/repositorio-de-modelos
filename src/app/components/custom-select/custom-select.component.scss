@@ -202,3 +202,171 @@
     }
   }
 }
+
+
+
+// ========== MEDIA QUERIES - CUSTOM SELECT ==========
+
+// LG - ≥1200px até 1399px
+@media (max-width: 1399px) {
+  .custom-select {
+    width: 75%; // Mesma largura dos outros inputs
+    
+    .selected-items-display {
+      font-size: 16px;
+    }
+  }
+  
+  .options-panel {
+    width: 75%;
+  }
+}
+
+// MD - ≥992px até 1199px
+@media (max-width: 1199px) {
+  .custom-select {
+    width: 80%;
+    
+    .selected-items-display {
+      font-size: 15px;
+    }
+    
+    .select-dropdown-icon {
+      font-size: 22px;
+    }
+  }
+  
+  .options-panel {
+    width: 80%;
+    max-height: 220px;
+    
+    .option-item {
+      font-size: 14px;
+      padding: 7px 12px;
+      
+      input[type="checkbox"],
+      input[type="radio"] {
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+// SM - ≥768px até 991px
+@media (max-width: 991px) {
+  .custom-select {
+    width: 85%;
+    padding: 10px;
+    
+    .selected-items-display {
+      font-size: 14px;
+    }
+    
+    .select-dropdown-icon {
+      font-size: 20px;
+    }
+  }
+  
+  .options-panel {
+    width: 85%;
+    max-height: 200px;
+    
+    .option-item {
+      font-size: 13px;
+      padding: 6px 10px;
+      
+      input[type="checkbox"],
+      input[type="radio"] {
+        width: 15px;
+        height: 15px;
+        margin-right: 6px;
+      }
+    }
+  }
+}
+
+// XS - ≥576px até 767px
+@media (max-width: 767px) {
+  .custom-select {
+    width: 100%;
+    padding: 9px;
+    font-size: 14px;
+    
+    .selected-items-display {
+      font-size: 14px;
+    }
+    
+    .select-dropdown-icon {
+      font-size: 20px;
+    }
+  }
+  
+  .options-panel {
+    width: 100%;
+    max-height: 180px;
+    z-index: 100; // Garante que fique acima de outros elementos
+    
+    .option-item {
+      font-size: 13px;
+      padding: 5px 8px;
+      
+      input[type="checkbox"],
+      input[type="radio"] {
+        width: 14px;
+        height: 14px;
+        margin-right: 5px;
+      }
+    }
+  }
+  
+  .titulo-info {
+    .select-hint {
+      display: block;
+      margin-left: 0;
+      margin-top: 2px;
+      font-size: 12px;
+    }
+  }
+}
+
+// XXS - <576px
+@media (max-width: 575px) {
+  .custom-select {
+    padding: 8px;
+    font-size: 13px;
+    
+    .selected-items-display {
+      font-size: 13px;
+    }
+    
+    .select-dropdown-icon {
+      font-size: 18px;
+    }
+  }
+  
+  .options-panel {
+    max-height: 160px;
+    
+    .option-item {
+      font-size: 12px;
+      padding: 4px 6px;
+      
+      input[type="checkbox"],
+      input[type="radio"] {
+        width: 13px;
+        height: 13px;
+        margin-right: 4px;
+      }
+    }
+  }
+  
+  .titulo-info {
+    font-size: 13px;
+    
+    .select-hint {
+      font-size: 11px;
+    }
+  }
+}

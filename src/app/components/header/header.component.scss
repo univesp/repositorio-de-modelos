@@ -409,6 +409,10 @@
       left: 73%;
     }
   }
+
+  .breadcrumbs {
+    font-size: 14px;
+  }
 }
 
 @media (max-width: 575px) {
@@ -431,6 +435,10 @@
   .login-header-button {
     width: 120px;
     padding: 6px 9px;
+  }
+
+  .breadcrumbs {
+    font-size: 12px;
   }
 
 }

@@ -37,6 +37,17 @@
           <input 
             class="checkFormato" 
             type="radio" 
+            id="formatoJogo" 
+            name="formato" 
+            value="Jogo" 
+            (change)="onFormatoChange($event); limparErroFormato()">
+            <label for="formatoJogo">Jogo</label>
+        </div>
+
+        <div>
+          <input 
+            class="checkFormato" 
+            type="radio" 
             id="recursoProgramacao" 
             name="formato" 
             value="Recurso de Programação" 
@@ -59,22 +70,11 @@
           <input 
             class="checkFormato" 
             type="radio" 
-            id="formatoJogo" 
+            id="novotec" 
             name="formato" 
-            value="Jogo" 
+            value="Novotec" 
             (change)="onFormatoChange($event); limparErroFormato()">
-            <label for="formatoJogo">Jogo</label>
-        </div>
-
-        <div>
-          <input 
-            class="checkFormato" 
-            type="radio" 
-            id="modeloExterno" 
-            name="formato" 
-            value="Modelo Externo" 
-            (change)="onFormatoChange($event); limparErroFormato()">
-            <label for="modeloExterno">Modelo Externo</label>
+            <label for="novotec">Novotec</label>
         </div>
         
       </div>
@@ -140,7 +140,7 @@
           >
         </div>
         <!-- Exibe o limite de tags restantes dinamicamente -->
-        <span class="detalhe-campo-forms">Insira palavras-chave relacionadas ao recurso para facilitar a busca (separe por vírgula). Limite: {{ maxTags - tags.length }} restantes.</span>
+        <span style="display: block;" class="detalhe-campo-forms">Insira palavras-chave relacionadas ao recurso para facilitar a busca (separe por vírgula). Limite: {{ maxTags - tags.length }} restantes.</span>
         <!-- Mensagem de erro de validação simples para tags (mostra se não houver tags) -->
         
       </div>

@@ -138,7 +138,7 @@
   }
 }
 
-// MD - ≥992px até 1199px (2 CARDS) ⭐ NOVO ⭐
+// MD - ≥992px até 1199px 
 @media (max-width: 1199px) {
   .destaques-container {
     margin: 40px 0;
@@ -168,7 +168,7 @@
   }
 }
 
-// SM - ≥768px até 991px (2 CARDS - COMPACTO) ⭐ MANTÉM 2 ⭐
+// SM - ≥768px até 991px
 @media (max-width: 991px) {
   .destaques-container {
     margin: 30px 0;
@@ -204,7 +204,7 @@
   }
 }
 
-// XS - ≥576px até 767px (1 CARD) ⭐ NOVO ⭐
+// XS - ≥576px até 767px
 @media (max-width: 767px) {
   .destaques-container {
     margin: 25px 0;
@@ -218,7 +218,7 @@
   }
   
   .modelos-grid {
-    grid-template-columns: 1fr; // ⭐ 1 CARD POR LINHA ⭐
+    grid-template-columns: 1fr; 
     gap: 15px;
     max-width: 500px;
     margin: 0 auto;
@@ -248,7 +248,7 @@
   }
 }
 
-// XXS - <576px (1 CARD - COMPACTO) ⭐ MANTÉM 1 ⭐
+// XXS - <576px 
 @media (max-width: 575px) {
   .destaques-container {
     margin: 20px 0;

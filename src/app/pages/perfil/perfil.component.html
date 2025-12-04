@@ -100,9 +100,14 @@
           <span>{{ getUserName() }}</span>
           <span>{{ userData.firstname + ' ' + userData.lastname }}</span>
         </div>
+
+        <button class="toggle-info-btn" (click)="toggleUserInfo()" *ngIf="showToggleButton">
+          <mat-icon>{{ isInfoExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+          <span>{{ isInfoExpanded ? 'Ocultar informações' : 'Ver informações' }}</span>
+        </button>
       </div>
 
-      <div class="profile-other-info-box">
+      <div id="user-info-box" class="profile-other-info-box" [class.expanded]="isInfoExpanded && showToggleButton">
         <div class="other-info-item">
           <p class="other-info-title">E-mail Institucional</p>
           <p class="other-info-content">{{ userData.email }}</p>
@@ -131,7 +136,7 @@
             *ngIf="isLoggedIn && (authService.userProfile$ | async)?.role === 'ADMIN'">
         Ferramentas do Administrador
       </span>
-      <div class="profile-other-info-box"
+      <div class="profile-other-info-box admin-tools-box"
            *ngIf="isLoggedIn && (authService.userProfile$ | async)?.role === 'ADMIN'">
         
           <div class="admin-buttons">

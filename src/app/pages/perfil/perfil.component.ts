@@ -26,6 +26,9 @@ export class PerfilComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
 
   currentView: 'favoritos' | 'criar-usuario' | 'visualizar-usuarios' = 'favoritos';
+
+  showToggleButton = false;
+  isInfoExpanded = false;
   
   private imageSubscription: Subscription | null = null;
   private userProfileSubscription: Subscription | null = null;
@@ -62,12 +65,27 @@ export class PerfilComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    this.checkScreenSize();
+    window.addEventListener('resize', () => this.checkScreenSize());
   }
 
   ngOnDestroy(): void {
     this.cleanupImageResources();
     if (this.userProfileSubscription) {
       this.userProfileSubscription.unsubscribe();
+    }
+
+    window.removeEventListener('resize', () => this.checkScreenSize());
+  }
+
+  // Método para verificar tamanho da tela:
+  checkScreenSize() {
+    this.showToggleButton = window.innerWidth < 1200;
+    
+    // Em telas grandes, garantir que as infos estejam visíveis
+    if (!this.showToggleButton) {
+      this.isInfoExpanded = true;
     }
   }
 
@@ -295,5 +313,19 @@ export class PerfilComponent implements OnInit, OnDestroy {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }, 100);
+  }
+
+  toggleUserInfo() {
+    this.isInfoExpanded = !this.isInfoExpanded;
+    
+    // Opcional: Adicionar/remover classe no elemento
+    const infoBox = document.querySelector('.user-content > .profile-other-info-box:first-of-type');
+    if (infoBox) {
+      if (this.isInfoExpanded) {
+        infoBox.classList.add('expanded');
+      } else {
+        infoBox.classList.remove('expanded');
+      }
+    }
   }
 }

@@ -510,3 +510,414 @@
     transform: translateY(0);
   }
 }
+
+
+
+
+/* ============================================
+   RESPONSIVIDADE - VISUALIZAR USUÁRIOS (<576px)
+   ============================================ */
+
+   @media (max-width: 575px) {
+    .visualizar-usuarios-container {
+      padding: 20px;
+      border-radius: 6px;
+      margin: 0 10px; /* Adiciona margem nas laterais */
+    }
+  
+    .usuarios-header {
+      margin-bottom: 20px;
+      text-align: center;
+      
+      h2 {
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+      
+      p {
+        font-size: 13px;
+        line-height: 1.4;
+      }
+    }
+  
+    /* FILTROS - EM COLUNA */
+    .filtros-container {
+      padding: 16px;
+    }
+  
+    .filtros-form {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+    }
+  
+    .filtro-group {
+      width: 100%;
+      
+      input, select {
+        min-width: 100% !important; /* Força largura total */
+        width: 100%;
+        min-height: 44px; /* Tamanho mínimo para touch */
+      }
+    }
+  
+    .btn-limpar {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      margin-top: 8px;
+    }
+  
+    /* TABELA - TRANSFORMA EM CARDS */
+    .table-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+  
+    .total-usuarios {
+      text-align: center;
+      font-size: 14px;
+    }
+  
+    .table-responsive {
+      overflow-x: visible; /* Remove scroll horizontal */
+    }
+  
+    .usuarios-table {
+      display: block;
+      
+      thead {
+        display: none; /* Esconde cabeçalho */
+      }
+      
+      tbody {
+        display: block;
+      }
+      
+      tr {
+        display: block;
+        margin-bottom: 16px;
+        padding: 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: #f8f9fa;
+      }
+      
+      td {
+        display: flex;
+        justify-content: space-between; /* Label esquerda, conteúdo direita */
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #e0e0e0;
+        text-align: right;
+        
+        &:last-child {
+          border-bottom: none;
+          padding-bottom: 0;
+        }
+        
+        &:before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: #333;
+          margin-right: 10px;
+          text-align: left;
+          flex: 1;
+        }
+      }
+      
+      /* Adiciona labels para cada coluna */
+      td:nth-child(1):before { content: "Nome"; }
+      td:nth-child(2):before { content: "Email"; }
+      td:nth-child(3):before { content: "Nível"; }
+      td:nth-child(4):before { content: "Ações"; }
+    }
+  
+    .acoes-cell {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end; /* Agrupa botões à direita */
+      width: auto; /* Não ocupa toda a largura */
+      margin-left: auto; /* Empurra para a direita */
+      
+      
+      button {
+        flex-shrink: 0;
+        min-width: 120px;
+        max-width: 140px;
+        justify-content: center;
+        padding: 10px 8px;
+        font-size: 13px;
+        text-align: center;
+        white-space: nowrap;
+        
+        .mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+          margin-right: 4px;
+        }
+      }
+    }
+  
+    /* BADGES - AJUSTE PARA MOBILE */
+    .role-badge {
+      min-width: 80px;
+      max-width: 80px;
+      padding: 8px 10px;
+      font-size: 11px;
+    }
+  
+    /* PAGINAÇÃO - AJUSTES */
+    .paginacao {
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px;
+    }
+  
+    .paginacao-btn {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+    }
+  
+    .paginacao-info {
+      font-size: 14px;
+      text-align: center;
+    }
+  
+    /* SEM RESULTADOS */
+    .sem-resultados {
+      padding: 30px 20px;
+      
+      .mat-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+      }
+      
+      p {
+        font-size: 15px;
+      }
+    }
+  
+    /* BOTÃO VOLTAR */
+    .acoes-footer {
+      margin-top: 20px;
+    }
+  
+    .btn-voltar {
+      width: 100%;
+      justify-content: center;
+      padding: 14px 20px;
+      font-size: 15px;
+      
+      .mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  
+    /* MODAL - AJUSTES PARA MOBILE */
+    .modal-content {
+      width: 95%;
+      max-width: 95%;
+      margin: 0 10px;
+    }
+  
+    .modal-header {
+      padding: 16px 20px;
+      
+      h3 {
+        font-size: 18px;
+      }
+    }
+  
+    .modal-body {
+      padding: 20px;
+    }
+  
+    .edicao-form {
+      gap: 14px;
+    }
+  
+    .form-group {
+      input, select {
+        min-height: 44px;
+        font-size: 15px;
+        padding: 12px;
+        width: 100%;
+      }
+    }
+  
+    .modal-footer {
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px 20px;
+      
+      button {
+        width: 100%;
+        padding: 14px;
+        font-size: 15px;
+      }
+    }
+  
+    .btn-salvar-modal {
+      justify-content: center;
+    }
+  
+    .loading-spinner-small {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  
+  /* Mobile muito pequeno (<400px) - Ajustes extras */
+  @media (max-width: 400px) {
+    .visualizar-usuarios-container {
+      padding: 16px;
+      margin: 0 8px;
+    }
+  
+    .usuarios-header {
+      h2 {
+        font-size: 18px;
+      }
+      
+      p {
+        font-size: 12px;
+      }
+    }
+  
+    .filtros-container {
+      padding: 14px;
+    }
+  
+    .usuarios-table {
+      tr {
+        padding: 14px;
+        margin-bottom: 14px;
+      }
+      
+      td {
+        padding: 8px 0;
+        font-size: 14px;
+        
+        &:before {
+          font-size: 13px;
+        }
+      }
+    }
+  
+    .role-badge {
+      min-width: 70px;
+      max-width: 70px;
+      padding: 6px 8px;
+      font-size: 10px;
+    }
+  
+    .acoes-cell {
+      gap: 6px; /* REDUZ GAP ENTRE BOTÕES */
+      
+      button {
+        flex: 1;
+        min-width: 100px; /* LARGURA MÍNIMA AINDA MENOR */
+        max-width: 120px;
+        padding: 8px 6px; /* PADDING AINDA MENOR */
+        font-size: 12px;
+        
+        .mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+          margin-right: 3px;
+        }
+      }
+    }
+  
+    .modal-content {
+      width: 98%;
+      max-width: 98%;
+    }
+  
+    .modal-header {
+      padding: 14px 16px;
+      
+      h3 {
+        font-size: 16px;
+      }
+    }
+  
+    .modal-body {
+      padding: 16px;
+    }
+  
+    .form-group {
+      input, select {
+        padding: 10px;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  /* Ajuste para quando o teclado virtual aparece */
+  @media (max-height: 600px) and (max-width: 575px) {
+    .visualizar-usuarios-container {
+      padding: 15px;
+    }
+    
+    .filtros-container {
+      padding: 12px;
+    }
+    
+    .usuarios-table {
+      tr {
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+      
+      td {
+        padding: 6px 0;
+      }
+    }
+    
+    /* Ajuste específico para os botões de ação */
+    .acoes-cell {
+      gap: 5px;
+      
+      button {
+        padding: 7px 5px;
+        font-size: 11px;
+        min-width: 95px;
+        
+        .mat-icon {
+          font-size: 13px;
+          width: 13px;
+          height: 13px;
+        }
+      }
+    }
+    
+    .modal-content {
+      max-height: 80vh;
+    }
+  }
+  
+  /* Loading spinner mobile */
+  @media (max-width: 575px) {
+    .loading-container {
+      padding: 30px;
+      
+      .loading-spinner {
+        width: 32px;
+        height: 32px;
+        border-width: 3px;
+      }
+      
+      p {
+        font-size: 14px;
+      }
+    }
+  }

@@ -129,3 +129,190 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+
+/* ============================================
+   RESPONSIVIDADE - CRIAR USUÁRIO COMPONENT 
+   ============================================ */
+
+   @media (max-width: 575px) {
+    .criar-usuario-container {
+      padding: 20px;
+      border-radius: 6px;
+      margin: 0 10px; /* Adiciona margem nas laterais */
+    }
+  
+    .criar-usuario-header {
+      margin-bottom: 20px;
+      text-align: center;
+      
+      h2 {
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+      
+      p {
+        font-size: 13px;
+        line-height: 1.4;
+        text-align: left;
+      }
+    }
+  
+    .usuario-form {
+      gap: 16px;
+    }
+  
+    /* FORM ROW - VIRA COLUNA ÚNICA */
+    .form-row {
+      flex-direction: column;
+      gap: 16px; /* Aumenta o gap entre os campos */
+      
+      .form-group {
+        flex: none; /* Remove o flex: 1 */
+        width: 100%;
+      }
+    }
+  
+    .form-group {
+      label {
+        font-size: 13px;
+        margin-bottom: 5px;
+      }
+      
+      input, select {
+        padding: 10px;
+        font-size: 14px;
+        width: 100%; /* Garante 100% de largura */
+        
+        /* Melhora a experiência em mobile */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        
+        /* Aumenta o tamanho da área de toque */
+        min-height: 44px; /* Tamanho mínimo recomendado para touch */
+      }
+      
+      /* Ajuste específico para selects em mobile */
+      select {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        background-size: 16px;
+        padding-right: 40px; /* Espaço para a seta */
+      }
+    }
+  
+    .error-message {
+      font-size: 11px;
+      margin-top: 3px;
+    }
+  
+    /* FORM ACTIONS - BOTÕES EM COLUNA */
+    .form-actions {
+      flex-direction: column-reverse; /* Cancelar embaixo, Criar em cima */
+      gap: 10px;
+      margin-top: 25px;
+      
+      button {
+        padding: 14px 20px; /* Botões maiores para touch */
+        font-size: 15px;
+        width: 100%; /* Botões ocupam toda a largura */
+        text-align: center;
+      }
+      
+      .btn-cancel {
+        order: 2; /* Coloca o cancelar embaixo */
+      }
+      
+      .btn-submit {
+        order: 1; /* Coloca o criar em cima */
+      }
+    }
+  
+    .button-content {
+      justify-content: center; /* Centraliza o conteúdo dos botões */
+      gap: 10px;
+    }
+  
+    .loading-spinner-small {
+      width: 18px;
+      height: 18px;
+      border-width: 2px;
+    }
+  }
+  
+  /* Mobile muito pequeno (<400px) - Ajustes extras */
+  @media (max-width: 400px) {
+    .criar-usuario-container {
+      padding: 16px;
+      margin: 0 8px;
+    }
+  
+    .criar-usuario-header {
+      h2 {
+        font-size: 18px;
+      }
+      
+      p {
+        font-size: 12px;
+      }
+    }
+  
+    .usuario-form {
+      gap: 14px;
+    }
+  
+    .form-row {
+      gap: 14px;
+    }
+  
+    .form-group {
+      input, select {
+        padding: 9px;
+        font-size: 13px;
+        min-height: 42px;
+      }
+      
+      select {
+        background-position: right 8px center;
+        background-size: 14px;
+        padding-right: 35px;
+      }
+    }
+  
+    .form-actions {
+      gap: 8px;
+      
+      button {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+    }
+  }
+  
+  /* Ajuste para quando o teclado virtual aparece */
+  @media (max-height: 600px) and (max-width: 575px) {
+    .criar-usuario-container {
+      padding: 15px;
+    }
+    
+    .usuario-form {
+      gap: 12px;
+    }
+    
+    .form-group {
+      input, select {
+        padding: 8px;
+      }
+    }
+    
+    .form-actions {
+      margin-top: 15px;
+      
+      button {
+        padding: 10px 14px;
+      }
+    }
+  }

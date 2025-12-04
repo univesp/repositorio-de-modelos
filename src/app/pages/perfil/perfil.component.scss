@@ -46,6 +46,12 @@
   display: flex;
   align-items: center;
   gap: 0 15px;
+  position: relative;
+}
+
+/* BOTÃO TOGGLE - ESTILOS GERAIS */
+.toggle-info-btn {
+  display: none; /* Escondido por padrão */
 }
 
 .profile-image{
@@ -109,7 +115,7 @@
 }
 
 .profile-other-info-box {
-  width: 95%;
+  width: 100%;
   background-color: #fff;
   padding: 30px;
   display: flex;
@@ -117,6 +123,7 @@
   gap: 35px 0;
   border-radius: 5px;
   box-shadow: 0px 5px 5px #d9d7d7;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .other-info-item {
@@ -428,5 +435,463 @@
   
   &:hover {
     background: #5a43b5;
+  }
+}
+
+
+
+/* ============================================
+   RESPONSIVIDADE - PERFIL COMPONENT
+   ============================================ */
+
+/* <1300px */
+@media (max-width: 1300px) {
+  .perfil-container {
+    &__contentBox {
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      gap: 0 40px;
+    }
+
+    &__filter {
+      margin-top: 30px;
+    }
+    
+    .user-content {
+      width: 28%;
+    }
+    
+    .user-bookmarks {
+      width: 58%;
+    }
+  }
+}
+
+
+/* <1199px - COLUNA ÚNICA MAS SEM TOGGLE (APENAS LAYOUT) */
+@media (max-width: 1199px) {
+  .perfil-container {
+    &__contentBox {
+      flex-direction: column;
+      gap: 40px;
+      align-items: center;
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .user-content,
+    .user-bookmarks {
+      width: 100%;
+      max-width: 900px;
+    }
+    
+    .user-content {
+      order: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 30px 0; /* Mantém o gap normal */
+    }
+    
+    .user-bookmarks {
+      order: 2;
+    }
+    
+    /* USER-BASIC-INFO - NORMAL */
+    .user-basic-info {
+      //flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 15px;
+      width: 100%;
+      order: 1;
+    }
+    
+    /* BOTÃO TOGGLE - NÃO APARECE AQUI */
+    .toggle-info-btn {
+      display: none; /* Mantém escondido em 991px-1199px */
+    }
+    
+    /* INFOS DO PERFIL - SEMPRE VISÍVEIS EM 991px-1199px */
+    #user-info-box {
+      width: 100%;
+      order: 2;
+      /* SEM max-height: 0, SEM opacity: 0 */
+      /* Mostra normalmente */
+    }
+    
+    /* BOTÃO SAIR */
+    .logout-perfil-page {
+      width: 100%;
+      display: flex;
+      //justify-content: center;
+      margin: 20px 0;
+      order: 3;
+      
+      button {
+        width: auto;
+        min-width: 200px;
+      }
+    }
+    
+    /* TÍTULO ADMIN */
+    .title-admin-tools {
+      margin-top: 40px !important;
+      margin-bottom: 10px !important;
+      text-align: center;
+      order: 4;
+    }
+    
+    /* FERRAMENTAS ADMIN */
+    .admin-tools-box {
+      margin-top: 0 !important;
+      order: 5;
+    }
+    
+    .admin-buttons {
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .admin-btn {
+      flex: 1;
+      min-width: 220px;
+      justify-content: center;
+    }
+  }
+}
+
+/* <991px - AQUI SIM COM TOGGLE BUTTON */
+@media (max-width: 991px) {
+  .perfil-container {
+    &__contentBox {
+      flex-direction: column;
+      gap: 30px;
+      align-items: center;
+      width: 95%;
+    }
+
+    &__filter {
+      margin-top: 30px;
+    }
+    
+    .user-content,
+    .user-bookmarks {
+      width: 100%;
+      max-width: 800px;
+    }
+    
+    .user-content {
+      order: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0; /* Remove gap para o toggle funcionar */
+    }
+    
+    .user-bookmarks {
+      order: 2;
+    }
+    
+    /* USER-BASIC-INFO COM BOTÃO TOGGLE */
+    .user-basic-info {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 15px;
+      width: 100%;
+      order: 1;
+    }
+    
+    /* BOTÃO TOGGLE - APARECE APENAS AQUI (<991px) */
+    .toggle-info-btn {
+      display: inline-flex !important; /* FORÇA a aparecer */
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #7155d8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      font-size: 15px;
+      
+      &:hover {
+        background: #5a43b5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(113, 85, 216, 0.3);
+      }
+      
+      .mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+    
+    /* INFOS DO PERFIL - ESCONDIDAS POR PADRÃO EM <991px */
+    #user-info-box {
+      width: 100%;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      padding: 0 !important;
+      margin: 0 !important;
+      border-radius: 5px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      order: 2;
+      
+      &.expanded {
+        max-height: 500px;
+        opacity: 1;
+        padding: 30px !important;
+        margin: 20px 0 !important;
+        box-shadow: 0px 5px 5px #d9d7d7;
+      }
+    }
+    
+    /* BOTÃO SAIR */
+    .logout-perfil-page {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      order: 3;
+      
+      button {
+        width: auto;
+        min-width: 200px;
+      }
+    }
+    
+    /* TÍTULO ADMIN */
+    .title-admin-tools {
+      margin-top: 40px !important;
+      margin-bottom: 10px !important;
+      text-align: center;
+      order: 4;
+    }
+    
+    /* FERRAMENTAS ADMIN */
+    .admin-tools-box {
+      margin-top: 0 !important;
+      order: 5;
+    }
+    
+    .admin-buttons {
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    
+    .admin-btn {
+      flex: 1;
+      min-width: 200px;
+      justify-content: center;
+    }
+    
+  }
+}
+
+
+/* <767px */
+@media (max-width: 767px) {
+  .perfil-container {
+    &__contentBox {
+      margin-top: 30px;
+      gap: 25px;
+      width: 98%;
+    }
+    
+    &__filter {
+      min-height: 120px;
+    }
+    
+    .profile-image-container {
+      .profile-image {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+      }
+      
+      .edit-image-btn {
+        width: 32px;
+        height: 32px;
+        bottom: 6px;
+        right: 6px;
+        
+        mat-icon {
+          font-size: 16px;
+        }
+      }
+    }
+    
+    .profile-userName {
+      gap: 3px;
+      
+      > span:nth-child(1) {
+        font-size: 16px;
+      }
+      
+      > span:nth-child(2) {
+        font-size: 20px;
+      }
+    }
+    
+    .toggle-info-btn {
+      padding: 8px 16px;
+      font-size: 13px;
+      
+      .mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+    
+    .profile-other-info-box {
+      padding: 20px;
+      gap: 25px 0;
+    }
+    
+    .profile-other-info-box:first-of-type.expanded {
+      padding: 20px !important;
+      max-height: 400px;
+    }
+    
+    .other-info-title {
+      font-size: 22px;
+    }
+    
+    .other-info-content {
+      font-size: 16px;
+    }
+    
+    .title-admin-tools {
+      font-size: 24px;
+      margin-top: 30px;
+      text-align: center;
+    }
+    
+    .admin-btn {
+      min-width: 180px;
+      padding: 10px 14px;
+      font-size: 14px;
+      
+      .mat-icon {
+        font-size: 18px;
+      }
+    }
+    
+    .image-menu {
+      min-width: 160px;
+      
+      &::before {
+        right: 15px;
+      }
+    }
+    
+    .menu-item {
+      padding: 8px 10px;
+      font-size: 13px;
+      
+      mat-icon {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+/* <576px */
+@media (max-width: 575px) {
+  .perfil-container {
+    &__contentBox {
+      margin-top: 20px;
+      gap: 20px;
+    }
+    
+    &__filter {
+      min-height: 100px;
+    }
+    
+    .user-basic-info {
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .profile-image-container {
+      .profile-image {
+        width: 90px;
+        height: 90px;
+        font-size: 2.2rem;
+      }
+    }
+    
+    .toggle-info-btn {
+      padding: 7px 14px;
+      font-size: 12px;
+      width: 90%;
+      max-width: 250px;
+    }
+    
+    .profile-other-info-box {
+      padding: 18px;
+      gap: 20px 0;
+    }
+    
+    .profile-other-info-box:first-of-type.expanded {
+      padding: 18px !important;
+      max-height: 380px;
+    }
+    
+    .other-info-title {
+      font-size: 20px;
+    }
+    
+    .other-info-content {
+      font-size: 15px;
+    }
+    
+    .title-admin-tools {
+      font-size: 22px;
+      margin-top: 25px;
+    }
+    
+    .admin-buttons {
+      flex-direction: column;
+    }
+    
+    .admin-btn {
+      min-width: 100%;
+      width: 100%;
+    }
+    
+    .image-menu {
+      position: fixed;
+      top: auto;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 280px;
+      
+      &::before {
+        display: none;
+      }
+    }
+    
+    .logout-perfil-page {
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
   }
 }

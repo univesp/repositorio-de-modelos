@@ -24,15 +24,6 @@ const additionalFilters = [
     placeholder: '[ Selecione ]', 
     opcoes: ['[ Selecione ]', 'Este Mês', 'Esta Semana', 'Este Ano'] 
   }
-  /*
-  ,
-  { 
-    key: 'ordenarPor', 
-    label: 'ORDENAR POR', 
-    placeholder: '[ Selecione ]', 
-    opcoes: ['Mais Comentado', 'Mais Curtido', 'Mais Recentes', 'Ordem Alfabética'] 
-  }
-  */
 ];
 
 // Gera os filtros a partir do SelectsList

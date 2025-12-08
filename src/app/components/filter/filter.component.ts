@@ -306,6 +306,14 @@ export class FilterComponent implements OnInit, OnDestroy {
     this.router.navigate(['/resultados'], { 
       queryParams: queryParams
     });
+
+    // Fecha os filtros se estiver em mobile (<576px)
+    if (this.isMobileView()) {
+      // Pequeno delay para melhor UX (usuário ver a seleção)
+      setTimeout(() => {
+        this.filtrosAbertos = false;
+      }, 200);
+    }
   }
   
 
@@ -372,7 +380,7 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   // Detecta se está em view mobile
   isMobileView(): boolean {
-    return window.innerWidth <= 575;
+    return window.innerWidth <= 576;
   }
   
   // Alterna estado dos filtros

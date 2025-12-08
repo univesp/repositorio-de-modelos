@@ -13,12 +13,19 @@ export interface PaginationConfig {
 })
 export class PaginationService {
   
-  inicializarPaginacao(itens: any[], itensPorPagina: number = 9): PaginationConfig {
+  inicializarPaginacao(
+      itens: any[], 
+      itensPorPagina: number = 9,
+      paginaInicial: number = 1
+    ): PaginationConfig {
     const totalItens = itens.length;
     const totalPaginas = Math.ceil(totalItens / itensPorPagina);
+
+    // Garante que a página inicial seja válida
+    const paginaAtual = Math.max(1, Math.min(paginaInicial, totalPaginas));
     
     return {
-      paginaAtual: 1,
+      paginaAtual,
       itensPorPagina,
       totalItens,
       totalPaginas,

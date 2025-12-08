@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { Modeloslist } from '../../data/modelos-list';
@@ -19,6 +19,10 @@ export class ExplorarGridComponent implements OnInit {
   paginationConfig!: PaginationConfig;
   modelosPaginados: Modelo[] = [];
   carregando: boolean = false;
+  
+  // Nova propriedade para itens por página dinâmico
+  private itensPorPaginaPadrao = 9; // Para 3 cards por linha
+  private itensPorPagina: number = this.itensPorPaginaPadrao;
 
   constructor(
       private router: Router,
@@ -41,24 +45,94 @@ export class ExplorarGridComponent implements OnInit {
 
   ngOnInit() {
     this.isLoggedIn = this.authService.isSignedIn();
+    
+    // Verifica tamanho da tela inicial
+    this.atualizarItensPorPaginaBaseadoNaLargura();
 
-    // INICIALIZAÇÃO SIMPLIFICADA - a paginação será tratada no ngOnChanges
-    this.paginationConfig = this.paginationService.inicializarPaginacao([], 9);
+    // INICIALIZAÇÃO SIMPLIFICADA
+    this.paginationConfig = this.paginationService.inicializarPaginacao([], this.itensPorPagina);
 
     this.authService.isAuthenticated().subscribe(loggedIn => {
       this.isLoggedIn = loggedIn;
     });
 
-    //Sincroniza o estado dos bookmarks com o perfil do usuário
+    // Sincroniza bookmarks
     this.authService.userProfile$.subscribe(profile => {
       if (profile && this.modelosList) {
         this.sincronizarBookmarks(profile.salvos || []);
       }
     });
+
+    // Adiciona listener para redimensionamento da tela
+    window.addEventListener('resize', () => this.onResize());
+  }
+
+  // Método para atualizar itens por página baseado na largura da tela
+  private atualizarItensPorPaginaBaseadoNaLargura(): void {
+    const largura = window.innerWidth;
+    
+    if (largura < 1400 && largura >= 992) {
+      // 2 cards por linha (992px-1399px) -> 8 itens por página
+      this.itensPorPagina = 8;
+      console.log('2 cards por linha - 8 itens por página');
+    } else {
+      // 3 cards por linha (≥1400px) -> 9 itens por página
+      this.itensPorPagina = 9;
+      console.log('3 cards por linha - 9 itens por página');
+    }
+  }
+
+  // Handler para redimensionamento da tela
+  @HostListener('window:resize')
+  public onResize(): void {
+    const larguraAnterior = this.itensPorPagina;
+    this.atualizarItensPorPaginaBaseadoNaLargura();
+    
+    // Só recalcula se o número de itens por página mudou
+    if (larguraAnterior !== this.itensPorPagina && this.modelosList.length > 0) {
+      this.recalcularPaginacao();
+    }
+  }
+
+  // Recalcula a paginação com o novo número de itens por página
+  private recalcularPaginacao(): void {
+    if (!this.carregando && this.modelosList.length > 0) {
+      this.carregando = true;
+      this.emitirCarregamentoAtualizado();
+
+      setTimeout(() => {
+        // Mantém a página atual se possível, ou ajusta
+        const paginaAtual = this.paginationConfig.paginaAtual;
+        const novoTotalPaginas = Math.ceil(this.modelosList.length / this.itensPorPagina);
+        
+        // Se a página atual não existe mais, vai para a primeira
+        const paginaAjustada = paginaAtual <= novoTotalPaginas ? paginaAtual : 1;
+        
+        // Usa o serviço atualizado com parâmetro de página inicial
+        this.paginationConfig = this.paginationService.inicializarPaginacao(
+          this.modelosList, 
+          this.itensPorPagina,
+          paginaAjustada
+        );
+        
+        this.modelosPaginados = this.paginationService.obterItensPaginados(
+          this.modelosList, 
+          this.paginationConfig
+        );
+
+        this.emitirPaginacaoAtualizada();
+        
+        this.carregando = false;
+        this.emitirCarregamentoAtualizado();
+      }, 300);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['modelosList']) {
+      // Atualiza itens por página baseado no tamanho atual
+      this.atualizarItensPorPaginaBaseadoNaLargura();
+      
       // Emite que começou a carregar
       this.carregando = true;
       this.emitirCarregamentoAtualizado();
@@ -66,7 +140,7 @@ export class ExplorarGridComponent implements OnInit {
       // FORÇA a reinicialização completa quando a lista muda
       this.paginationConfig = this.paginationService.inicializarPaginacao(
         this.modelosList, 
-        9
+        this.itensPorPagina
       );
 
       // Sincroniza bookmarks quando a lista mudar
@@ -85,7 +159,6 @@ export class ExplorarGridComponent implements OnInit {
       modelo.isSalvo = idsSalvos.includes(modelo.id);
     });
     
-    // Se estiver usando paginação, atualiza também os modelos paginados
     if (this.modelosPaginados.length > 0) {
       this.modelosPaginados.forEach(modelo => {
         modelo.isSalvo = idsSalvos.includes(modelo.id);
@@ -94,11 +167,11 @@ export class ExplorarGridComponent implements OnInit {
   }
 
   /**
-   * Inicializa a página carregando apenas os primeiros 9 itens
+   * Inicializa a página carregando apenas os primeiros itens
    */
   private inicializarPagina(): void {
     this.carregando = true;
-    this.emitirCarregamentoAtualizado(); // EMITE QUE COMEÇOU A CARREGAR
+    this.emitirCarregamentoAtualizado();
 
     setTimeout(() => {
       // Atualiza a paginação com a lista atual
@@ -112,11 +185,10 @@ export class ExplorarGridComponent implements OnInit {
         this.paginationConfig
       );
 
-      // EMITE AS INFORMAÇÕES DE PAGINAÇÃO NA INICIALIZAÇÃO
       this.emitirPaginacaoAtualizada();
 
       this.carregando = false;
-      this.emitirCarregamentoAtualizado(); // EMITE QUE TERMINOU DE CARREGAR
+      this.emitirCarregamentoAtualizado();
     }, 1000);
   }
 
@@ -140,10 +212,9 @@ export class ExplorarGridComponent implements OnInit {
         this.paginationConfig
       );
 
-    // EMITE AS INFORMAÇÕES DE PAGINAÇÃO
-    this.emitirPaginacaoAtualizada();
+      this.emitirPaginacaoAtualizada();
 
-    setTimeout(() => {
+      setTimeout(() => {
         this.carregando = false;
         this.emitirCarregamentoAtualizado();
         this.rolarParaTopo();
@@ -198,42 +269,38 @@ export class ExplorarGridComponent implements OnInit {
   }
 
   redirectModeloPage(id: string, event?: MouseEvent) {
-    // 1. Previne comportamentos padrão e propagação
     if (event) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
     }
   
-    // 2. Delay mínimo para garantir que outros eventos terminem
     setTimeout(() => {
-      // 3. Emite o evento para o Dashboard (se necessário)
       this.modeloSelecionado.emit(id);
       
-      // 4. Navegação com tratamento de erro
       this.router.navigate(['/modelo', id]).then(navigationSuccess => {
         if (!navigationSuccess) {
           console.error('Falha na navegação para o modelo', id);
-          this.router.navigate(['/']); // Fallback
+          this.router.navigate(['/']);
         }
       }).catch(err => {
         console.error('Erro na navegação:', err);
       });
-    }, 50); // Delay de 50ms é seguro para conflitos de UI
+    }, 50);
   }
 
   toggleBookmark(modelo: Modelo, event: MouseEvent): void {
-    event.stopPropagation(); // impede o clique no card
+    event.stopPropagation();
     
-    // Verifica se está logado
     if (!this.isLoggedIn) {
       console.log('Usuário precisa estar logado para salvar modelos');
       return;
     }
   
-    // Usa o BookmarkService atualizado
     this.bookmarkService.toggle(modelo.id);
-    
   }
 
+  ngOnDestroy() {
+    window.removeEventListener('resize', () => this.onResize());
+  }
 }

@@ -244,29 +244,161 @@ transition: opacity 0.3s ease;
 100% { transform: rotate(360deg); }
 }
 
-@media (max-width: 1300px){
+
+// ... todo o seu código SCSS atual permanece igual ...
+
+/* ============================================
+   RESPONSIVIDADE - EXPLORAR GRID COMPONENT
+   (Só aparece a partir de 991px)
+   ============================================ */
+
+/* LG - 1200px até 1399px (2 CARDS POR LINHA) */
+@media (max-width: 1399px) and (min-width: 1200px) {
   .explorarGrid {
-      gap: 50px 50px;
+    gap: 60px 40px;
+    margin-left: 40px;
 
-      &__item {
-          width: 370px;
-          height: 450px;
-      }
+    &__item {
+      width: 45%; /* MUDADO: 2 cards por linha (30% → 45%) */
+      min-width: 280px;
+      min-height: 580px;
+    }
 
-      &__item> h2 {
-          font-size: 24px;
-      }
+    &__detalhes {
+      font-size: 15px;
+      margin-left: 15px;
+    }
 
-      &__imagem > img {
-          width: 360px;
-      }
+    &__descricao {
+      font-size: 17px;
+      margin-left: 20px;
+      -webkit-line-clamp: 3; /* Reduz para 3 linhas */
+    }
 
-      &__detalhes, &__descricao {
-          font-size: 14px;
-      }
+    &__autor {
+      font-size: 17px;
+      margin-left: 20px;
+    }
 
-      &__autor {
-          font-size: 15px;
+    .modelo-title {
+      margin-left: 15px;
+      
+      h2 {
+        font-size: 22px;
       }
+    }
+
+    .modelo-tags {
+      margin-right: 2px;
+      
+      .tag-item {
+        font-size: 13px;
+        padding: 3px 7px;
+      }
+    }
+  }
+
+  .paginacao {
+    margin: 50px 0 20px 0;
+    
+    .paginacao-btn,
+    .paginacao-numero {
+      font-size: 16px;
+      padding: 7px 10px;
+      min-width: 36px;
+    }
+  }
+}
+
+/* MD - 992px até 1199px (2 CARDS POR LINHA - AJUSTES ADICIONAIS) */
+@media (max-width: 1199px) and (min-width: 992px) {
+  .explorarGrid {
+    gap: 50px 35px;
+    margin-left: 0px;
+
+    &__item {
+      width: 48%; /* MUDADO: 2 cards por linha, ajuste fino */
+      min-width: 260px;
+      min-height: 550px;
+      padding: 18px;
+    }
+
+    &__detalhes {
+      font-size: 14px;
+      margin-left: 10px;
+    }
+
+    &__info > h2 {
+      font-size: 20px;
+    }
+
+    &__descricao {
+      font-size: 16px;
+      margin-left: 15px;
+      -webkit-line-clamp: 3;
+      max-height: calc(1.4em * 3);
+    }
+
+    &__autor {
+      font-size: 16px;
+      margin-left: 15px;
+      margin-top: 15px;
+    }
+
+    .modelo-title {
+      margin-left: 10px;
+      margin-top: 8px;
+      
+      h2 {
+        font-size: 20px;
+        line-height: 1.3;
+      }
+    }
+
+    .modelo-tags {
+      margin-top: 8px;
+      margin-right: 0;
+      justify-content: flex-start; /* Tags começam da esquerda */
+      gap: 4px;
+      
+      .tag-item {
+        font-size: 12px;
+        padding: 3px 6px;
+      }
+    }
+
+    .icon-bookmark {
+      transform: scale(1.3);
+    }
+  }
+
+  .paginacao {
+    margin: 40px 0 20px 0;
+    padding: 0 15px;
+    
+    .paginacao-btn,
+    .paginacao-numero {
+      font-size: 15px;
+      padding: 6px 9px;
+      min-width: 34px;
+    }
+  }
+}
+
+/* Loading overlay responsivo */
+@media (max-width: 1399px) and (min-width: 992px) {
+  .grid-loading-overlay {
+    .grid-loading-content {
+      padding: 35px 45px;
+    }
+
+    .grid-loading-spinner {
+      width: 45px;
+      height: 45px;
+    }
+
+    span {
+      font-size: 16px;
+    }
   }
 }

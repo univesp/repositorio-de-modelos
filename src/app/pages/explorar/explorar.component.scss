@@ -132,3 +132,246 @@
   opacity: 0.6;
   transition: opacity 0.3s ease;
 }
+
+
+
+/* ============================================
+   RESPONSIVIDADE - EXPLORAR COMPONENT
+   ============================================ */
+
+/* <1199px - AJUSTES INICIAIS */
+@media (max-width: 1199px) {
+  .explorar {
+    &__switch-view-buttons {
+      margin: 40px 40px 25px 0;
+    }
+
+    &__modelos-container {
+      margin-left: 0px;
+    }
+
+    &__filter {
+      margin-top: 30px;
+    }
+
+    .resultados-contador {
+      margin-left: 8%;
+      font-size: 24px;
+      
+      .info-paginacao {
+        font-size: 16px;
+      }
+    }
+
+    .ordenacao-container {
+      margin-right: 30px;
+      
+      .ordenacao-select {
+        min-width: 160px;
+      }
+    }
+  }
+}
+
+/* <991px - SOMENTE VISUALIZAÇÃO LIST */
+@media (max-width: 991px) {
+  .explorar {
+    &__switch-view-buttons {
+      margin: 30px 20px 60px 0;
+      align-items: stretch;
+      justify-content: space-between;
+    }
+
+    &__modelos-container {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    // Forçar visualização List abaixo de 991px
+    app-explorar-grid {
+      display: none !important;
+    }
+    
+    // Garantir que List esteja visível
+    app-explorar-list {
+      display: block !important;
+    }
+
+    .resultados-contador {
+      margin-left: 0;
+      font-size: 22px;
+      text-align: center;
+      white-space: normal;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      
+      span {
+        padding: 4px 8px;
+      }
+      
+      .info-paginacao {
+        font-size: 15px;
+        margin-top: 0;
+      }
+    }
+
+    .controles-direita {
+      justify-content: space-between;
+      
+      // Esconder botões de mudança de visualização (grid/list)
+      button:has(.icon-viewType) {
+        display: none !important;
+      }
+    }
+
+    .ordenacao-container {
+      margin-right: 0;
+      flex: 1;
+      max-width: 200px;
+      
+      .ordenacao-select {
+        min-width: 100%;
+        font-size: 13px;
+        padding: 7px 30px 7px 10px;
+      }
+      
+      .ordenacao-icon {
+        right: 6px;
+      }
+    }
+  }
+}
+
+/* <767px - TABLET PEQUENO */
+@media (max-width: 767px) {
+  .explorar {
+    &__switch-view-buttons {
+      margin: 25px 15px 60px 0;
+      gap: 12px;
+    }
+
+    &__modelos-container {
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+
+    .resultados-contador {
+      font-size: 20px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+      
+      .info-paginacao {
+        font-size: 14px;
+        align-self: flex-end;
+      }
+    }
+
+    .ordenacao-container {
+      max-width: 180px;
+      
+      .ordenacao-select {
+        padding: 6px 28px 6px 8px;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+/* <576px - MOBILE */
+@media (max-width: 575px) {
+  .explorar {
+    &__filter {
+      min-height: 120px;
+    }
+
+    &__switch-view-buttons {
+      margin: 20px 10px 50px 0;
+      gap: 10px;
+    }
+
+    &__modelos-container {
+      margin-left: 10px;
+      margin-right: 10px;
+      margin-top: 15px;
+    }
+
+    .resultados-contador {
+      font-size: 18px;
+      width: 100%;
+      
+      span {
+        padding: 3px 6px;
+        font-size: 12px;
+      }
+      
+      .info-paginacao {
+        font-size: 13px;
+      }
+    }
+
+    .controles-direita {
+      flex-direction: column;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .ordenacao-container {
+      max-width: 100%;
+      width: 100%;
+      
+      .ordenacao-select {
+        width: 100%;
+        padding: 8px 32px 8px 12px;
+        font-size: 14px;
+        min-height: 40px;
+      }
+      
+      .ordenacao-icon {
+        right: 10px;
+      }
+    }
+
+    // Mensagem quando não há modelos
+    .no-models-message {
+      padding: 20px;
+      text-align: center;
+      
+      h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+      
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+/* Mobile muito pequeno (<400px) */
+@media (max-width: 400px) {
+  .explorar {
+    .resultados-contador {
+      font-size: 16px;
+      
+      span {
+        font-size: 15px;
+      }
+      
+      .info-paginacao {
+        font-size: 12px;
+      }
+    }
+
+    .ordenacao-container {
+      .ordenacao-select {
+        font-size: 13px;
+        padding: 7px 30px 7px 10px;
+      }
+    }
+  }
+}

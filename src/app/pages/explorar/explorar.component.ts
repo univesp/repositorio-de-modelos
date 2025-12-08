@@ -39,10 +39,22 @@ export class ExplorarComponent implements OnInit, OnDestroy {
     
     this.modoExplorarService.resetAll();
 
-    const savedViewType = localStorage.getItem('viewType');
-    this.viewType = savedViewType === 'list' ? 'list' : 'grid';
+    // Verificar tamanho da tela primeiro
+    this.checkScreenSize();
+
+    // Só usar localStorage se for tela grande
+    if (window.innerWidth >= 992) {
+      const savedViewType = localStorage.getItem('viewType');
+      this.viewType = savedViewType === 'list' ? 'list' : 'grid';
+    } else {
+      // Forçar list em telas menores
+      this.viewType = 'list';
+    }
 
     this.carregarModelos();
+
+    // Adicionar listener para mudanças de tamanho
+    window.addEventListener('resize', () => this.checkScreenSize());
   }
 
   /**
@@ -93,6 +105,20 @@ export class ExplorarComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Verifica o tamanho da tela e ajusta a visualização
+   */
+  checkScreenSize(): void {
+    if (window.innerWidth < 992) {
+      // Forçar visualização List em telas menores
+      this.viewType = 'list';
+    } else {
+      // Em telas grandes, manter a preferência do usuário
+      const savedViewType = localStorage.getItem('viewType');
+      this.viewType = savedViewType === 'list' ? 'list' : 'grid';
+    }
+  }
+
+  /**
    * Alterna o tipo de visualização entre 'grid' e 'list'
    */
   switchViewType(type: 'grid' | 'list') {
@@ -128,5 +154,6 @@ export class ExplorarComponent implements OnInit, OnDestroy {
     this.modoExplorarService.setModoExplorarAtivo(false);
     this.modoExplorarService.setModeloId(null);
     this.modoExplorarService.setFiltrosAtuais({});
+    window.removeEventListener('resize', () => this.checkScreenSize());
   }
 }

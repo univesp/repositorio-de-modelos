@@ -111,7 +111,7 @@ export class ExplorarListComponent implements OnInit, OnChanges {
    * HostListener para detectar quando o usuário chega perto do final
    */
   @HostListener('window:scroll', ['$event'])
-  onWindowScroll(): void {
+  onWindowScroll(event: Event): void {
     if (this.deveCarregarMais()) {
       this.carregarMaisItens();
     }

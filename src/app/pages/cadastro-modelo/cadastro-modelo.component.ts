@@ -16,7 +16,7 @@ export class CadastroModeloComponent implements OnInit {
   // Propriedades para o gerenciamento de tags
   tags: string[] = [];
   currentTagInput: string = '';
-  maxTags: number = 7;
+  maxTags: number = 5;
 
   // Propriedades para os radio buttons
   // Usamos 'boolean | null' para que possa ser nulo antes de uma seleção,
@@ -180,6 +180,23 @@ export class CadastroModeloComponent implements OnInit {
     if(tecla === ','){
       event.preventDefault();
       this.addTagFromInput();
+    }
+  }
+
+  /**
+ * Adiciona tag quando pressionar Enter
+ */
+  onTagEnterKey(event: any): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const input = this.currentTagInput.trim();
+    if (input) {
+      const normalizedTag = this.normalizeTag(input);
+      if (this.tags.length < this.maxTags && !this.tags.includes(normalizedTag) && normalizedTag.length >= 2) {
+        this.tags.push(normalizedTag);
+        this.currentTagInput = '';
+      }
     }
   }
 

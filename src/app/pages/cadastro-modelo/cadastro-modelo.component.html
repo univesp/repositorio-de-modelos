@@ -11,7 +11,7 @@
     <h1>Envie um Modelo</h1>
     <span>Por favor, preencha todos os campos abaixo com as informações solicitadas para cadastrar o modelo no repositório.</span>
 
-    <form class="cadastro-modelo__formulario">
+    <form class="cadastro-modelo__formulario" (keydown.enter)="$event.preventDefault()">
 
       <!-- Informações Básicas -->
       <span class="cadastro-modelo__titulo-secao">Informações Básicas</span>
@@ -133,6 +133,7 @@
             placeholder="Adicionar tags (separe por vírgula)"
             [(ngModel)]="currentTagInput"
             (keyup)="onKeyUp($event)"
+            (keydown.enter)="onTagEnterKey($event)"
             (blur)="addTagFromInput()"
             (input)="limparErroCampo('tags')"
             name="tagInput" 
@@ -140,7 +141,7 @@
           >
         </div>
         <!-- Exibe o limite de tags restantes dinamicamente -->
-        <span style="display: block;" class="detalhe-campo-forms">Insira palavras-chave relacionadas ao recurso para facilitar a busca (separe por vírgula). Limite: {{ maxTags - tags.length }} restantes.</span>
+        <span style="display: block;" class="detalhe-campo-forms">Insira palavras-chave relacionadas ao recurso para facilitar a busca (separe por vírgula ou enter). Limite: {{ maxTags - tags.length }} restantes.</span>
         <!-- Mensagem de erro de validação simples para tags (mostra se não houver tags) -->
         
       </div>

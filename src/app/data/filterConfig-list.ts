@@ -16,7 +16,7 @@ const additionalFilters = [
     key: 'formato', 
     label: 'FORMATO', 
     placeholder: '[ Selecione ]', 
-    opcoes: ['[ Selecione ]', 'REA Univesp', 'Jogo', 'Site', 'Recurso de Programação', 'Modelo Externo'] 
+    opcoes: ['[ Selecione ]', 'REA Univesp', 'Jogo', 'Recurso de Programação', 'Site', 'Novotec'] 
   },
   { 
     key: 'data', 

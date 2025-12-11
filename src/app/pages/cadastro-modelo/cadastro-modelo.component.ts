@@ -22,7 +22,8 @@ export class CadastroModeloComponent implements OnInit {
   // Usamos 'boolean | null' para que possa ser nulo antes de uma seleção,
   // e true/false após a seleção.
   codigoFonteDisponivel: boolean | null = null;
-  isRea: boolean | null = null;
+  mostrarEquipe: boolean = false;
+  formatoSelecionado: string = '';
 
   // Estrutura para gerenciar os selects de forma escalável
   public selectsConfig: Selects[] = SelectsList;
@@ -128,13 +129,10 @@ export class CadastroModeloComponent implements OnInit {
 
   onFormatoChange(event: Event): void {
     const target = event.target as HTMLInputElement;
-    // Converte a string "true" ou "false" para o booleano true ou false
-    if(target.checked && target.id === 'reaUnivesp') {
-      this.isRea = true;
-    } else {
-      this.isRea = false;
-    }
-    
+    this.formatoSelecionado = target.value;
+
+    // Mostrar equipe para: REA Univesp, Jogo OU Novotec
+    this.mostrarEquipe = ['REA Univesp', 'Jogo', 'Novotec'].includes(this.formatoSelecionado);    
   }
 
   // --- Métodos de Tags ---
@@ -300,13 +298,7 @@ export class CadastroModeloComponent implements OnInit {
   }
 
   private getFormatoSelecionado(): string {
-    const formatoSelecionado = this.getCheckedInputsByClass('checkFormato');
-    for (const formato of formatoSelecionado) {
-      if (formato.checked) {
-        return formato.value;
-      }
-    }
-    return '';
+    return this.formatoSelecionado || '';
   }
 
   /**
@@ -451,16 +443,17 @@ export class CadastroModeloComponent implements OnInit {
     }, 100);
   }
 
-  limparFormulario(): void {
+  limparFormulario(mostrarMensagem: boolean = true): void {
     this.camposComErro = [];
-   this.selectsComErro = [];
+    this.selectsComErro = [];
 
     // Limpa todos os campos
     this.tags = [];
     this.currentTagInput = '';
     this.descricaoModelo = '';
     this.codigoFonteDisponivel = null;
-    this.isRea = null;
+    this.mostrarEquipe = false;
+     this.formatoSelecionado = ''; 
     
     // Reseta os arrays Selects
     this.selectsConfig.forEach(config => {
@@ -475,14 +468,16 @@ export class CadastroModeloComponent implements OnInit {
     const radios = document.querySelectorAll('input[type="radio"]');
     radios.forEach((radio: any) => radio.checked = false);
 
-    Swal.fire({
-      icon: 'info',
-      title: 'Formulário limpo',
-      text: 'Todos os campos foram resetados',
-      confirmButtonColor: '#7155d8',
-      timer: 2000,
-      showConfirmButton: false
-    });
+    if(mostrarMensagem) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Formulário limpo',
+        text: 'Todos os campos foram resetados',
+        confirmButtonColor: '#7155d8',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
   }
 
   /**
@@ -511,6 +506,19 @@ export class CadastroModeloComponent implements OnInit {
    */
   limparErroCodigoFonte(): void {
     this.camposComErro = this.camposComErro.filter(c => c !== 'codigoFonte');
+  }
+
+  /**
+ * Scrolla para o topo do formulário (div .cadastro-modelo__container)
+ */
+  private scrollParaTopoFormulario(): void {
+    const container = document.querySelector('.cadastro-modelo__container');
+    if (container) {
+      container.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' // 'start' vai alinhar ao topo da viewport
+      });
+    }
   }
 
 
@@ -542,7 +550,7 @@ export class CadastroModeloComponent implements OnInit {
 
     // Obtém dados da equipe APENAS se for REA da Univesp
     let equipeData = undefined;
-    if (this.isRea) {
+    if (this.mostrarEquipe) {
       equipeData = {
         docente: this.getInputValue('#EquipeDocenteResponsavel') || '',
         coordenacao: this.getInputValue('#EquipeCoordenacao') || '',
@@ -583,7 +591,7 @@ export class CadastroModeloComponent implements OnInit {
       hasCodigo: this.codigoFonteDisponivel || false,
       codigoLink: codigoLinkFinal,
       autoria: this.getAutoria(),
-      hasEquipe: this.isRea || false,
+      hasEquipe: this.mostrarEquipe || false,
       equipe: equipeData
     };
 
@@ -602,8 +610,14 @@ export class CadastroModeloComponent implements OnInit {
           timer: 3000,
           showConfirmButton: true
         }).then(() => {
-          this.limparFormulario();
-        })
+           // 1. Limpa o formulário sem mostrar mensagem
+          this.limparFormulario(false); // ← Aqui passa false para não mostrar mensagem Swal
+
+          // 2. Aguarda um pouco e faz scroll para o topo
+          setTimeout(() => {
+            this.scrollParaTopoFormulario();
+          }, 100);
+        });
         
         console.log('✅ Modelo criado:', response);
       },

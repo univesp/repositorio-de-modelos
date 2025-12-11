@@ -4,21 +4,21 @@ export const SelectsList: Selects[] = [
   { 
     key: 'curso', 
     label: 'Curso',  
-    opcoes: ['Administração', 'Ciência de Dados', 'Engenharia de Computação', 'Engenharia de Produção', 'Habil. em Língua Portuguesa', 'Matemática', 'Pedagogia', 'Tecnologia da Informação', 'Tec. em Processos Gerenciais', 'Acessibilidade'],
+    opcoes: ['Administração', 'Ciência de Dados', 'Engenharia de Computação', 'Engenharia de Produção', 'Habil. em Língua Portuguesa', 'Matemática', 'Pedagogia', 'Projeto Integrador', 'Tecnologia da Informação', 'Tec. em Processos Gerenciais', 'Acessibilidade'],
     obrigatorio: false,
     maxSelecoes: 3
   },
   { 
     key: 'area', 
     label: 'Área de Conhecimento',  
-    opcoes: ['Artes e Humanidades', 'Artes Linguísticas', 'Ciências Aplicadas', 'Ciências Biológicas', 'Ciências Físicas', 'Ciências Sociais', 'Comunicação', 'Direito', 'Educação e Cultura', 'História', 'Matemática', 'Negócios', 'Profissão', 'Tecnologia'],
+    opcoes: ['Artes e Humanidades', 'Artes Linguísticas', 'Ciências Aplicadas', 'Ciências Biológicas', 'Ciências Físicas', 'Ciências Sociais', 'Comunicação', 'Direito', 'Educação e Cultura', 'História', 'Institucional', 'Matemática', 'Negócios', 'Profissão', 'Tecnologia'],
     obrigatorio: true,
     maxSelecoes: 2
   },
   { 
     key: 'tipo', 
     label: 'Tipo',  
-    opcoes: ['Adivinhe a Resposta', 'Antes e Depois', 'Apresentação de Slides', 'Arrastar e Soltar', 'Caça-Palavras', 'Cartões Interativos', 'Cenário de Ramificação', 'Classificação em Grupos', 'Combinar', 'Conjunto de Quiz', 'Desembaralhar', 'Encontrar a Correspondência', 'Escolha de Imagem', 'Flashcards', 'Imagem Interativa', 'Jogo da Memória', 'Linha do Tempo', 'Livro Interativo', 'Mapa Mental', 'Múltipla Escolha', 'Página Expositiva', 'Palavras Cruzadas', 'Pergunta Verdadeiro/Falso', 'Preencher as Lacunas', 'Quebra-cabeça', 'Questionário', 'Sequenciamento de Imagens', 'Simulação interativa', 'Vídeo Interativo', 'Virar as peças', 'Visita virtual 360'],
+    opcoes: ['Adivinhe a Resposta', 'Antes e Depois', 'Apresentação de Slides', 'Arrastar e Soltar', 'Caça-Palavras', 'Cartões Interativos', 'Cenário de Ramificação', 'Classificação em Grupos', 'Combinar', 'Conjunto de Quiz', 'Desembaralhar', 'Encontrar a Correspondência', 'Escolha de Imagem', 'Flashcards', 'Imagem Interativa', 'Jogo da Memória', 'Linha do Tempo', 'Livro Interativo', 'Mapa Mental', 'Múltipla Escolha', 'Página Expositiva', 'Página Interativa', 'Palavras Cruzadas', 'Pergunta Verdadeiro/Falso', 'Preencher as Lacunas', 'Quebra-cabeça', 'Questionário', 'Sequenciamento de Imagens', 'Simulação interativa', 'Vídeo Interativo', 'Virar as peças', 'Visita virtual 360'],
     obrigatorio: true,
     maxSelecoes: 5
   },

@@ -256,7 +256,7 @@ export class AuthService {
   }
 
   /**
-   * ✅ VERIFICA SE PRECISA RECARREGAR
+   * VERIFICA SE PRECISA RECARREGAR
    */
   private handlePossibleResume(): void {
     if (this.isCheckingResume) return;
@@ -271,19 +271,19 @@ export class AuthService {
   }
 
   /**
-   * ✅ VERIFICA CONSISTÊNCIA E RECARREGA SE NECESSÁRIO
+   * VERIFICA CONSISTÊNCIA E RECARREGA SE NECESSÁRIO
    */
   private checkAuthConsistency(): void {
     const hasToken = this.isSignedIn();
     const hasProfile = this.userProfileSubject.value !== null;
     
-    //console.log('🔍 Verificação de consistência:');
+    //console.log('Verificação de consistência:');
     //console.log('  - Tem token:', hasToken);
     //console.log('  - Tem perfil:', hasProfile);
 
     // CRITÉRIO PRINCIPAL: Tem token mas não tem perfil = estado inconsistente
     if (hasToken && !hasProfile) {
-      //console.log('🔄 Estado inconsistente detectado, recarregando página...');
+      //console.log('Estado inconsistente detectado, recarregando página...');
       this.triggerPageReload();
       return;
     }
@@ -296,7 +296,7 @@ export class AuthService {
   }
 
   /**
-   * ✅ VERIFICA SE HÁ ELEMENTOS DE ERRO NA PÁGINA
+   * VERIFICA SE HÁ ELEMENTOS DE ERRO NA PÁGINA
    */
   private checkForPageErrors(): void {
     // Verifica se há mensagens de erro comuns
@@ -317,13 +317,13 @@ export class AuthService {
     });
 
     if (hasVisibleErrors) {
-      //console.log('🔄 Erros visíveis detectados na página, recarregando...');
+      //console.log('Erros visíveis detectados na página, recarregando...');
       this.triggerPageReload();
     }
   }
 
   /**
-   * ✅ DISPARA RECARGA DA PÁGINA COM FEEDBACK
+   * DISPARA RECARGA DA PÁGINA COM FEEDBACK
    */
   private triggerPageReload(): void {
     // Mostra feedback visual para o usuário
@@ -453,10 +453,10 @@ export class AuthService {
     this.setAuthentication(false);
     localStorage.removeItem('authData');
     
-    // ✅ RESETA aviso ao fazer logout
+    // RESETA aviso ao fazer logout
     this.warningShown = false;
     
-   // console.log('✅ AuthService: Logout concluído');
+   // console.log('AuthService: Logout concluído');
   }
 
   private setAuthentication(status: boolean): void {

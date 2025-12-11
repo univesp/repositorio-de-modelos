@@ -20,13 +20,13 @@ export class ImageService {
    * O interceptor vai adicionar automaticamente o token
    */
   getProfileImage(mongoId: string): Observable<SafeUrl> {
-   // console.log('🖼️ Carregando imagem via API para:', mongoId);
+   // console.log('Carregando imagem via API para:', mongoId);
     
     return this.authService.getProfileImage(mongoId).pipe(
       map(blob => {
         // Cria uma Blob URL a partir do blob recebido
         const blobUrl = URL.createObjectURL(blob);
-       // console.log('✅ Blob URL criada, tamanho:', blob.size, 'tipo:', blob.type);
+       // console.log('Blob URL criada, tamanho:', blob.size, 'tipo:', blob.type);
         
         // Torna a URL segura para o Angular
         return this.sanitizer.bypassSecurityTrustUrl(blobUrl);
@@ -37,7 +37,7 @@ export class ImageService {
   revokeImageUrl(blobUrl: string): void {
     if (blobUrl && blobUrl.startsWith('blob:')) {
       URL.revokeObjectURL(blobUrl);
-     // console.log('🗑️ Blob URL revogada');
+     // console.log('Blob URL revogada');
     }
   }
 }

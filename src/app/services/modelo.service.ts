@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
+import { map, catchError } from 'rxjs/operators';
 
 export interface ModeloCreateRequest {
   ano: number;
@@ -37,6 +38,7 @@ export interface ModeloCreateRequest {
 })
 export class ModeloService {
   private apiUrl = '/api/modelos';
+  private BASEURL = 'https://apps.univesp.br/repositorio-modelos';
 
   constructor(
     private http: HttpClient,
@@ -56,5 +58,20 @@ export class ModeloService {
     });
 
     return this.http.post(this.apiUrl, modelo, { headers });
+  }
+
+  verificarTituloExistente(titulo: string): Observable<boolean> {
+    return this.http.get<any[]>(`${this.BASEURL}/modelos/list`).pipe(
+      map(modelos => {
+        const tituloNormalizado = titulo.toLowerCase().trim();
+        return modelos.some(modelo => 
+          modelo.titulo.toLowerCase().trim() === tituloNormalizado
+        );
+      }),
+      catchError(error => {
+        console.error('Erro ao verificar título:', error);
+        return of(false); // Em caso de erro, permite enviar
+      })
+    );
   }
 }

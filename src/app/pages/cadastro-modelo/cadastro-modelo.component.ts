@@ -4,6 +4,7 @@ import { CustomSelectComponent } from '../../components/custom-select/custom-sel
 import { Selects } from '../../interfaces/selects/selects.interface'; // Importa a interface Selects
 import { ModeloService } from '../../services/modelo.service';
 import { AuthService } from '../../services/auth.service';
+import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -521,32 +522,17 @@ export class CadastroModeloComponent implements OnInit {
     }
   }
 
-
-  onSubmit(): void {
-    if (this.isLoading) return;
-
-    if (!this.validarFormulario()) {
-      return;
-    }
-
-    // Verificação de usuário logado
-    if (!this.currentUser) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro!',
-        text: 'Erro: Usuário não identificado. Faça login novamente.',
-        confirmButtonColor: '#7155d8'
-      });
-      return;
-    }
-
+  /**
+ * Método com o código ORIGINAL do submit (sem verificação de título)
+ */
+  private executarSubmitOriginal(): void {
     this.isLoading = true;
 
     // Obtém os valores dos campos
     const formatoSelecionado = this.getFormatoSelecionado();
     const titleModelo = this.getInputValue('#inputTitle');
     const urlInput = this.getInputValue('#urlInput');
-    const codigoLink = this.getInputValue('#codigoLink'); // CORREÇÃO: estava '#cofigoLink'
+    const codigoLink = this.getInputValue('#codigoLink');
 
     // Obtém dados da equipe APENAS se for REA da Univesp
     let equipeData = undefined;
@@ -596,7 +582,7 @@ export class CadastroModeloComponent implements OnInit {
     };
 
     console.log('Modelo enviado:', modeloRequest);
-    console.log('Usuário logado:', this.currentUser)
+    console.log('Usuário logado:', this.currentUser);
 
     // Envia para o banco de dados via API
     this.modeloService.criarModelo(modeloRequest).subscribe({
@@ -610,8 +596,8 @@ export class CadastroModeloComponent implements OnInit {
           timer: 3000,
           showConfirmButton: true
         }).then(() => {
-           // 1. Limpa o formulário sem mostrar mensagem
-          this.limparFormulario(false); // ← Aqui passa false para não mostrar mensagem Swal
+          // 1. Limpa o formulário sem mostrar mensagem
+          this.limparFormulario(false);
 
           // 2. Aguarda um pouco e faz scroll para o topo
           setTimeout(() => {
@@ -619,7 +605,7 @@ export class CadastroModeloComponent implements OnInit {
           }, 100);
         });
         
-        console.log('✅ Modelo criado:', response);
+        console.log('Modelo criado:', response);
       },
       error: (error) => {
         this.isLoading = false;
@@ -629,8 +615,86 @@ export class CadastroModeloComponent implements OnInit {
           text: 'Erro ao cadastrar modelo. Tente novamente.',
           confirmButtonColor: '#7155d8'
         });
-        console.error('❌ Erro ao criar modelo:', error);
+        console.error('Erro ao criar modelo:', error);
       }
+    });
+  }
+
+
+  onSubmit(): void {
+    if (this.isLoading) return;
+  
+    if (!this.validarFormulario()) {
+      return;
+    }
+  
+    // Verificação de usuário logado
+    if (!this.currentUser) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro!',
+        text: 'Erro: Usuário não identificado. Faça login novamente.',
+        confirmButtonColor: '#7155d8'
+      });
+      return;
+    }
+  
+    // Obtém o título do modelo
+    const titleModelo = this.getInputValue('#inputTitle');
+  
+    // VERIFICAÇÃO DO TÍTULO DUPLICADO
+    this.verificarTituloDuplicado(titleModelo!).subscribe({
+      next: (tituloExiste: boolean) => {
+        if (tituloExiste) {
+          // Título já existe, mostra erro e PARA AQUI
+          this.mostrarErroTituloDuplicado(titleModelo!);
+          return;
+        } else {
+          // Título não existe, executa o submit original
+          this.executarSubmitOriginal();
+        }
+      },
+      error: (error: any) => {
+        console.error('Erro ao verificar título:', error);
+        // Se der erro, permite enviar (melhor permitir que bloquear)
+        this.executarSubmitOriginal();
+      }
+    });
+  }
+  
+  /**
+ * Verifica se o título já existe no banco
+ */
+  private verificarTituloDuplicado(titulo: string): Observable<boolean> {
+    return this.modeloService.verificarTituloExistente(titulo);
+  }
+
+  /**
+ * Mostra erro quando título já existe
+ */
+  private mostrarErroTituloDuplicado(titulo: string): void {
+    // Marca o campo de título como erro
+    if (!this.camposComErro.includes('inputTitle')) {
+      this.camposComErro.push('inputTitle');
+    }
+    
+    // Foca no campo de título
+    setTimeout(() => {
+      const inputElement = document.getElementById('inputTitle') as HTMLInputElement;
+      if (inputElement) {
+        inputElement.focus();
+        inputElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+    
+    // Mostra SweetAlert
+    Swal.fire({
+      icon: 'warning',
+      title: 'Título já existe',
+      html: `Já existe um modelo cadastrado com o título: <strong>"${titulo}"</strong><br><br>
+            Por favor, escolha um título diferente.`,
+      confirmButtonColor: '#7155d8',
+      confirmButtonText: 'Entendi'
     });
   }
 }

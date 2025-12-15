@@ -67,7 +67,7 @@
    </ng-container>
 
    <!-- Mensagem se, por algum motivo, a lista estiver vazia -->
-   <div *ngIf="modelosExibidos.length === 0" class="no-models-message">
+   <div *ngIf="modelosExibidos.length === 0 && !isLoading" class="no-models-message">
      <h2>Nenhum modelo disponível para exploração.</h2>
      <p>Parece que não há dados para exibir no momento.</p>
    </div>

@@ -1,16 +1,19 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+// resultados.component.ts
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-
-// DATA
-import { Modeloslist } from '../../data/modelos-list';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 // INTERFACES
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
+import { ModeloAPI } from '../../interfaces/modelo/modelo-api.interface';
 
 // SERVICES
 import { ModoExplorarService } from '../../services/modo-explorar.service';
 import { BookmarkService } from '../../services/bookmark.service';
 import { FiltroService } from '../../services/filtro.service';
+import { ApiModelosService } from '../../services/api-modelos.service';
+import { ModeloConverterService } from '../../services/modelo-converter.service';
 
 @Component({
   selector: 'app-resultados',
@@ -18,19 +21,25 @@ import { FiltroService } from '../../services/filtro.service';
   styleUrls: ['./resultados.component.scss']
 })
 export class ResultadosComponent implements OnInit, OnDestroy {
-
+  todosModelosDaAPI: Modelo[] = [];
   modelosFiltrados: Modelo[] = [];
   viewType: 'grid' | 'list' = 'grid';
   opacityClicked = 1;
   ordenacaoSelecionada: string = '';
   filtrosAtivos: string[] = [];
+  
+  isLoading = true;
+  
+  private destroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private modoExplorarService: ModoExplorarService,
     private bookmarkService: BookmarkService,
-    private filtroService: FiltroService
+    private filtroService: FiltroService,
+    private apiModelosService: ApiModelosService,
+    private modeloConverter: ModeloConverterService
   ) {}
 
   ngOnInit(): void {
@@ -38,54 +47,128 @@ export class ResultadosComponent implements OnInit, OnDestroy {
 
     this.modoExplorarService.resetAll();
 
-    const savedViewType = localStorage.getItem('viewType');
-    this.viewType = savedViewType === 'list' ? 'list' : 'grid';
+    // Verificar tamanho da tela primeiro
+    this.checkScreenSize();
 
-     // Escuta mudanças nos parâmetros da URL
-    this.route.queryParams.subscribe((params: Params) => {
-      this.aplicarFiltrosViaUrl(params);
-    });
+    // Só usar localStorage se for tela grande
+    if (window.innerWidth >= 992) {
+      const savedViewType = localStorage.getItem('viewType');
+      this.viewType = savedViewType === 'list' ? 'list' : 'grid';
+    } else {
+      // Forçar list em telas menores
+      this.viewType = 'list';
+    }
 
-    // Escuta mudanças diretas do serviço (quando filtros são limpos)
-    this.modoExplorarService.filtrosAtuais$.subscribe(filtros => {
-      // Se os filtros estão vazios, recarrega todos os modelos
-      if (Object.keys(filtros).length === 0) {
-        this.carregarTodosModelos();
-      }
-    });
+    // PRIMEIRO: Carrega todos modelos da API
+    this.carregarTodosModelosDaAPI();
+
+    // DEPOIS: Escuta mudanças nos parâmetros da URL
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params: Params) => {
+        console.log('🔍 Parâmetros da URL:', params);
+        this.aplicarFiltrosViaUrl(params);
+      });
+
+    // Escuta mudanças diretas do serviço
+    this.modoExplorarService.filtrosAtuais$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(filtros => {
+        if (Object.keys(filtros).length === 0 && this.todosModelosDaAPI.length > 0) {
+          // Se os filtros estão vazios, mostra todos os modelos
+          this.modelosFiltrados = [...this.todosModelosDaAPI];
+          this.atualizarStatusSalvos();
+          this.aplicarOrdenacaoSeNecessaria();
+          this.atualizarFiltrosAtivos({});
+        }
+      });
+
+    // Adicionar listener para mudanças de tamanho
+    window.addEventListener('resize', () => this.checkScreenSize());
   }
 
-  //carrega todos os modelos
-  private carregarTodosModelos(): void {
-    const todosModelos = Modeloslist;
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.modoExplorarService.setModoExplorarAtivo(false);
+    this.modoExplorarService.setModeloId(null);
+    this.modoExplorarService.setFiltrosAtuais({});
+    window.removeEventListener('resize', () => this.checkScreenSize());
+  }
+
+  /**
+   * VERIFICA O TAMANHO DA TELA E AJUSTA A VISUALIZAÇÃO
+   */
+  checkScreenSize(): void {
+    if (window.innerWidth < 992) {
+      // Forçar visualização List em telas menores
+      this.viewType = 'list';
+    } else {
+      // Em telas grandes, manter a preferência do usuário
+      const savedViewType = localStorage.getItem('viewType');
+      this.viewType = savedViewType === 'list' ? 'list' : 'grid';
+    }
+  }
+
+  /**
+   * CARREGA TODOS MODELOS DA API
+   */
+  private carregarTodosModelosDaAPI(): void {
+    this.isLoading = true;
+    
+    this.apiModelosService.getModelosDaAPI()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (apiModelos: ModeloAPI[]) => {
+          console.log('📦 Modelos carregados da API:', apiModelos.length);
+          
+          // Converte para o formato interno
+          this.todosModelosDaAPI = this.modeloConverter.converterArrayAPIparaModelo(apiModelos);
+          
+          // Aplica filtros se houver parâmetros na URL
+          const paramsAtuais = this.route.snapshot.queryParams;
+          if (Object.keys(paramsAtuais).length > 0) {
+            this.aplicarFiltrosViaUrl(paramsAtuais);
+          } else {
+            // Se não há filtros, mostra todos
+            this.modelosFiltrados = [...this.todosModelosDaAPI];
+            this.atualizarStatusSalvos();
+            this.aplicarOrdenacaoSeNecessaria();
+          }
+          
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('❌ Erro ao carregar modelos da API:', error);
+          this.isLoading = false;
+          this.modelosFiltrados = [];
+        }
+      });
+  }
+
+  /**
+   * APLICA FILTROS VIA URL
+   */
+  aplicarFiltrosViaUrl(params: Params): void {
+    if (this.todosModelosDaAPI.length === 0) {
+      console.log('⚠️ Aguardando carregar modelos da API...');
+      return;
+    }
+
+    console.log('🎯 Aplicando filtros para:', params);
+    
+    // Aplica filtros nos modelos já carregados
+    const modelosFiltrados = this.filtroService.aplicarFiltros(this.todosModelosDaAPI, params);
     
     // Aplica ordenação se houver
     if (this.ordenacaoSelecionada) {
-      this.modelosFiltrados = this.aplicarOrdenacaoInterna(todosModelos);
+      this.modelosFiltrados = this.aplicarOrdenacaoInterna(modelosFiltrados);
     } else {
-      this.modelosFiltrados = todosModelos;
+      this.modelosFiltrados = modelosFiltrados;
     }
 
     // Atualiza o status de salvamento
-    this.modelosFiltrados = this.modelosFiltrados.map(modelo => ({
-      ...modelo,
-      isSalvo: this.bookmarkService.isSalvo(modelo.id)
-    })) as Modelo[];
-  }
-
-  aplicarFiltrosViaUrl(params: Params): void {
-    const modelosBase = Modeloslist;
-    let modelosPosFiltro = this.filtroService.aplicarFiltros(modelosBase, params);
-
-    // Aplica ordenação se houver uma selecionada
-    if (this.ordenacaoSelecionada) {
-      modelosPosFiltro = this.aplicarOrdenacaoInterna(modelosPosFiltro);
-    }
-
-    this.modelosFiltrados = modelosPosFiltro.map(modelo => ({
-      ...modelo,
-      isSalvo: this.bookmarkService.isSalvo(modelo.id)
-    })) as Modelo[];
+    this.atualizarStatusSalvos();
 
     // Atualiza os filtros ativos para exibição
     this.atualizarFiltrosAtivos(params);
@@ -95,15 +178,30 @@ export class ResultadosComponent implements OnInit, OnDestroy {
   }
 
   /**
-     * Atualiza a lista de filtros ativos para exibição
-     */
-      /**
-     * Atualiza a lista de filtros ativos para exibição nos badges
+   * ATUALIZA STATUS DE SALVOS NOS MODELOS
+   */
+  private atualizarStatusSalvos(): void {
+    this.modelosFiltrados = this.modelosFiltrados.map(modelo => ({
+      ...modelo,
+      isSalvo: this.bookmarkService.isSalvo(modelo.id)
+    }));
+  }
+
+  /**
+   * APLICA ORDENAÇÃO SE NECESSÁRIA
+   */
+  private aplicarOrdenacaoSeNecessaria(): void {
+    if (this.ordenacaoSelecionada && this.modelosFiltrados.length > 0) {
+      this.modelosFiltrados = this.aplicarOrdenacaoInterna(this.modelosFiltrados);
+    }
+  }
+
+  /**
+   * ATUALIZA FILTROS ATIVOS PARA EXIBIÇÃO
    */
   private atualizarFiltrosAtivos(params: Params): void {
     this.filtrosAtivos = [];
     
-    // Mapeamento de chaves para labels mais amigáveis
     const labels: { [key: string]: string } = {
       'search': 'Busca',
       'tags': 'Tag',
@@ -118,10 +216,8 @@ export class ResultadosComponent implements OnInit, OnDestroy {
     };
   
     Object.entries(params).forEach(([chave, valor]) => {
-      // Ignora valores vazios, nulos ou placeholders
       if (valor && valor !== '' && valor !== '[Selecione]' && valor !== 'null' && valor !== 'undefined') {
         const label = labels[chave] || chave;
-        // Armazena no formato "chave|textoVisual" para facilitar o parsing
         const textoVisual = `${label}: ${valor}`;
         this.filtrosAtivos.push(`${chave}|${textoVisual}`);
       }
@@ -129,17 +225,16 @@ export class ResultadosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Aplica a ordenação quando o select é alterado
+   * APLICA ORDENAÇÃO QUANDO O SELECT É ALTERADO
    */
   aplicarOrdenacao(): void {
-    // Reaplica os filtros atuais com a nova ordenação
-    this.route.queryParams.subscribe((params: Params) => {
-      this.aplicarFiltrosViaUrl(params);
-    });
+    if (this.modelosFiltrados.length === 0) return;
+    
+    this.modelosFiltrados = this.aplicarOrdenacaoInterna(this.modelosFiltrados);
   }
 
   /**
-   * Aplica a lógica de ordenação interna
+   * APLICA LÓGICA DE ORDENAÇÃO INTERNA
    */
   private aplicarOrdenacaoInterna(modelos: Modelo[]): Modelo[] {
     switch (this.ordenacaoSelecionada) {
@@ -149,57 +244,56 @@ export class ResultadosComponent implements OnInit, OnDestroy {
         );
       
       case 'recentes':
-        // Por enquanto, retorna sem ordenação (implementaremos depois)
-        console.log('Ordenação por "Mais Recentes" será implementada em breve');
-        return modelos;
+        // Ordena por data (mais recentes primeiro)
+        return [...modelos].sort((a, b) => {
+          const dateA = new Date(a.date.split('/').reverse().join('-')).getTime();
+          const dateB = new Date(b.date.split('/').reverse().join('-')).getTime();
+          return dateB - dateA; // Descendente (mais recente primeiro)
+        });
       
       default:
         return modelos;
     }
   }
 
+  /**
+   * ALTERNA O TIPO DE VISUALIZAÇÃO
+   * Bloqueia mudança para 'grid' em telas menores
+   */
   switchViewType(type: 'grid' | 'list') {
+    // Bloqueia mudança para grid em telas menores
+    if (window.innerWidth < 992 && type === 'grid') {
+      console.log('📱 Visualização grid desativada em telas menores');
+      return;
+    }
+    
     this.viewType = type;
     localStorage.setItem('viewType', type);
   }
 
   abrirModelo(id: string) {
-    const idNumber = Number(id);
-    this.modoExplorarService.setModeloId(idNumber);
+    this.modoExplorarService.setModeloId(Number(id));
     this.router.navigate(['/modelo', id]);
   }
 
-  /**
-   * Extrai o texto limpo para o badge
-  */
   getTextoBadge(filtroCompleto: string): string {
-    // Extrai apenas a parte após o pipe "|" - que é o texto visual
     return filtroCompleto.split('|')[1];
   }
 
-  /**
-   * Remove um filtro específico
-  */
   removerFiltro(filtroCompleto: string, event: Event) {
     event.stopPropagation();
     
-    // Extrai a chave do formato "chave|textoVisual"
     const partes = filtroCompleto.split('|');
     const chave = partes[0];
     
     if (chave) {
-      // Obtém os parâmetros atuais da URL
       const paramsAtuais = { ...this.route.snapshot.queryParams };
-      
-      // Remove o parâmetro específico
       delete paramsAtuais[chave];
       
-      console.log(`Removendo filtro ${chave}. Parâmetros restantes:`, paramsAtuais); // DEBUG
+      console.log(`🗑️ Removendo filtro ${chave}. Parâmetros restantes:`, paramsAtuais);
       
-      // ATUALIZAÇÃO CRÍTICA: Força a sincronização no FilterComponent
       this.forcarSincronizacaoFilterComponent(chave, paramsAtuais);
       
-      // Navega para atualizar a URL
       if (Object.keys(paramsAtuais).length > 0) {
         this.router.navigate(['/resultados'], {
           queryParams: paramsAtuais,
@@ -211,30 +305,17 @@ export class ResultadosComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Força a sincronização do FilterComponent de forma mais agressiva
-  */
   private forcarSincronizacaoFilterComponent(chaveRemovida: string, novosParams: any) {
-    // 1. Atualiza o serviço - isso dispara a subscription no FilterComponent
     this.modoExplorarService.setFiltrosAtuais(novosParams);
     
-    // 2. Se for um dos selects conhecidos, força um delay para garantir a sincronização
     const filtrosConhecidos = ['area', 'curso', 'disciplina', 'categorias', 'tipo', 'tecnologia', 'acessibilidade', 'formato'];
     
     if (filtrosConhecidos.includes(chaveRemovida)) {
-      console.log(`Forçando sincronização do select: ${chaveRemovida}`); // DEBUG
+      console.log(`🔄 Forçando sincronização do select: ${chaveRemovida}`);
       
-      // Pequeno delay para garantir que o FilterComponent processou a mudança
       setTimeout(() => {
-        // Força uma nova atualização para garantir
         this.modoExplorarService.setFiltrosAtuais(novosParams);
       }, 100);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.modoExplorarService.setModoExplorarAtivo(false);
-    this.modoExplorarService.setModeloId(null);
-    this.modoExplorarService.setFiltrosAtuais({});
   }
 }

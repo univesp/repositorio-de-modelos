@@ -1,71 +1,298 @@
-import { Component, OnInit } from '@angular/core';
+// components/user-favourites/user-favourites.component.ts
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
-import { Modeloslist } from '../../data/modelos-list';
+import { ModeloAPI } from '../../interfaces/modelo/modelo-api.interface';
 import { SalvosService } from '../../services/salvos.service';
 import { AuthService } from '../../services/auth.service';
 import { PaginationService, PaginationConfig } from '../../services/pagination.service';
+import { ApiModelosService } from '../../services/api-modelos.service';
+import { ImagemDefaultUtils } from '../../utils/imagem-default.utils';
 
 @Component({
   selector: 'app-user-favourites',
   templateUrl: './user-favourites.component.html',
-  styleUrl: './user-favourites.component.scss'
+  styleUrls: ['./user-favourites.component.scss']
 })
-export class UserFavouritesComponent implements OnInit {
+export class UserFavouritesComponent implements OnInit, OnDestroy {
   // Arrays de dados
+  todosModelosDaAPI: Modelo[] = [];
   modelosSalvos: Modelo[] = [];
   modelosFiltrados: Modelo[] = [];
   modelosPaginados: Modelo[] = [];
 
   // Filtros
   filtroTexto: string = '';
-  ordenacaoSelecionada: string = ''; // Default
+  ordenacaoSelecionada: string = 'salvos-recentes';
 
-  //Propriedades de paginação
+  // Propriedades de paginação
   paginationConfig!: PaginationConfig;
-
   isLoading = true;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private router: Router,
     private salvosService: SalvosService,
     public authService: AuthService,
-    private paginationService: PaginationService
+    private paginationService: PaginationService,
+    private apiModelosService: ApiModelosService
   ) {}
 
   ngOnInit(): void {
     // Inicializa a configuração de paginação
     this.paginationConfig = this.paginationService.inicializarPaginacao([], 5);
+    
+    // Carrega os modelos salvos
+    this.carregarModelosSalvos();
+  }
 
-    // Escuta mudanças diretas no serviço de salvos
-    this.salvosService.modelosSalvos$.subscribe({
-      next: (modelos) => {
-        //console.log(' Modelos recebidos do serviço:', modelos.length);
-        this.modelosSalvos = modelos;
-        this.modelosFiltrados = [...modelos]; // Inicializa os modelos filtrados
-        this.aplicarFiltros();                // Aplica filtros iniciais
-        this.isLoading = false;
-      },
-      error: (error) => {
-        //console.error('Erro ao carregar modelos salvos:', error);
-        this.isLoading = false;
-      }
-    });
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    // Força o carregamento inicial baseado no perfil atual
-    const currentProfile = this.authService.getCurrentUserProfile();
-    if (currentProfile && currentProfile.salvos) {
-      this.carregarModelosSalvos(currentProfile.salvos);
-    } else {
+  /**
+   * CARREGA MODELOS SALVOS
+   */
+  private carregarModelosSalvos(): void {
+    this.isLoading = true;
+    
+    // Primeiro carrega TODOS os modelos da API
+    this.apiModelosService.getModelosDaAPI()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (modelosAPI: ModeloAPI[]) => {
+          console.log('📦 Todos modelos carregados da API:', modelosAPI.length);
+          
+          // Converte todos os modelos da API para o formato interno
+          this.todosModelosDaAPI = modelosAPI.map(apiModelo => 
+            this.converterAPIparaModelo(apiModelo)
+          );
+          
+          // Agora filtra apenas os modelos salvos
+          this.filtrarModelosSalvos();
+        },
+        error: (error) => {
+          console.error('❌ Erro ao carregar modelos da API:', error);
+          this.isLoading = false;
+          this.modelosSalvos = [];
+          this.modelosFiltrados = [];
+          this.atualizarPaginacao();
+        }
+      });
+  }
+
+  /**
+   * FILTRA APENAS OS MODELOS SALVOS
+   */
+  private filtrarModelosSalvos(): void {
+    const userProfile = this.authService.getCurrentUserProfile();
+    
+    if (!userProfile || !userProfile.salvos || userProfile.salvos.length === 0) {
+      console.log('👤 Usuário não tem modelos salvos');
       this.modelosSalvos = [];
       this.modelosFiltrados = [];
       this.isLoading = false;
-      // Atualiza a paginação mesmo com array vazio
       this.atualizarPaginacao();
+      return;
+    }
+
+    console.log('🔍 Filtrando modelos salvos entre:', this.todosModelosDaAPI.length, 'modelos');
+    
+    // Filtra apenas os modelos que estão na lista de salvos do usuário
+    this.modelosSalvos = this.todosModelosDaAPI.filter(modelo => 
+      userProfile.salvos!.includes(modelo.id)
+    );
+
+    console.log('✅ Modelos salvos encontrados:', this.modelosSalvos.length);
+    
+    // Inicializa os modelos filtrados
+    this.modelosFiltrados = [...this.modelosSalvos];
+    
+    // Aplica filtros iniciais
+    this.aplicarFiltros();
+    this.isLoading = false;
+  }
+
+  /**
+   * CONVERTE ModeloAPI PARA Modelo
+   */
+  private converterAPIparaModelo(apiModelo: ModeloAPI): Modelo {
+    const formatarData = (dataISO: string): string => {
+      try {
+        const date = new Date(dataISO);
+        return date.toLocaleDateString('pt-BR', { 
+          month: 'short', 
+          day: 'numeric', 
+          year: 'numeric' 
+        }).replace(/ de /g, ' ');
+      } catch {
+        return 'Data não disponível';
+      }
+    };
+
+    const limparHTML = (html: string): string => {
+      if (!html) return '';
+      return html.replace(/<[^>]*>/g, '');
+    };
+
+    const imagemParaExibir = ImagemDefaultUtils.getImagemParaExibicao(apiModelo);
+
+    return {
+      id: apiModelo.id,
+      titulo: apiModelo.titulo,
+      recurso: apiModelo.formato,
+      date: formatarData(apiModelo.date),
+      curso: apiModelo.curso || [],
+      disciplina: apiModelo.curso?.[0] || 'Disciplina não especificada',
+      area: apiModelo.area || [],
+      categorias: apiModelo.tipo || [],
+      tipo: apiModelo.tipo || [],
+      img_sm: imagemParaExibir,
+      img_md: imagemParaExibir,
+      img_lg: imagemParaExibir,
+      descricao: limparHTML(apiModelo.descricao),
+      autor: apiModelo.autoria || apiModelo.createdBy || 'Autor não informado',
+      formato: apiModelo.formato,
+      tecnologia: apiModelo.tecnologias || [],
+      acessibilidade: apiModelo.acessibilidade || [],
+      hasMobile: false,
+      hasCodigo: apiModelo.hasCodigo || false,
+      isDestaque: apiModelo.destaque || false,
+      hasEquipe: apiModelo.hasEquipe || false,
+      equipe: apiModelo.equipe ? {
+        docente: apiModelo.equipe.docente || '',
+        coordenacao: apiModelo.equipe.coordenacao || '',
+        roteirizacao: apiModelo.equipe.roteirizacao || '',
+        ilustracao: apiModelo.equipe.ilustracao || '',
+        layout: apiModelo.equipe.layout || '',
+        programacao: apiModelo.equipe.programacao || ''
+      } : undefined,
+      tags: apiModelo.tags || [],
+      link: apiModelo.link || '',
+      github: apiModelo.codigoLink || undefined,
+      isSalvo: true, // Por definição, todos aqui são salvos
+      licenca: apiModelo.licenca?.join(', ') || 'Não especificada'
+    };
+  }
+
+  /**
+   * APLICA FILTROS E ORDENAÇÃO
+   */
+  aplicarFiltros(): void {
+    let modelosFiltrados = [...this.modelosSalvos];
+
+    // Filtro por texto
+    if (this.filtroTexto.trim()) {
+      const termo = this.filtroTexto.toLowerCase().trim();
+      modelosFiltrados = modelosFiltrados.filter(modelo => 
+        modelo.titulo.toLowerCase().includes(termo) ||
+        (modelo.descricao && modelo.descricao.toLowerCase().includes(termo)) ||
+        (modelo.tags && modelo.tags.some(tag => tag.toLowerCase().includes(termo)))
+      );
+    }
+
+    // Aplica ordenação
+    modelosFiltrados = this.aplicarOrdenacao(modelosFiltrados);
+    this.modelosFiltrados = modelosFiltrados;
+
+    // Atualiza paginação
+    this.paginationConfig = this.paginationService.irParaPagina(1, this.paginationConfig);
+    this.atualizarPaginacao();
+  }
+
+  /**
+   * APLICA ORDENAÇÃO SELECIONADA
+   */
+  private aplicarOrdenacao(modelos: Modelo[]): Modelo[] {
+    const userProfile = this.authService.getCurrentUserProfile();
+    const salvosIds = userProfile?.salvos || [];
+
+    const ordenacao = this.ordenacaoSelecionada || 'salvos-recentes';
+    const modelosOrdenados = [...modelos];
+
+    switch (ordenacao) {
+      case 'salvos-recentes':
+        return modelosOrdenados.sort((a, b) => {
+          const indexA = salvosIds.indexOf(a.id);
+          const indexB = salvosIds.indexOf(b.id);
+          
+          if (indexA === -1) return 1;
+          if (indexB === -1) return -1;
+          
+          return indexB - indexA; // Mais recentes primeiro
+        });
+
+      case 'salvos-antigos':
+        return modelosOrdenados.sort((a, b) => {
+          const indexA = salvosIds.indexOf(a.id);
+          const indexB = salvosIds.indexOf(b.id);
+          
+          if (indexA === -1) return 1;
+          if (indexB === -1) return -1;
+          
+          return indexA - indexB; // Mais antigos primeiro
+        });
+
+      case 'alfabetica':
+        return modelosOrdenados.sort((a, b) => 
+          a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' })
+        );
+
+      case 'mais-recentes':
+        return modelosOrdenados.sort((a, b) => {
+          const dateA = this.converterDataParaTimestamp(a.date);
+          const dateB = this.converterDataParaTimestamp(b.date);
+          
+          if (dateB === dateA) {
+            return a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' });
+          }
+          
+          return dateB - dateA;
+        });
+
+      case 'mais-antigos':
+        return modelosOrdenados.sort((a, b) => {
+          const dateA = this.converterDataParaTimestamp(a.date);
+          const dateB = this.converterDataParaTimestamp(b.date);
+          
+          if (dateA === dateB) {
+            return a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' });
+          }
+          
+          return dateA - dateB;
+        });
+
+      default:
+        return modelosOrdenados;
     }
   }
 
-  // Métodos de paginação
+  /**
+   * CONVERTE STRING DE DATA PARA TIMESTAMP
+   */
+  private converterDataParaTimestamp(dateString: string): number {
+    const parts = dateString.split('/');
+    
+    if (parts.length === 3) {
+      const [day, month, year] = parts;
+      return new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).getTime();
+    } else if (parts.length === 2) {
+      const [month, year] = parts;
+      return new Date(parseInt(year), parseInt(month) - 1, 1).getTime();
+    } else if (parts.length === 1) {
+      return new Date(parseInt(parts[0]), 0, 1).getTime();
+    }
+    
+    return 0;
+  }
+
+  /**
+   * ATUALIZA PAGINAÇÃO
+   */
   private atualizarPaginacao(): void {
     this.paginationConfig = this.paginationService.atualizarPaginacaoComNovosItens(
       this.modelosFiltrados, 
@@ -77,7 +304,9 @@ export class UserFavouritesComponent implements OnInit {
     );
   }
 
-  // Métodos de navegação
+  /**
+   * NAVEGAÇÃO ENTRE PÁGINAS
+   */
   irParaPagina(pagina: number): void {
     this.paginationConfig = this.paginationService.irParaPagina(pagina, this.paginationConfig);
     this.atualizarModelosPaginados();
@@ -101,7 +330,6 @@ export class UserFavouritesComponent implements OnInit {
     this.atualizarModelosPaginados();
     this.rolarParaTopo();
   }
-  
 
   irParaUltimaPagina(): void {
     this.paginationConfig = this.paginationService.irParaUltimaPagina(this.paginationConfig);
@@ -109,7 +337,9 @@ export class UserFavouritesComponent implements OnInit {
     this.rolarParaTopo();
   }
 
-
+  /**
+   * ATUALIZA MODELOS PAGINADOS
+   */
   private atualizarModelosPaginados(): void {
     this.modelosPaginados = this.paginationService.obterItensPaginados(
       this.modelosFiltrados, 
@@ -117,197 +347,69 @@ export class UserFavouritesComponent implements OnInit {
     );
   }
 
+  /**
+   * ROLA PARA O TOPO
+   */
   private rolarParaTopo(): void {
     setTimeout(() => {
       const elemento = document.querySelector('.user-bookmarks');
       if (elemento) {
-        elemento.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        });
+        elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
-        // Fallback para topo da página
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }, 100);
   }
 
-  // Carrega os modelos completos baseado nos IDs salvos
-  private carregarModelosSalvos(idsSalvos: string[]): void {
-    if (idsSalvos.length === 0) {
-      this.modelosSalvos = [];
-      this.modelosFiltrados = [];
-      this.isLoading = false;
-      // CORREÇÃO: Atualiza a paginação
-      this.atualizarPaginacao();
-      return;
-    }
-  
-    const todosModelos: Modelo[] = Modeloslist;
-    const modelosFiltrados = todosModelos.filter(modelo => 
-      idsSalvos.includes(modelo.id)
-    );
-    
-    this.modelosSalvos = modelosFiltrados;
-    this.modelosFiltrados = [...modelosFiltrados];
-    this.aplicarFiltros();
-    this.isLoading = false;
-  }
-
-  // Aplica filtros e ordenação
-  aplicarFiltros(): void {
-    let modelosFiltrados = [...this.modelosSalvos];
-  
-    if (this.filtroTexto.trim()) {
-      const termo = this.filtroTexto.toLowerCase().trim();
-      modelosFiltrados = modelosFiltrados.filter(modelo => 
-        modelo.titulo.toLowerCase().includes(termo)
-      );
-    }
-  
-    modelosFiltrados = this.aplicarOrdenacao(modelosFiltrados);
-    this.modelosFiltrados = modelosFiltrados;
-  
-    // CORREÇÃO: Em vez de this.paginaAtual = 1, atualizamos a configuração
-    this.paginationConfig = this.paginationService.irParaPagina(1, this.paginationConfig);
-    this.atualizarPaginacao();
-  }
-
-  // Aplica a ordenação selecionada
-  private aplicarOrdenacao(modelos: Modelo[]): Modelo[] {
-    const userProfile = this.authService.getCurrentUserProfile();
-    const salvosIds = userProfile?.salvos || [];
-  
-    //console.log('Aplicando ordenação:', this.ordenacaoSelecionada);
-    //console.log(' IDs salvos:', salvosIds);
-
-    // Se não há ordenação selecionada, usa "salvos-recentes" como default
-    const ordenacao = this.ordenacaoSelecionada || 'salvos-recentes';
-  
-    // Cria uma cópia do array para não modificar o original
-    const modelosOrdenados = [...modelos];
-  
-    switch (ordenacao) {
-      case '':
-      case 'salvos-recentes':
-        // Ordem inversa do array de salvos (último salvo primeiro)
-        return modelosOrdenados.sort((a, b) => {
-          const indexA = salvosIds.indexOf(a.id);
-          const indexB = salvosIds.indexOf(b.id);
-          
-          //console.log(`   Ordenando: ${a.titulo} (index: ${indexA}) vs ${b.titulo} (index: ${indexB})`);
-          
-          // Se não encontrou no array, vai para o final
-          if (indexA === -1) return 1;
-          if (indexB === -1) return -1;
-          
-          // Ordem decrescente (mais recentes primeiro) - índice maior = mais recente
-          return indexB - indexA;
-        });
-  
-      case 'salvos-antigos':
-        // Ordem normal do array de salvos (primeiro salvo primeiro)
-        return modelosOrdenados.sort((a, b) => {
-          const indexA = salvosIds.indexOf(a.id);
-          const indexB = salvosIds.indexOf(b.id);
-          
-          if (indexA === -1) return 1;
-          if (indexB === -1) return -1;
-          
-          // Ordem crescente (mais antigos primeiro)
-          return indexA - indexB;
-        });
-  
-      case 'alfabetica':
-        return modelosOrdenados.sort((a, b) => {
-          const resultado = a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' });
-          //console.log(`   Alfabético: ${a.titulo} vs ${b.titulo} -> ${resultado}`);
-          return resultado;
-        });
-  
-      case 'mais-recentes':
-        return modelosOrdenados.sort((a, b) => {
-          const dateA = this.converterDataParaTimestamp(a.date);
-          const dateB = this.converterDataParaTimestamp(b.date);
-          
-          //console.log(`   Data: ${a.titulo} (${a.date} -> ${dateA}) vs ${b.titulo} (${b.date} -> ${dateB})`);
-          
-          // Se datas iguais, ordena alfabeticamente
-          if (dateB === dateA) {
-            return a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' });
-          }
-          
-          return dateB - dateA; // Mais recentes primeiro
-        });
-  
-      case 'mais-antigos':
-        return modelosOrdenados.sort((a, b) => {
-          const dateA = this.converterDataParaTimestamp(a.date);
-          const dateB = this.converterDataParaTimestamp(b.date);
-          
-          // Se datas iguais, ordena alfabeticamente
-          if (dateA === dateB) {
-            return a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' });
-          }
-          
-          return dateA - dateB; // Mais antigos primeiro
-        });
-  
-      default:
-        return modelosOrdenados;
-    }
-  }
-
-  // Converte string de data para timestamp
-  private converterDataParaTimestamp(dateString: string): number {
-    // Assumindo que date está no formato "DD/MM/YYYY" ou "MM/YYYY" ou "YYYY"
-    const parts = dateString.split('/');
-    
-    if (parts.length === 3) {
-      // DD/MM/YYYY
-      const [day, month, year] = parts;
-      return new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).getTime();
-    } else if (parts.length === 2) {
-      // MM/YYYY
-      const [month, year] = parts;
-      return new Date(parseInt(year), parseInt(month) - 1, 1).getTime();
-    } else if (parts.length === 1) {
-      // YYYY
-      return new Date(parseInt(parts[0]), 0, 1).getTime();
-    }
-    
-    // Fallback: retorna 0 se não conseguir converter
-    return 0;
-  }
-
-
-  // Navega para a página do modelo
+  /**
+   * NAVEGA PARA PÁGINA DO MODELO
+   */
   verMaisInformacoes(modeloId: string): void {
     this.router.navigate(['/modelo', modeloId]);
   }
 
-  // Abre o link do material em nova aba
+  /**
+   * ABRE LINK DO MATERIAL
+   */
   irParaMaterial(link: string | undefined): void {
     if (link) {
       window.open(link, '_blank');
     }
   }
 
-  // Remove um modelo dos salvos
+  /**
+   * REMOVE DOS SALVOS
+   */
   removerDosSalvos(modeloId: string, event: Event): void {
-    event.stopPropagation(); // Previne que o clique afete o card
+    event.stopPropagation();
     
     this.salvosService.removerDosSalvos(modeloId).subscribe({
       next: () => {
-        //console.log('Modelo removido dos salvos');
+        console.log('✅ Modelo removido dos salvos');
+        // Atualiza a lista após remoção
+        this.atualizarListaAposRemocao(modeloId);
       },
       error: (error) => {
-        //console.error('Erro ao remover dos salvos:', error);
+        console.error('❌ Erro ao remover dos salvos:', error);
       }
     });
   }
 
-  // MÉTODOS GETTER PARA O TEMPLATE (importante!)
+  /**
+   * ATUALIZA LISTA APÓS REMOÇÃO
+   */
+  private atualizarListaAposRemocao(modeloId: string): void {
+    // Remove o modelo da lista local
+    this.modelosSalvos = this.modelosSalvos.filter(modelo => modelo.id !== modeloId);
+    this.modelosFiltrados = this.modelosFiltrados.filter(modelo => modelo.id !== modeloId);
+    
+    // Atualiza paginação
+    this.atualizarPaginacao();
+  }
+
+  /**
+   * GETTERS PARA O TEMPLATE
+   */
   get paginaAtual(): number {
     return this.paginationConfig.paginaAtual;
   }

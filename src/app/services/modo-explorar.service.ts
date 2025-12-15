@@ -8,7 +8,7 @@ export class ModoExplorarService {
   private modoExplorarAtivoSubject = new BehaviorSubject<boolean>(false);
   modoExplorarAtivo$ = this.modoExplorarAtivoSubject.asObservable();
 
-  private modeloIdSubject = new BehaviorSubject<number | null>(null);
+  private modeloIdSubject = new BehaviorSubject<number | string | null>(null);
   modeloId$ = this.modeloIdSubject.asObservable();
 
   private filtrosAtuaisSubject = new BehaviorSubject<{ [key: string]: string }>({});
@@ -18,11 +18,11 @@ export class ModoExplorarService {
     this.modoExplorarAtivoSubject.next(ativo);
   }
 
-  setModeloId(id: number | null) {
+  setModeloId(id: number | string | null) {
     this.modeloIdSubject.next(id);
   }
 
-  getModeloId(): number | null {
+  getModeloId(): number | string | null {
     return this.modeloIdSubject.getValue();
   }
 

@@ -126,8 +126,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       const crumbs = ['Home'];
       const currentUrl = navEvent.urlAfterRedirects;
 
-      const idFromUrlMatch = currentUrl.match(/\/modelo\/(\d+)/);
-      const idFromUrl = idFromUrlMatch ? parseInt(idFromUrlMatch[1], 10) : null;
+      const idFromUrlMatch = currentUrl.match(/\/modelo\/([a-fA-F0-9]{24})/);
+      const idFromUrl = idFromUrlMatch ? idFromUrlMatch[1] : null;
 
       if (idFromUrl !== null) {
         if (this.lastListPageUrl?.startsWith('/resultados')) {
@@ -137,7 +137,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         } else if (this.lastListPageUrl?.startsWith('/cadastro-novo-modelo')) {
           crumbs.push('Cadastro de Modelo');
         }
-        crumbs.push(`Modelo #${idFromUrl}`);
+        crumbs.push(`Modelo ${idFromUrl}`);
       } else {
         if (currentUrl.startsWith('/resultados')) {
           crumbs.push('Resultados');

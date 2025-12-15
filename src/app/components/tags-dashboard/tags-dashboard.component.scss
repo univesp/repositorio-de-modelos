@@ -17,6 +17,16 @@
   flex-wrap: wrap;
   gap: 15px;
   margin-left: 3px;
+  align-items: center; // Para alinhar verticalmente
+}
+
+// Container flexível para as tags
+.tags-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  flex-grow: 1; // Ocupa o espaço disponível
+  max-width: 80%; // Limita a 80% da largura
 }
 
 .tag-item {
@@ -50,7 +60,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  margin-left: auto;
+  margin-left: 15px; // Espaço entre tags e botão
+  flex-shrink: 0; // Impede que o botão encolha
   
   &:hover {
     background: #7155d8;
@@ -65,4 +76,3 @@
     height: 18px;
   }
 }
-

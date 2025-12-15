@@ -6,10 +6,15 @@ import { Modeloslist } from '../../data/modelos-list';
 
 // INTERFACES
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
+import { ModeloAPI } from '../../interfaces/modelo/modelo-api.interface';
 
 // SERVICES
 import { ModoExplorarService } from '../../services/modo-explorar.service';
 import { BookmarkService } from '../../services/bookmark.service';
+import { ApiModelosService } from '../../services/api-modelos.service';
+
+// UTILS
+import { ImagemDefaultUtils } from '../../utils/imagem-default.utils';
 
 @Component({
   selector: 'app-explorar',
@@ -26,12 +31,14 @@ export class ExplorarComponent implements OnInit, OnDestroy {
   paginaAtual: number = 1;
   totalPaginas: number = 1;
 
-  isLoading: boolean = false;
+  isLoading: boolean = true;
+  usandoAPI: boolean = false;
 
   constructor(
     private router: Router,
     private modoExplorarService: ModoExplorarService,
-    private bookmarkService: BookmarkService
+    private bookmarkService: BookmarkService,
+    private apiModelosService: ApiModelosService
   ) {}
 
   ngOnInit(): void {
@@ -51,37 +58,148 @@ export class ExplorarComponent implements OnInit, OnDestroy {
       this.viewType = 'list';
     }
 
-    this.carregarModelos();
+    // CARREGA MODELOS - TENTA API PRIMEIRO, SE FALHAR USA LOCAIS
+    this.carregarModelosComFallback();
 
     // Adicionar listener para mudanças de tamanho
     window.addEventListener('resize', () => this.checkScreenSize());
   }
 
   /**
-   * Carrega e aplica a ordenação nos modelos
+   * Tenta carregar da API, se falhar usa dados locais
    */
-  private carregarModelos(): void {
-    // Primeiro cria a lista base com a propriedade isSalvo
+  private carregarModelosComFallback(): void {
+    this.isLoading = true;
+    this.usandoAPI = true; // Tenta usar API
+    
+    this.apiModelosService.getModelosDaAPI().subscribe({
+      next: (modelosAPI: ModeloAPI[]) => {
+        if (modelosAPI.length > 0) {
+          console.log(`✅ Carregados ${modelosAPI.length} modelos da API`);
+          // CONVERTE API -> Modelo
+          const modelosConvertidos = this.converterAPIparaModelo(modelosAPI);
+          this.processarModelos(modelosConvertidos);
+        } else {
+          // API retornou vazio ou erro, usa dados locais
+          console.log('⚠️ API vazia ou com erro, usando dados locais');
+          this.usandoAPI = false;
+          this.carregarModelosLocais();
+        }
+      },
+      error: (error) => {
+        // Erro na requisição, usa dados locais
+        console.error('❌ Erro na requisição API, usando dados locais:', error);
+        this.usandoAPI = false;
+        this.carregarModelosLocais();
+      }
+    });
+  }
+
+  /**
+   * Carrega dados locais
+   */
+  private carregarModelosLocais(): void {
     const modelosComBookmark = Modeloslist.map(modelo => ({
       ...modelo,
       isSalvo: this.bookmarkService.isSalvo(modelo.id)
-    })) as Modelo[]; // ← FORÇA A TIPAGEM AQUI
+    })) as Modelo[];
 
-    // Aplica ordenação se houver uma selecionada
-    let modelosOrdenados = modelosComBookmark;
+    this.processarModelos(modelosComBookmark);
+  }
+
+   /**
+   * Processa os modelos (aplica ordenação, etc)
+   */
+   private processarModelos(modelos: Modelo[]): void {
+    let modelosOrdenados = modelos;
     
     if (this.ordenacaoSelecionada) {
-      modelosOrdenados = this.aplicarOrdenacaoInterna(modelosComBookmark);
+      modelosOrdenados = this.aplicarOrdenacaoInterna(modelos);
     }
 
     this.modelosExibidos = modelosOrdenados;
+    this.isLoading = false;
+    
+    console.log(`📊 Exibindo ${this.modelosExibidos.length} modelos (${this.usandoAPI ? 'API' : 'LOCAL'})`);
+  }
+
+  /**
+   * Converte ModeloAPI[] para Modelo[]
+   */
+  private converterAPIparaModelo(apiModelos: ModeloAPI[]): Modelo[] {
+    return apiModelos.map(apiModelo => {
+      // Formata data
+      const formatarData = (dataISO: string): string => {
+        try {
+          const date = new Date(dataISO);
+          return date.toLocaleDateString('pt-BR', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          });
+        } catch {
+          return 'Data não disponível';
+        }
+      };
+
+      // Limpa HTML
+      const limparHTML = (html: string): string => {
+        if (!html) return '';
+        const texto = html.replace(/<[^>]*>/g, '');
+        return texto.length > 200 ? texto.substring(0, 200) + '...' : texto;
+      };
+
+      // USA O UTILITÁRIO DE IMAGENS DEFAULT
+      const imagemParaExibir = ImagemDefaultUtils.getImagemParaExibicao(apiModelo);
+
+      return {
+        id: apiModelo.id,
+        titulo: apiModelo.titulo,
+        recurso: apiModelo.formato,
+        date: formatarData(apiModelo.date),
+        curso: apiModelo.curso || [],
+        disciplina: apiModelo.curso?.[0] || 'Disciplina não especificada',
+        area: apiModelo.area || [],
+        categorias: apiModelo.tipo || [],
+        tipo: apiModelo.tipo || [],
+        img_sm: imagemParaExibir,
+        img_md: imagemParaExibir,
+        img_lg: imagemParaExibir,
+        descricao: limparHTML(apiModelo.descricao),
+        autor: apiModelo.autoria || apiModelo.createdBy || 'Autor não informado',
+        formato: apiModelo.formato,
+        tecnologia: apiModelo.tecnologias || [],
+        acessibilidade: apiModelo.acessibilidade || [],
+        hasMobile: false,
+        hasCodigo: apiModelo.hasCodigo || false,
+        isDestaque: apiModelo.destaque || false,
+        hasEquipe: apiModelo.hasEquipe || false,
+        equipe: apiModelo.equipe ? {
+          docente: apiModelo.equipe.docente || '',
+          coordenacao: apiModelo.equipe.coordenacao || '',
+          roteirizacao: apiModelo.equipe.roteirizacao || '',
+          ilustracao: apiModelo.equipe.ilustracao || '',
+          layout: apiModelo.equipe.layout || '',
+          programacao: apiModelo.equipe.programacao || ''
+        } : undefined,
+        tags: apiModelo.tags || [],
+        link: apiModelo.link || '',
+        github: apiModelo.codigoLink || undefined,
+        isSalvo: this.bookmarkService.isSalvo(apiModelo.id),
+        licenca: apiModelo.licenca?.join(', ') || 'Não especificada'
+      };
+    });
   }
 
   /**
    * Aplica a ordenação quando o select é alterado
    */
   aplicarOrdenacao(): void {
-    this.carregarModelos();
+    if (this.usandoAPI) {
+      this.carregarModelosComFallback();
+    } else {
+      this.carregarModelosLocais();
+    }
   }
 
   /**
@@ -95,9 +213,16 @@ export class ExplorarComponent implements OnInit, OnDestroy {
         );
       
       case 'recentes':
-        // Por enquanto, retorna sem ordenação (implementaremos depois)
-        console.log('Ordenação por "Mais Recentes" será implementada em breve');
-        return modelos;
+        return [...modelos].sort((a, b) => {
+          try {
+            const dataA = new Date(a.date).getTime();
+            const dataB = new Date(b.date).getTime();
+            return dataB - dataA;
+          } catch (e) {
+            console.warn('Erro ao ordenar por data:', e);
+            return 0;
+          }
+        });
       
       default:
         return modelos;

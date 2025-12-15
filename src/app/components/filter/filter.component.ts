@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { Modeloslist } from '../../data/modelos-list';
-import { FilterConfigList } from '../../data/filterConfig-list'; 
+import { take } from 'rxjs/operators';
 import { FiltroConfig } from '../../interfaces/filter/filterConfig.interface';
+import { FilterConfigList } from '../../data/filterConfig-list';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
 import { AuthService } from '../../services/auth.service';
+import { ApiModelosService } from '../../services/api-modelos.service';
+import { ModeloConverterService } from '../../services/modelo-converter.service';
 
 @Component({
   selector: 'app-filter',
@@ -19,11 +21,14 @@ export class FilterComponent implements OnInit, OnDestroy {
 
   isLoggedIn: boolean = false;
 
-  qtdeModelos: number = Modeloslist.length;
+  qtdeModelos: number = 0;
 
   filtrosAbertos = false;
 
   ngOnInit(): void {
+     // CARREGA QUANTIDADE DE MODELOS DA API
+     this.carregarQuantidadeModelos();
+
     // ESCUTA MUDANÇAS NO SERVIÇO E NA URL SIMULTANEAMENTE
     this.filtrosSub = this.modoExplorarService.filtrosAtuais$.subscribe(filtros => {
       //console.log('FilterComponent: Filtros atualizados via serviço', filtros); // DEBUG
@@ -90,7 +95,9 @@ export class FilterComponent implements OnInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private modoExplorarService: ModoExplorarService,
-        private authService: AuthService
+        private authService: AuthService,
+        private apiModelosService: ApiModelosService,
+        private modeloConverter: ModeloConverterService
       ) {
 
         // INICIALIZA TODOS OS FILTROS COM PLACEHOLDER PRIMEIRO
@@ -135,6 +142,24 @@ export class FilterComponent implements OnInit, OnDestroy {
         this.modoExplorarService.setFiltrosAtuais(this.filtros);
       });
     } 
+  }
+
+  /**
+   * CARREGA QUANTIDADE DE MODELOS DA API
+   */
+  private carregarQuantidadeModelos(): void {
+    this.apiModelosService.getModelosDaAPI()
+      .pipe(take(1))
+      .subscribe({
+        next: (modelosAPI) => {
+          this.qtdeModelos = modelosAPI.length;
+          console.log(`📊 ${this.qtdeModelos} modelos carregados da API`);
+        },
+        error: (error) => {
+          console.error('❌ Erro ao carregar quantidade de modelos:', error);
+          this.qtdeModelos = 0;
+        }
+      });
   }
 
   /**

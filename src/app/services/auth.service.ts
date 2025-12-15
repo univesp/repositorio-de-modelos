@@ -274,26 +274,31 @@ export class AuthService {
    * VERIFICA CONSISTÊNCIA E RECARREGA SE NECESSÁRIO
    */
   private checkAuthConsistency(): void {
+    // ⚠️ NÃO VERIFICA CONSISTÊNCIA EM ROTAS DE MODELO
+    if (window.location.pathname.includes('/modelo/')) {
+        console.log('🚫 Ignorando verificação de consistência na rota de modelo');
+        return;
+    }
+    
     const hasToken = this.isSignedIn();
     const hasProfile = this.userProfileSubject.value !== null;
     
-    //console.log('Verificação de consistência:');
-    //console.log('  - Tem token:', hasToken);
-    //console.log('  - Tem perfil:', hasProfile);
+    console.log('🔍 Verificação de consistência Auth:', {
+        hasToken,
+        hasProfile,
+        url: window.location.pathname
+    });
 
-    // CRITÉRIO PRINCIPAL: Tem token mas não tem perfil = estado inconsistente
+    // ⚠️ COMENTE A RECARGA
     if (hasToken && !hasProfile) {
-      //console.log('Estado inconsistente detectado, recarregando página...');
-      this.triggerPageReload();
-      return;
+        console.log('⚠️ Estado inconsistente: tem token mas não tem perfil');
+        // Não recarrega
     }
 
-    // CRITÉRIO SECUNDÁRIO: Se tem perfil mas alguma página está com erro
-    // Podemos verificar se há elementos de erro na página
     if (hasToken && hasProfile) {
-      this.checkForPageErrors();
+        this.checkForPageErrors();
     }
-  }
+}
 
   /**
    * VERIFICA SE HÁ ELEMENTOS DE ERRO NA PÁGINA

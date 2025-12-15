@@ -1,135 +1,131 @@
+// services/filtro.service.ts - VERSÃO MAIS SIMPLES
 import { Injectable } from '@angular/core';
+import { Modelo } from '../interfaces/modelo/modelo.interface';
 
 @Injectable({ providedIn: 'root' })
 export class FiltroService {
-
-  /**
-   * Normaliza uma string removendo acentos e caracteres especiais,
-   * e convertendo para minúsculas.
-   * @param str A string a ser normalizada.
-   * @returns A string normalizada.
-   */
+  
   private normalizeString(str: string | null | undefined): string {
-    if (str === null || str === undefined) {
-      return '';
-    }
+    if (!str) return '';
     return str
       .toString()
-      .normalize('NFD') // Normaliza para forma de decomposição (separa a letra do acento)
-      .replace(/[\u0300-\u036f]/g, '') // Remove os diacríticos (acentos)
-      .toLowerCase() // Converte para minúsculas
-      .trim(); // Remove espaços em branco extras
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
   }
 
-  aplicarFiltros(modelos: any[], filtros: { [key: string]: any }): any[] {
-    // Log inicial para verificar se o método foi chamado e quais filtros recebeu
-    /*
-    console.log('FiltroService: Início do aplicarFiltros. Filtros recebidos:', filtros);
-    console.log('FiltroService: Quantidade de filtros recebidos (Object.keys().length):', Object.keys(filtros).length);
-    */
-
+  aplicarFiltros(modelos: Modelo[], filtros: { [key: string]: any }): Modelo[] {
     if (!filtros || Object.keys(filtros).length === 0) {
-      console.log('FiltroService: Nenhum filtro válido. Retornando modelos originais.');
       return modelos;
     }
 
-    /*
-    console.log('FiltroService: Modelos a serem filtrados:', modelos.length); // Log da quantidade de modelos
-    */
+    console.log('🎯 Aplicando filtros:', filtros);
+    
     return modelos.filter(modelo => {
-      let match = true; // Assume que o modelo corresponde inicialmente
-
-      // Itera sobre cada filtro vindo da URL
-      Object.entries(filtros).forEach(([chave, valorFiltro]) => {
-        // Se a correspondência já falhou por um filtro anterior, não precisa verificar os outros
-        if (!match) return;
-
-        // Ignora filtros vazios ou inválidos, que não devem afetar a filtragem
-        if (valorFiltro === null || valorFiltro === undefined || valorFiltro === '' || valorFiltro === '[Selecione]') {
-          return; // Continua para o próximo filtro
+      // Verifica cada filtro
+      for (const [chave, valorFiltro] of Object.entries(filtros)) {
+        // Ignora filtros vazios
+        if (!valorFiltro || valorFiltro === '' || valorFiltro === '[Selecione]') {
+          continue;
         }
 
-        // Lidar com o termo de busca genérico (chave 'search')
+        // 1. BUSCA GERAL
         if (chave === 'search') {
-          const searchTermNormalized = this.normalizeString(valorFiltro);
-         // console.log('FiltroService: Termo de busca normalizado (searchTermNormalized):', searchTermNormalized);
-
-          // IMPORTANTE: AJUSTE ESTES CAMPOS CONFORME AS PROPRIEDADES DO SEU OBJETO MODELO
-          const fieldsToSearch = ['titulo']; // Seus campos a serem pesquisados
-
-          let foundInSearchFields = false;
-          // Verifica se o termo de busca está presente em algum dos campos definidos
-          for (const field of fieldsToSearch) {
-            const modelFieldValue = modelo[field];
-            const normalizedModelFieldValue = this.normalizeString(modelFieldValue);
-            // CORREÇÃO: Removido tags HTML e ajustado para string pura
-            //console.log(`FiltroService: Comparando modelo ID ${modelo.id} - campo '${field}' ('${normalizedModelFieldValue}') com termo de busca '${searchTermNormalized}'`);
-            if (normalizedModelFieldValue.includes(searchTermNormalized)) {
-              foundInSearchFields = true;
-              break;
-            }
-          }
-          //console.log(`FiltroService: Resultado da busca para modelo ID ${modelo.id}: Encontrou termo no modelo?`, foundInSearchFields);
-          if (!foundInSearchFields) {
-            match = false;
-          }
-          return; // Já processou o filtro 'search', passa para o próximo
+          const termo = this.normalizeString(valorFiltro);
+          const camposParaBuscar = [
+            modelo.titulo,
+            modelo.descricao,
+            modelo.disciplina,
+            modelo.autor,
+            modelo.tags?.join(' ') || '',
+            modelo.curso?.join(' ') || '',
+            modelo.area?.join(' ') || '',
+            modelo.tecnologia?.join(' ') || '',
+            modelo.categorias?.join(' ') || ''
+          ];
+          
+          const encontrou = camposParaBuscar.some(campo => 
+            this.normalizeString(campo).includes(termo)
+          );
+          
+          if (!encontrou) return false;
+          continue;
         }
 
-        // Filtro especial para TAGS (busca dentro do array de tags)
+        // 2. FILTRO TAGS
         if (chave === 'tags') {
           const tagBuscada = this.normalizeString(valorFiltro);
-          const tagsDoModelo = modelo['tags'] || [];
+          const encontrouTag = modelo.tags?.some(tag => 
+            this.normalizeString(tag).includes(tagBuscada)
+          ) || false;
           
-          let encontrouTag = false;
-          for (const tag of tagsDoModelo) {
-            const tagNormalizada = this.normalizeString(tag);
-            if (tagNormalizada.includes(tagBuscada)) {
-              encontrouTag = true;
-              break;
+          if (!encontrouTag) return false;
+          continue;
+        }
+
+        // 3. FILTROS POR PROPRIEDADE ESPECÍFICA
+        switch (chave) {
+          case 'area':
+            const areaBuscada = this.normalizeString(valorFiltro);
+            const temArea = modelo.area?.some(area => 
+              this.normalizeString(area) === areaBuscada
+            ) || false;
+            if (!temArea) return false;
+            break;
+            
+          case 'curso':
+            const cursoBuscado = this.normalizeString(valorFiltro);
+            const temCurso = modelo.curso?.some(curso => 
+              this.normalizeString(curso) === cursoBuscado
+            ) || false;
+            if (!temCurso) return false;
+            break;
+            
+          case 'disciplina':
+            if (this.normalizeString(modelo.disciplina) !== this.normalizeString(valorFiltro)) {
+              return false;
             }
-          }
-          
-          if (!encontrouTag) {
-            match = false;
-          }
-          return; // Já processou o filtro 'tags', passa para o próximo
+            break;
+            
+          case 'categorias':
+          case 'tipo': // compatibilidade
+            const categoriaBuscada = this.normalizeString(valorFiltro);
+            const temCategoria = modelo.categorias?.some(categoria => 
+              this.normalizeString(categoria) === categoriaBuscada
+            ) || false;
+            if (!temCategoria) return false;
+            break;
+            
+          case 'tecnologia':
+            const tecnologiaBuscada = this.normalizeString(valorFiltro);
+            const temTecnologia = modelo.tecnologia?.some(tech => 
+              this.normalizeString(tech) === tecnologiaBuscada
+            ) || false;
+            if (!temTecnologia) return false;
+            break;
+            
+          case 'acessibilidade':
+            const acessibilidadeBuscada = this.normalizeString(valorFiltro);
+            const temAcessibilidade = modelo.acessibilidade?.some(acess => 
+              this.normalizeString(acess) === acessibilidadeBuscada
+            ) || false;
+            if (!temAcessibilidade) return false;
+            break;
+            
+          case 'formato':
+            if (this.normalizeString(modelo.formato) !== this.normalizeString(valorFiltro)) {
+              return false;
+            }
+            break;
+            
+          default:
+            console.warn(`⚠️ Filtro desconhecido: ${chave}`);
         }
-
-        // Para os demais filtros (não 'search'), realiza a comparação direta da propriedade
-        const valorModelo = modelo[chave];
-
-        // Comparação especial para arrays (se o valor do modelo for um array)
-        if (Array.isArray(valorModelo)) {
-          const normalizedValorModeloArray = valorModelo.map(item => this.normalizeString(item));
-          const normalizedValorFiltro = this.normalizeString(valorFiltro);
-          //console.log(`FiltroService: Comparando array para chave '${chave}' com '${normalizedValorFiltro}'`);
-          if (!normalizedValorModeloArray.includes(normalizedValorFiltro)) {
-            match = false;
-          }
-          return;
-        }
-
-        // Comparação especial para números vs strings (para garantir comparação numérica exata)
-        if (!isNaN(Number(valorModelo)) && !isNaN(Number(valorFiltro))) {
-         // console.log(`FiltroService: Comparando números para chave '${chave}': ${Number(valorModelo)} === ${Number(valorFiltro)}`);
-          if (Number(valorModelo) !== Number(valorFiltro)) {
-            match = false;
-          }
-          return;
-        }
-
-        // Comparação padrão (case insensitive e sem acentuação)
-        const normalizedValorModelo = this.normalizeString(valorModelo);
-        const normalizedValorFiltro = this.normalizeString(valorFiltro);
-        //console.log(`FiltroService: Comparando strings normalizadas para chave '${chave}': '${normalizedValorModelo}' === '${normalizedValorFiltro}'`);
-
-        if (normalizedValorModelo !== normalizedValorFiltro) {
-          match = false;
-        }
-      });
-     // console.log(`FiltroService: Resultado final para modelo ID ${modelo.id || 'N/A'}:`, match);
-      return match;
+      }
+      
+      // Passou em todos os filtros
+      return true;
     });
   }
 }

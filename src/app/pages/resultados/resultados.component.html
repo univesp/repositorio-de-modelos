@@ -1,5 +1,11 @@
 <div class="resultados">
 
+   <!-- LOADING STATE -->
+   <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <span>Carregando resultados...</span>
+  </div>
+
   <!-- Filtro reutilizado -->
   <app-filter 
     class="resultados__filter"
@@ -76,7 +82,7 @@
     </ng-container>
     
     <!-- Exibe a mensagem se não houver resultados -->
-    <div *ngIf="modelosFiltrados.length === 0" class="no-results-message">
+    <div *ngIf="!isLoading && modelosFiltrados.length === 0" class="no-results-message">
       <h2>Nenhum resultado encontrado para os filtros aplicados.</h2>
       <p>Tente ajustar seus critérios de busca ou redefinir os filtros.</p>
     </div>

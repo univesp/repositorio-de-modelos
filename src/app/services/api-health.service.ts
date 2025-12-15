@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
-import { AuthService } from './auth.service'; //
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,7 @@ export class ApiHealthService {
     // VERIFICAR SE TOKEN ESTÁ EXPIRADO ANTES DE FAZER HEALTH CHECK
     if (this.authService.isTokenExpired()) {
       console.log('🔐 Health check ignorado - token expirado');
-      return of(true); // Retorna sucesso sem fazer requisição
+      return of(true);
     }
 
     return this.http.get(this.healthUrl, { responseType: 'text' }).pipe(
@@ -40,7 +40,9 @@ export class ApiHealthService {
         this.isApiHealthySubject.next(false);
         this.lastError = this.getErrorMessage(error);
         this.hasCheckedInitially = true;
-        throw error;
+        
+        // Retorna um observable que não falha
+        return of(false);
       })
     );
   }

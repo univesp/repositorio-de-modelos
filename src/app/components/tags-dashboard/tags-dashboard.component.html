@@ -1,18 +1,34 @@
+<!-- tags-dashboard.component.html -->
 <div class="tags-populares-container">
   <h1>Tags Populares</h1>
-  <div class="tags-items-container">
-    <span 
-      class="tag-item" 
-      *ngFor="let tagInfo of tagsPopulares"
-      [title]="'Encontrada em ' + tagInfo.count + ' modelo(s). Clique para filtrar.'"
-      (click)="onTagClick(tagInfo.tag)">
-      {{ tagInfo.tag }} ({{ tagInfo.count }})
-    </span>
+  
+  <!-- LOADING STATE -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="loading-spinner small"></div>
+    <p>Carregando tags populares...</p>
+  </div>
+  
+  <div *ngIf="!isLoading" class="tags-items-container">
+    <!-- Container para as tags (80% da largura) -->
+    <div class="tags-wrapper">
+      <span 
+        class="tag-item" 
+        *ngFor="let tagInfo of tagsPopulares"
+        [title]="'Encontrada em ' + tagInfo.count + ' modelo(s). Clique para filtrar.'"
+        (click)="onTagClick(tagInfo.tag)">
+        {{ tagInfo.tag }} ({{ tagInfo.count }})
+      </span>
+    </div>
 
-    <!-- Botão Ver Todas as Tags -->
+    <!-- Botão Ver Todas as Tags (fica à direita) -->
     <button class="btn-ver-todas" (click)="verTodasAsTags()">
       Ver todas as tags
       <mat-icon>arrow_forward</mat-icon>
     </button>
+  </div>
+  
+  <!-- MENSAGEM SE NÃO HOUVER TAGS -->
+  <div *ngIf="!isLoading && tagsPopulares.length === 0" class="sem-tags">
+    <p>Nenhuma tag encontrada no momento.</p>
   </div>
 </div>

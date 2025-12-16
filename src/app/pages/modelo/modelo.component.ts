@@ -5,6 +5,7 @@ import { BookmarkService } from '../../services/bookmark.service';
 import { ModoExplorarService } from '../../services/modo-explorar.service';
 import { AuthService } from '../../services/auth.service';
 import { ApiModelosService } from '../../services/api-modelos.service';
+import { ExcluirModeloService } from '../../services/excluir-modelo.service';
 import { ModeloConverterService } from '../../services/modelo-converter.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject, of } from 'rxjs';
@@ -33,7 +34,8 @@ export class ModeloComponent implements OnInit, OnDestroy {
         private modoExplorarService: ModoExplorarService,
         public authService: AuthService,
         private apiModelosService: ApiModelosService,
-        private modeloConverterService: ModeloConverterService
+        private modeloConverterService: ModeloConverterService,
+        private excluirModeloService: ExcluirModeloService
     ) {
         // Escuta mudanças de rota - VERSÃO CORRIGIDA
         this.router.events
@@ -354,9 +356,19 @@ export class ModeloComponent implements OnInit, OnDestroy {
     }
 
     excluirModelo(): void {
-        console.log('Excluir Modelo clicado');
         this.menuOpcoesAberto = false;
-    }
+        
+        if (!this.currentModelo) {
+          console.error('Nenhum modelo para excluir');
+          return;
+        }
+        
+        // Usa o serviço para executar o fluxo de exclusão
+        this.excluirModeloService.executarExclusao(
+          this.currentModelo.id.toString(),
+          this.currentModelo.titulo
+        );
+      }
 
     voltarParaExplorar(): void {
         this.router.navigate(['/explorar']);

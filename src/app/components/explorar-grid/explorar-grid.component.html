@@ -37,8 +37,8 @@
         </div>
 
         <div class="explorarGrid__imagem">
-            <img src="{{ item.img_lg }}" alt="">
-        </div>
+          <img [src]="obterImagemParaModelo(item)" [alt]="item.titulo">
+      </div>
 
         <div class="modelo-tags">
           <span *ngFor="let tag of item.tags" class="tag-item">

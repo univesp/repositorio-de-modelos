@@ -186,7 +186,8 @@ export class ExplorarComponent implements OnInit, OnDestroy {
         link: apiModelo.link || '',
         github: apiModelo.codigoLink || undefined,
         isSalvo: this.bookmarkService.isSalvo(apiModelo.id),
-        licenca: apiModelo.licenca?.join(', ') || 'Não especificada'
+        licenca: apiModelo.licenca?.join(', ') || 'Não especificada',
+        carousel: apiModelo.carousel
       };
     });
   }

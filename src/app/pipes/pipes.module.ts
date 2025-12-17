@@ -3,6 +3,7 @@ import { EnderecoPipe } from './endereco.pipe';
 import { RegiaoPipe } from './regiao.pipe';
 import { CepPipe } from './cep.pipe';
 import { TelefonePipe } from './telefone.pipe';
+import { BytesFormatPipe } from "./bytes-format.pipe";
 
 
 @NgModule({
@@ -10,13 +11,15 @@ import { TelefonePipe } from './telefone.pipe';
     EnderecoPipe,
     RegiaoPipe,
     CepPipe,
-    TelefonePipe
+    TelefonePipe,
+    BytesFormatPipe
   ],
   exports: [
     EnderecoPipe,
     RegiaoPipe,
     CepPipe,
-    TelefonePipe
+    TelefonePipe,
+    BytesFormatPipe
   ],
 })
 

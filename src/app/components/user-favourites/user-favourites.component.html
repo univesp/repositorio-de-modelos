@@ -48,7 +48,7 @@
         <div class="modelo-card" *ngFor="let modelo of modelosPaginados; let last = last">
           
           <div class="modelo-imagem">
-            <img src="{{ modelo.img_lg }}" alt="">
+            <img [src]="obterImagemParaModelo(modelo)" [alt]="modelo.titulo">
           </div>
 
           <div class="modelo-header">

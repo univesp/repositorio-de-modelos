@@ -14,7 +14,7 @@
         *ngFor="let card of cards" 
         class="card" 
         (click)="redirectModeloPage(card.id)">
-        <img [src]="card.img_sm" [alt]="card.titulo" class="card-image">
+        <img [src]="obterImagemParaModelo(card)" [alt]="card.titulo" class="card-image">
         <p class="card-title"> {{ card.titulo }} </p>
       </div>
     </div>

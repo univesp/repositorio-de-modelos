@@ -1,16 +1,17 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, OnDestroy, SimpleChanges, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { BookmarkService } from '../../services/bookmark.service'; 
 import { AuthService } from '../../services/auth.service';
 import { CarregamentoService } from '../../services/carregamento-modelos.service';
+import { UploadImagemService } from '../../services/upload-imagem.service';
 
 @Component({
   selector: 'app-explorar-list',
   templateUrl: './explorar-list.component.html',
   styleUrls: ['./explorar-list.component.scss']
 })
-export class ExplorarListComponent implements OnInit, OnChanges {
+export class ExplorarListComponent implements OnInit, OnChanges, OnDestroy {
   @Input({required: true}) modelosList: Modelo[] = [];
 
   // Propriedades para infinite scroll
@@ -19,11 +20,17 @@ export class ExplorarListComponent implements OnInit, OnChanges {
   carregandoMais: boolean = false;
   todosCarregados: boolean = false;
 
+  // Cache simples de imagens
+  private imagensCache = new Map<string, string>();
+  // Controla quais imagens estão sendo carregadas
+  private carregandoImagens = new Set<string>();
+
   constructor(
     private router: Router,
     private bookmarkService: BookmarkService,
     private authService: AuthService,
-    private carregamentoService: CarregamentoService
+    private carregamentoService: CarregamentoService,
+    private uploadImagemService: UploadImagemService
   ) { }
 
   @Output() modeloSelecionado = new EventEmitter<string>();
@@ -43,6 +50,39 @@ export class ExplorarListComponent implements OnInit, OnChanges {
     if (changes['modelosList']) {
       this.resetarLista();
     }
+  }
+
+  /**
+ * Retorna a imagem do cache ou inicia o carregamento
+ */
+  obterImagemParaModelo(modelo: Modelo): string {
+    const modeloId = modelo.id;
+    
+    // 1. Se já tem no cache, retorna
+    if (this.imagensCache.has(modeloId)) {
+      return this.imagensCache.get(modeloId)!;
+    }
+    
+    // 2. Se não está carregando, inicia o carregamento
+    if (!this.carregandoImagens.has(modeloId)) {
+      this.carregandoImagens.add(modeloId);
+      
+      this.uploadImagemService.getImagemModelo(modeloId).subscribe({
+        next: (blob) => {
+          // Cria URL e salva no cache
+          const url = URL.createObjectURL(blob);
+          this.imagensCache.set(modeloId, url);
+          this.carregandoImagens.delete(modeloId);
+        },
+        error: (error) => {
+          // Se erro, remove do set de carregamento
+          this.carregandoImagens.delete(modeloId);
+        }
+      });
+    }
+    
+    // 3. Enquanto carrega ou se der erro, retorna a imagem padrão
+    return modelo.img_lg || 'assets/images/placeholder-modelo.svg';
   }
 
   /**
@@ -158,5 +198,14 @@ export class ExplorarListComponent implements OnInit, OnChanges {
     event.stopPropagation();
     this.bookmarkService.toggle(modelo.id);
     modelo.isSalvo = this.bookmarkService.isSalvo(modelo.id);
+  }
+
+  ngOnDestroy() {
+    // Limpa as URLs de blob da memória
+    this.imagensCache.forEach(url => {
+      URL.revokeObjectURL(url);
+    });
+    this.imagensCache.clear();
+    this.carregandoImagens.clear();
   }
 }

@@ -33,4 +33,5 @@ export interface Modelo {
   github?: string;
   isSalvo?: boolean;
   licenca: string;
+  carousel: boolean;
 }

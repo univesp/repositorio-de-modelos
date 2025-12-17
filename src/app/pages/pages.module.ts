@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentsModule } from "../components/components.module";
 import { AngularMaterialModule } from "../angular-material/angular-material.module";
+import { PipesModule } from "../pipes/pipes.module";
+
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotFoundComponent } from './not-found/not-found.component';
@@ -33,6 +35,7 @@ import { TagsComponent } from './tags/tags.component';
     AngularMaterialModule,
     BrowserAnimationsModule,
    // BrowserModule,
+   PipesModule,
     CommonModule,
     FormsModule, 
     QuillModule

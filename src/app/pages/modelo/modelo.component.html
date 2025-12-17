@@ -1,243 +1,296 @@
 <div class="modelo">
 
-    <!-- LOADING OVERLAY -->
-    <div *ngIf="isLoading" class="modelo-loading">
-      <div class="loading-spinner"></div>
-      <span>Carregando modelo...</span>
-    </div>
-  
-    <!-- CONTEÚDO PRINCIPAL (aparece quando loading termina e tem modelo) -->
-    <div *ngIf="!isLoading && currentModelo">
-      
-      <app-filter class="modelo__filter"></app-filter>
-  
-      <div class="modelo__container">
-        <div class="modelo__tituloBox">
-          <p> {{ currentModelo.date }} | <span style="color: #7155d8;">{{ currentModelo.id }}</span> </p>
-          <div class="modelo-title-actionButton">
-            <div class="title-and-bookmark">
-              <h1> {{ currentModelo.titulo }} </h1>
-              <span (click)="toggleBookmark(currentModelo)" *ngIf="isLoggedIn">
-                <mat-icon 
-                  class="icon-bookmark" 
-                  aria-hidden="false" 
-                  aria-label="BookMark icon" 
-                  [fontIcon]="currentModelo.isSalvo ? 'bookmark' : 'bookmark_border'">
-                </mat-icon>
+  <!-- LOADING OVERLAY -->
+  <div *ngIf="isLoading" class="modelo-loading">
+    <div class="loading-spinner"></div>
+    <span>Carregando modelo...</span>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL (aparece quando loading termina e tem modelo) -->
+  <div *ngIf="!isLoading && currentModelo">
+    
+    <app-filter class="modelo__filter"></app-filter>
+
+    <div class="modelo__container">
+      <div class="modelo__tituloBox">
+        <p> {{ currentModelo.date }} | <span style="color: #7155d8;">{{ currentModelo.id }}</span> </p>
+        <div class="modelo-title-actionButton">
+          <div class="title-and-bookmark">
+            <h1> {{ currentModelo.titulo }} </h1>
+            <span (click)="toggleBookmark(currentModelo)" *ngIf="isLoggedIn">
+              <mat-icon 
+                class="icon-bookmark" 
+                aria-hidden="false" 
+                aria-label="BookMark icon" 
+                [fontIcon]="currentModelo.isSalvo ? 'bookmark' : 'bookmark_border'">
+              </mat-icon>
+            </span>
+          </div>
+
+          <div class="modelo-action-buttons" *ngIf="podeGerenciarModelo">
+            <!-- Botão de três pontos -->
+            <button class="menu-tres-pontos-button" 
+                    (click)="toggleMenuOpcoes()"
+                    aria-label="Opções do modelo">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <!-- Menu de opções -->
+            <div class="menu-opcoes" *ngIf="menuOpcoesAberto">
+              <button class="opcao-menu" (click)="editarModelo()">
+                <mat-icon>edit</mat-icon>
+                <span>Editar Modelo</span>
+              </button>
+              
+              <button class="opcao-menu" 
+                      (click)="adicionarAoTopo()"
+                      *ngIf="isAdmin">
+                <mat-icon>view_carousel</mat-icon>
+                <span>Adicionar ao Topo</span>
+              </button>
+              
+              <button class="opcao-menu" 
+                      (click)="adicionarAosDestaques()"
+                      *ngIf="isAdmin">
+                <mat-icon>star</mat-icon>
+                <span>Adicionar aos Destaques</span>
+              </button>
+              
+              <button class="opcao-menu opcao-excluir" 
+                      (click)="excluirModelo()"
+                      *ngIf="isAdmin">
+                <mat-icon>delete</mat-icon>
+                <span>Excluir Modelo</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção da Imagem com Upload -->
+      <div class="modelo__galeriaImagens">
+        <div class="imagem-container">
+          <!-- Loading overlay para imagem -->
+          <div class="imagem-loading-overlay" *ngIf="imagemCarregando">
+            <div class="loading-spinner small"></div>
+            <span>Carregando imagem...</span>
+          </div>
+
+          <!-- USA imagemParaExibir que verifica customizada primeiro -->
+          <img [src]="imagemParaExibir" [alt]="currentModelo.titulo"
+               (click)="abrirModalImagem(imagemParaExibir)">
+          
+          <!-- Botões de ação flutuantes -->
+          <div class="badge-imagem-acoes" 
+               *ngIf="mostrarBadgeImagemAcoes"
+               [class.visible]="mostrarBotoesImagem"
+               (mouseenter)="mostrarBotoesImagem = true"
+               (mouseleave)="mostrarBotoesImagem = false">
+            <!-- Botão para upload -->
+            <button class="btn-acao-imagem btn-upload" 
+                    (click)="abrirSeletorImagem()"
+                    [disabled]="isUploading"
+                    matTooltip="{{ isUploading ? 'Enviando...' : 'Alterar imagem' }}"
+                    matTooltipPosition="above"
+                    title="Substituir imagem">
+              <mat-icon *ngIf="!isUploading">photo_camera</mat-icon>
+              <mat-spinner *ngIf="isUploading" diameter="20"></mat-spinner>
+            </button>
+            
+            <!-- Botão para remover -->
+            <button class="btn-acao-imagem btn-remover" 
+                    (click)="removerImagem()"
+                    matTooltip="Remover imagem"
+                    matTooltipPosition="above"
+                    *ngIf="temImagemCustomizada && !isUploading"
+                    title="Excluir imagem">
+              <mat-icon>delete</mat-icon>
+            </button>
+
+            <!-- Botão para fechar (opcional) -->
+            <button class="btn-acao-imagem btn-fechar" 
+                    (click)="esconderBotoesImagem(); $event.stopPropagation()"
+                    matTooltip="Fechar"
+                    matTooltipPosition="above"
+                    title="Cancelar">
+                      <mat-icon>close</mat-icon>
+          </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input de arquivo escondido -->
+      <input type="file" #fileInput 
+             (change)="onFileSelected($event)"
+             accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/svg+xml"
+             style="display: none;">
+
+      <!-- Modal para imagem ampliada -->
+      <div class="modal-imagem" *ngIf="modalAberto" (click)="fecharModalImagem()">
+        <div class="modal-conteudo" (click)="$event.stopPropagation()">
+          <button class="modal-fechar" (click)="fecharModalImagem()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <img [src]="imagemModal" [alt]="currentModelo.titulo">
+        </div>
+      </div>
+
+      <div class="modelo__detailsBox">
+        <div class="modelo__col1">
+          <a [href]="currentModelo.link" target="_blank">
+            Acessar Material
+            <mat-icon>open_in_new</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <div class="modelo-info-container">
+        <div class="modelo-info-descricao">
+          <h3>Descrição</h3>
+          <div>
+            {{ currentModelo.descricao }}
+          </div>
+        </div>
+
+        <div class="modelo-col-2">
+          <div class="modelo-other-info">
+            <div class="modelo-other-info-item">
+              <span class="modelo-formato"> {{ currentModelo.formato }} </span>
+            </div>
+
+            <div class="modelo-other-info-item">
+              <span class="other-info-title">Data de adição:</span>
+              <span class="other-info-content"> {{ currentModelo.date }} </span>
+            </div>
+
+            <div class="modelo-other-info-item">
+              <span class="other-info-title">Curso(s):</span>
+              <span class="other-info-content"> {{ (currentModelo.curso || []).join(', ') }} </span>
+            </div>
+
+            <div class="modelo-other-info-item">
+              <span class="other-info-title">Área(s) de Conhecimento:</span>
+              <span class="other-info-content"> {{ (currentModelo.area || []).join(', ') }} </span>
+            </div>
+
+            <div class="modelo-other-info-item">
+              <span class="other-info-title">Tipo:</span>
+              <span class="other-info-content"> {{ (currentModelo.tipo || []).join(', ') }} </span>
+            </div>
+
+            <div class="modelo-other-info-item">
+              <span class="other-info-title">Tecnologia(s):</span>
+              <span class="other-info-content"> {{ (currentModelo.tecnologia || []).join(', ') }} </span>
+            </div>
+
+            <div class="modelo-other-info-item">
+              <span class="other-info-title">Acessibilidade:</span>
+              <span class="other-info-content"> 
+                {{ currentModelo.acessibilidade && currentModelo.acessibilidade.length > 0 
+                  ? currentModelo.acessibilidade.join(', ') 
+                  : 'Não especificada' }} 
               </span>
             </div>
-  
-            <div class="modelo-action-buttons" *ngIf="isLoggedIn">
-              <!-- Botão de três pontos -->
-              <button class="menu-tres-pontos-button" 
-                      (click)="toggleMenuOpcoes()"
-                      aria-label="Opções do modelo">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <!-- Menu de opções -->
-              <div class="menu-opcoes" *ngIf="menuOpcoesAberto">
-                <button class="opcao-menu" (click)="editarModelo()">
-                  <mat-icon>edit</mat-icon>
-                  <span>Editar Modelo</span>
-                </button>
-                
-                <button class="opcao-menu" 
-                        (click)="adicionarAoTopo()"
-                        *ngIf="(authService.userProfile$ | async)?.role === 'ADMIN'">
-                  <mat-icon>view_carousel</mat-icon>
-                  <span>Adicionar ao Topo</span>
-                </button>
-                
-                <button class="opcao-menu" 
-                        (click)="adicionarAosDestaques()"
-                        *ngIf="(authService.userProfile$ | async)?.role === 'ADMIN'">
-                  <mat-icon>star</mat-icon>
-                  <span>Adicionar aos Destaques</span>
-                </button>
-                
-                <button class="opcao-menu opcao-excluir" 
-                        (click)="excluirModelo()"
-                        *ngIf="(authService.userProfile$ | async)?.role === 'ADMIN'">
-                  <mat-icon>delete</mat-icon>
-                  <span>Excluir Modelo</span>
-                </button>
-              </div>
+
+            <div class="modelo-other-info-item">
+              <span class="other-info-title">Licença:</span>
+              <span class="other-info-content"> {{ currentModelo.licenca }} </span>
             </div>
-          </div>
-        </div>
-  
-        <div class="modelo__galeriaImagens">
-          <img [src]="currentModelo.img_lg" [alt]="currentModelo.titulo"
-               (click)="abrirModalImagem(currentModelo.img_lg)">
-        </div>
-  
-        <!-- Modal para imagem ampliada -->
-        <div class="modal-imagem" *ngIf="modalAberto" (click)="fecharModalImagem()">
-          <div class="modal-conteudo" (click)="$event.stopPropagation()">
-            <button class="modal-fechar" (click)="fecharModalImagem()">
-              <mat-icon>close</mat-icon>
-            </button>
-            <img [src]="imagemModal" [alt]="currentModelo.titulo">
-          </div>
-        </div>
-  
-        <div class="modelo__detailsBox">
-          <div class="modelo__col1">
-            <a [href]="currentModelo.link" target="_blank">
-              Acessar Material
-              <mat-icon>open_in_new</mat-icon>
-            </a>
-          </div>
-        </div>
-  
-        <div class="modelo-info-container">
-          <div class="modelo-info-descricao">
-            <h3>Descrição</h3>
-            <div>
-              {{ currentModelo.descricao }}
-            </div>
-          </div>
-  
-          <div class="modelo-col-2">
-            <div class="modelo-other-info">
-              <div class="modelo-other-info-item">
-                <span class="modelo-formato"> {{ currentModelo.formato }} </span>
-              </div>
-  
-              <div class="modelo-other-info-item">
-                <span class="other-info-title">Data de adição:</span>
-                <span class="other-info-content"> {{ currentModelo.date }} </span>
-              </div>
-  
-              <div class="modelo-other-info-item">
-                <span class="other-info-title">Curso(s):</span>
-                <span class="other-info-content"> {{ (currentModelo.curso || []).join(', ') }} </span>
-              </div>
-  
-              <div class="modelo-other-info-item">
-                <span class="other-info-title">Área(s) de Conhecimento:</span>
-                <span class="other-info-content"> {{ (currentModelo.area || []).join(', ') }} </span>
-              </div>
-  
-              <div class="modelo-other-info-item">
-                <span class="other-info-title">Tipo:</span>
-                <span class="other-info-content"> {{ (currentModelo.tipo || []).join(', ') }} </span>
-              </div>
-  
-              <div class="modelo-other-info-item">
-                <span class="other-info-title">Tecnologia(s):</span>
-                <span class="other-info-content"> {{ (currentModelo.tecnologia || []).join(', ') }} </span>
-              </div>
-  
-              <div class="modelo-other-info-item">
-                <span class="other-info-title">Acessibilidade:</span>
+
+            <div class="modelo-other-info-item">
+              <span class="other-info-title">Código-fonte disponível?</span>
+              <span class="other-info-content"> {{ currentModelo.hasCodigo ? 'Sim' : 'Não' }} </span>
+              <div class="github-info" *ngIf="currentModelo.hasCodigo && currentModelo.github">
+                <span class="other-info-title">Link: </span>
                 <span class="other-info-content"> 
-                  {{ currentModelo.acessibilidade && currentModelo.acessibilidade.length > 0 
-                    ? currentModelo.acessibilidade.join(', ') 
-                    : 'Não especificada' }} 
+                  <a class="link-codigo" target="_blank" [href]="currentModelo.github">
+                    {{ currentModelo.github }}
+                  </a> 
                 </span>
-              </div>
-  
-              <div class="modelo-other-info-item">
-                <span class="other-info-title">Licença:</span>
-                <span class="other-info-content"> {{ currentModelo.licenca }} </span>
-              </div>
-  
-              <div class="modelo-other-info-item">
-                <span class="other-info-title">Código-fonte disponível?</span>
-                <span class="other-info-content"> {{ currentModelo.hasCodigo ? 'Sim' : 'Não' }} </span>
-                <div class="github-info" *ngIf="currentModelo.hasCodigo && currentModelo.github">
-                  <span class="other-info-title">Link: </span>
-                  <span class="other-info-content"> 
-                    <a class="link-codigo" target="_blank" [href]="currentModelo.github">
-                      {{ currentModelo.github }}
-                    </a> 
-                  </span>
-                </div>
-              </div>
-  
-              <div class="modelo-other-info-item">
-                <span class="other-info-title">Enviado por:</span>
-                <span class="other-info-content"> {{ currentModelo.autor }} </span>
-              </div>
-  
-              <div class="modelo-equipe-responsavel" *ngIf="currentModelo.hasEquipe && currentModelo.equipe">
-                <span class="modelo-equipe-title">Equipe</span>
-                <hr>
-                <br>
-                <div class="modelo-equipe-responsavel-item">
-                  <span class="other-info-title">Docente:</span>
-                  <span class="other-info-content"> {{ currentModelo.equipe.docente || 'Não informado' }} </span>
-                </div>
-  
-                <div class="modelo-equipe-responsavel-item">
-                  <span class="other-info-title">Coordenação:</span>
-                  <span class="other-info-content"> {{ currentModelo.equipe.coordenacao || 'Não informado' }} </span>
-                </div>
-  
-                <div class="modelo-equipe-responsavel-item">
-                  <span class="other-info-title">Roteirização:</span>
-                  <span class="other-info-content"> {{ currentModelo.equipe.roteirizacao || 'Não informado' }} </span>
-                </div>
-  
-                <div class="modelo-equipe-responsavel-item">
-                  <span class="other-info-title">Ilustração:</span>
-                  <span class="other-info-content"> {{ currentModelo.equipe.ilustracao || 'Não informado' }} </span>
-                </div>
-  
-                <div class="modelo-equipe-responsavel-item">
-                  <span class="other-info-title">Layout:</span>
-                  <span class="other-info-content"> {{ currentModelo.equipe.layout || 'Não informado' }} </span>
-                </div>
-  
-                <div class="modelo-equipe-responsavel-item">
-                  <span class="other-info-title">Programação:</span>
-                  <span class="other-info-content"> {{ currentModelo.equipe.programacao || 'Não informado' }} </span>
-                </div>
               </div>
             </div>
-  
-            <div class="modelo-tags-container">
-              <div class="tags-list">
-                <span class="tag" *ngFor="let tag of (currentModelo.tags || [])">
-                  {{ tag }}
-                </span>
+
+            <div class="modelo-other-info-item">
+              <span class="other-info-title">Enviado por:</span>
+              <span class="other-info-content"> {{ currentModelo.autor }} </span>
+            </div>
+
+            <div class="modelo-equipe-responsavel" *ngIf="currentModelo.hasEquipe && currentModelo.equipe">
+              <span class="modelo-equipe-title">Equipe</span>
+              <hr>
+              <br>
+              <div class="modelo-equipe-responsavel-item">
+                <span class="other-info-title">Docente:</span>
+                <span class="other-info-content"> {{ currentModelo.equipe.docente || 'Não informado' }} </span>
+              </div>
+
+              <div class="modelo-equipe-responsavel-item">
+                <span class="other-info-title">Coordenação:</span>
+                <span class="other-info-content"> {{ currentModelo.equipe.coordenacao || 'Não informado' }} </span>
+              </div>
+
+              <div class="modelo-equipe-responsavel-item">
+                <span class="other-info-title">Roteirização:</span>
+                <span class="other-info-content"> {{ currentModelo.equipe.roteirizacao || 'Não informado' }} </span>
+              </div>
+
+              <div class="modelo-equipe-responsavel-item">
+                <span class="other-info-title">Ilustração:</span>
+                <span class="other-info-content"> {{ currentModelo.equipe.ilustracao || 'Não informado' }} </span>
+              </div>
+
+              <div class="modelo-equipe-responsavel-item">
+                <span class="other-info-title">Layout:</span>
+                <span class="other-info-content"> {{ currentModelo.equipe.layout || 'Não informado' }} </span>
+              </div>
+
+              <div class="modelo-equipe-responsavel-item">
+                <span class="other-info-title">Programação:</span>
+                <span class="other-info-content"> {{ currentModelo.equipe.programacao || 'Não informado' }} </span>
               </div>
             </div>
           </div>
+
+          <div class="modelo-tags-container">
+            <div class="tags-list">
+              <span class="tag" *ngFor="let tag of (currentModelo.tags || [])">
+                {{ tag }}
+              </span>
+            </div>
+          </div>
         </div>
-  
-        <!-- VISUALIZADOR CODEPEN -->
-        <app-code-pen-viewer 
-          *ngIf="isCodePenUrl(currentModelo.github)"
-          [codepenId]="getCodePenId(currentModelo.github)"
-          [codepenUser]="getCodePenUser(currentModelo.github)">
-        </app-code-pen-viewer>
-  
-        <!-- Seção Modelos Similares -->
-        <div class="modelos-similares" *ngIf="modelosSimilares && modelosSimilares.length > 0">
-          <h2 class="modelos-similares__titulo">Modelos similares</h2>
-          
-          <div class="modelos-similares__lista">
-            <div class="modelo-similar-card" 
-                 *ngFor="let modelo of modelosSimilares"
-                 (click)="navegarParaModelo(modelo.id)">
-              
-              <div class="modelo-similar__conteudo">
-                <img class="modelo-similar__imagem" [src]="modelo.img_lg" [alt]="modelo.titulo">
-                <h3 class="modelo-similar__titulo">{{ modelo.titulo }}</h3>
-              </div>
+      </div>
+
+      <!-- VISUALIZADOR CODEPEN -->
+      <app-code-pen-viewer 
+        *ngIf="isCodePenUrl(currentModelo.github)"
+        [codepenId]="getCodePenId(currentModelo.github)"
+        [codepenUser]="getCodePenUser(currentModelo.github)">
+      </app-code-pen-viewer>
+
+      <!-- Seção Modelos Similares -->
+      <div class="modelos-similares" *ngIf="modelosSimilares && modelosSimilares.length > 0">
+        <h2 class="modelos-similares__titulo">Modelos similares</h2>
+        
+        <div class="modelos-similares__lista">
+          <div class="modelo-similar-card" 
+               *ngFor="let modelo of modelosSimilares"
+               (click)="navegarParaModelo(modelo.id)">
+            
+            <div class="modelo-similar__conteudo">
+              <img class="modelo-similar__imagem" [src]="obterImagemParaModeloSimilar(modelo)" [alt]="modelo.titulo">
+              <h3 class="modelo-similar__titulo">{{ modelo.titulo }}</h3>
             </div>
           </div>
         </div>
       </div>
     </div>
-  
-    <!-- ERRO (se não encontrar modelo) -->
-    <div *ngIf="!isLoading && !currentModelo" class="modelo-error">
-      <h2>Modelo não encontrado</h2>
-      <p>O modelo solicitado não está disponível.</p>
-      <button (click)="voltarParaExplorar()">Voltar para Explorar</button>
-    </div>
-  
   </div>
+
+  <!-- ERRO (se não encontrar modelo) -->
+  <div *ngIf="!isLoading && !currentModelo" class="modelo-error">
+    <h2>Modelo não encontrado</h2>
+    <p>O modelo solicitado não está disponível.</p>
+    <button (click)="voltarParaExplorar()">Voltar para Explorar</button>
+  </div>
+
+</div>

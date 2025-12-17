@@ -32,7 +32,8 @@ export const Modeloslist = [
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Alguns direitos reservados'
+    licenca: 'Alguns direitos reservados',
+    carousel: false
   },
   {
     id: '002',
@@ -67,7 +68,8 @@ export const Modeloslist = [
     tags: ["Lorem", "Ipsum", "Dolor", "consectetur"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Domínio Público'
+    licenca: 'Domínio Público',
+    carousel: false
   },
   {
     id: '003',
@@ -94,6 +96,7 @@ export const Modeloslist = [
     tags: ["Lorem", "Ipsum", "Amet", "adipiscing", "elit"],
     licenca: 'Uso educacional',
     github: "https://codepen.io/CaioPaiola/pen/nojJmQ",
+    carousel: false
   },
   {
     id: '004',
@@ -117,7 +120,8 @@ export const Modeloslist = [
     isDestaque: false,
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "Amet", "adipiscing", "elit"],
-    licenca: 'Uso irrestrito / CCO'
+    licenca: 'Uso irrestrito / CCO',
+    carousel: false
   },
   {
     id: '005',
@@ -152,7 +156,8 @@ export const Modeloslist = [
     tags: ["Lorem", "dictum", "Nulla", "fringilla"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Uso restrito'
+    licenca: 'Uso restrito',
+    carousel: false
   },
   {
     id: '006',
@@ -177,7 +182,8 @@ export const Modeloslist = [
     hasCodigo: true,
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "Dolor", "velit", "feugiat"],
-    licenca: 'Alguns direitos reservados'
+    licenca: 'Alguns direitos reservados',
+    carousel: false
   },
   {
     id: '007',
@@ -212,7 +218,8 @@ export const Modeloslist = [
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet", "feugiat"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Domínio Público'
+    licenca: 'Domínio Público',
+    carousel: false
   },
   {
     id: '008',
@@ -236,7 +243,8 @@ export const Modeloslist = [
     hasCodigo: true,
     hasEquipe: false,
     tags: ["Lorem", "erat", "Dolor", "justo"],
-    licenca: 'Uso educacional'
+    licenca: 'Uso educacional',
+    carousel: false
   },
   {
     id: '009',
@@ -271,7 +279,8 @@ export const Modeloslist = [
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Uso irrestrito / CCO'
+    licenca: 'Uso irrestrito / CCO',
+    carousel: false
   },
 
   {
@@ -307,7 +316,8 @@ export const Modeloslist = [
     tags: ["Lorem", "Ipsum", "dapibus", "vitae"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Uso restrito'
+    licenca: 'Uso restrito',
+    carousel: false
   },
   {
     id: '011',
@@ -340,7 +350,8 @@ export const Modeloslist = [
     },
     tags: ["Lorem", "Ipsum", "facilisis", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
-    licenca: 'Alguns direitos reservados'
+    licenca: 'Alguns direitos reservados',
+    carousel: false
   },
   {
     id: '012',
@@ -365,7 +376,8 @@ export const Modeloslist = [
     hasCodigo: true,
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "Dolor", "venenatis"],
-    licenca: 'Domínio Público'
+    licenca: 'Domínio Público',
+    carousel: false
   },
   {
     id: '013',
@@ -390,7 +402,8 @@ export const Modeloslist = [
     hasCodigo: true,
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "Dolor", "magna", "Amet"],
-    licenca: 'Uso educacional'
+    licenca: 'Uso educacional',
+    carousel: false
   },
   {
     id: '014',
@@ -425,7 +438,8 @@ export const Modeloslist = [
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "magna"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Uso irrestrito / CCO'
+    licenca: 'Uso irrestrito / CCO',
+    carousel: false
   },
   {
     id: '015',
@@ -460,7 +474,8 @@ export const Modeloslist = [
     tags: ["Lorem", "Ipsum", "facilisis", "Sit", "Amet"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Alguns direitos reservados'
+    licenca: 'Alguns direitos reservados',
+    carousel: false
   },
   {
     id: '016',
@@ -495,7 +510,8 @@ export const Modeloslist = [
     tags: ["Lorem", "sapien", "feugiat", "tempus"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Domínio Público'
+    licenca: 'Domínio Público',
+    carousel: false
   },
   {
     id: '017',
@@ -520,7 +536,8 @@ export const Modeloslist = [
     isDestaque: false,
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "feugiat", "Sit", "Amet"],
-    licenca: 'Uso educacional'
+    licenca: 'Uso educacional',
+    carousel: false
   },
   {
     id: '018',
@@ -544,7 +561,8 @@ export const Modeloslist = [
     isDestaque: false,
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "Dolor", "Sit"],
-    licenca: 'Uso irrestrito / CCO'
+    licenca: 'Uso irrestrito / CCO',
+    carousel: false
   },
   {
     id: '019',
@@ -579,7 +597,8 @@ export const Modeloslist = [
     tags: ["Lorem", "Ipsum", "Dolor", "Sit", "magna"],
     link: "https://apps.univesp.br/teoricos-da-sociologia/",
     github: "https://github.com/univesp/linha-do-tempo-da-acessibilidade",
-    licenca: 'Uso restrito'
+    licenca: 'Uso restrito',
+    carousel: false
   },
   {
     id: '020',
@@ -604,7 +623,8 @@ export const Modeloslist = [
     hasCodigo: true,
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "luctus", "vitae"],
-    licenca: 'Alguns direitos reservados'
+    licenca: 'Alguns direitos reservados',
+    carousel: false
   },
   {
     id: '021',
@@ -628,6 +648,7 @@ export const Modeloslist = [
     hasCodigo: true,
     hasEquipe: false,
     tags: ["Lorem", "Ipsum", "Dolor", "vitae"],
-    licenca: 'Uso educacional'
+    licenca: 'Uso educacional',
+    carousel: false
   }
 ];

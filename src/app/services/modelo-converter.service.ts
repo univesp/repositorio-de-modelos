@@ -66,7 +66,8 @@ export class ModeloConverterService {
       link: apiModelo.link || '',
       github: apiModelo.codigoLink || undefined,
       isSalvo: false, // Será atualizado pelo BookmarkService
-      licenca: apiModelo.licenca?.join(', ') || 'Não especificada'
+      licenca: apiModelo.licenca?.join(', ') || 'Não especificada',
+      carousel: apiModelo.carousel || false
     };
   }
 

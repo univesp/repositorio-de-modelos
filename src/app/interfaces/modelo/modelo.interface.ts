@@ -34,4 +34,5 @@ export interface Modelo {
   isSalvo?: boolean;
   licenca: string;
   carousel: boolean;
+  destaque?: boolean;
 }

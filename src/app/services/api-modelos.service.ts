@@ -92,4 +92,28 @@ export class ApiModelosService {
         })
       );
   }
+
+  /**
+   * Busca modelos com carousel=true da API
+   */
+  getModelosCarouselDaAPI(): Observable<ModeloAPI[]> {
+    return this.http.get<ModeloAPI[]>(`/api/modelos/list?carousel=true`).pipe(
+      catchError(error => {
+        console.error('❌ Erro ao buscar modelos do carrossel:', error);
+        return of([]);
+      })
+    );
+  }
+
+  /**
+   * Busca modelos com destaque=true da API
+   */
+  getModelosDestaqueDaAPI(): Observable<ModeloAPI[]> {
+    return this.http.get<ModeloAPI[]>(`/api/modelos/list?destaque=true`).pipe(
+      catchError(error => {
+        console.error('❌ Erro ao buscar modelos em destaque:', error);
+        return of([]);
+      })
+    );
+  }
 }

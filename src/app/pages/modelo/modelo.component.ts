@@ -521,22 +521,72 @@ export class ModeloComponent implements OnInit, OnDestroy {
         this.mostrarBotoesImagem = false;
     }
 
-    adicionarAoTopo(): void {
+    /**
+     * Verifica se o modelo está no carrossel (topo)
+     */
+    get estaNoCarrossel(): boolean {
+        return this.currentModeloAPI?.carousel === true;
+    }
+
+    /**
+     * Alterna entre adicionar/remover do topo (carrossel)
+     */
+    alternarNoTopo(): void {
         this.menuOpcoesAberto = false;
         
         if (!this.currentModelo || !this.currentModeloAPI) {
-            return;
+        return;
         }
         
+        if (this.estaNoCarrossel) {
+        // Se já está no topo, remove
+        this.atualizarModeloService.removerDoTopo(
+            this.currentModeloAPI,
+            this.currentModelo.id.toString(),
+            this.currentModelo.titulo
+        );
+        } else {
+        // Se não está no topo, adiciona
         this.atualizarModeloService.executarAdicionarAoTopo(
             this.currentModeloAPI,
             this.currentModelo.id.toString(),
             this.currentModelo.titulo
         );
+        }
     }
 
-    adicionarAosDestaques(): void {
+    /**
+     * Verifica se o modelo está nos destaques
+     */
+    get estaNosDestaques(): boolean {
+        return this.currentModeloAPI?.destaque === true;
+    }
+
+    /**
+     * Alterna entre adicionar/remover dos destaques
+     */
+    alternarNosDestaques(): void {
         this.menuOpcoesAberto = false;
+        
+        if (!this.currentModelo || !this.currentModeloAPI) {
+        return;
+        }
+        
+        if (this.estaNosDestaques) {
+        // Se já está nos destaques, remove
+        this.atualizarModeloService.removerDosDestaques(
+            this.currentModeloAPI,
+            this.currentModelo.id.toString(),
+            this.currentModelo.titulo
+        );
+        } else {
+        // Se não está nos destaques, adiciona
+        this.atualizarModeloService.adicionarAosDestaques(
+            this.currentModeloAPI,
+            this.currentModelo.id.toString(),
+            this.currentModelo.titulo
+        );
+        }
     }
 
     excluirModelo(): void {

@@ -1,26 +1,75 @@
 <div class="carousel-container">
-  <ngx-slick-carousel class="carousel"
-  #slickModal="slick-carousel"
-  [config]="slideConfig">
-
-    <div ngxSlickItem *ngFor="let slide of slides" class="slide">
-      <img src="{{ slide.img_lg }}" alt="" class="img-style">
-      <div class="info-modelo-carousel">
-        <h1>{{ slide.titulo }}</h1>
-        <p>{{ slide.descricao }}</p>
-        <div class="tags-carousel">
-          <span *ngFor="let tag of slide.tags">
-            {{ tag }}
-          </span>
-          
-        </div>
-        <button class="button-saibaMais-carousel" (click)="redirectModeloPage(slide.id)">
-          Saiba Mais
-        </button>
-      </div>
+  <!-- LOADING STATE - mantém o estilo original -->
+  <div *ngIf="isLoading" class="loading-state" style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 520px;
+    background: linear-gradient(135deg, #7155d8 0%, #8a7ae3 100%);
+    border-radius: 5px;
+  ">
+    <div style="
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    "></div>
+    <p style="color: white; font-size: 18px;">Carregando carrossel...</p>
+  </div>
+  
+  <!-- CARROSSEL (aparece quando tem slides e não está carregando) -->
+  <ng-container *ngIf="!isLoading">
+    <ngx-slick-carousel 
+      class="carousel"
+      #slickModal="slick-carousel"
+      [config]="slideConfig"
+      *ngIf="slides.length > 0">
       
+      <div ngxSlickItem *ngFor="let slide of slides" class="slide">
+        <!-- USA O MÉTODO PARA OBTER IMAGEM - mantém mesma estrutura -->
+        <img [src]="obterImagemParaModelo(slide)" alt="" class="img-style">
+        <div class="info-modelo-carousel">
+          <h1>{{ slide.titulo }}</h1>
+          <p>{{ slide.descricao }}</p>
+          <div class="tags-carousel">
+            <span *ngFor="let tag of slide.tags">
+              {{ tag }}
+            </span>
+          </div>
+          <button class="button-saibaMais-carousel" (click)="redirectModeloPage(slide.id)">
+            Saiba Mais
+          </button>
+        </div>
+      </div>
+    </ngx-slick-carousel>
+    
+    <!-- MENSAGEM SE NÃO HOUVER SLIDES - mantém o estilo -->
+    <div *ngIf="slides.length === 0 && !isLoading" style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 520px;
+      background: linear-gradient(135deg, #7155d8 0%, #8a7ae3 100%);
+      border-radius: 5px;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    ">
+      <div>
+        <h3 style="font-size: 24px; margin-bottom: 10px; font-weight: 300;">Nenhum modelo no carrossel</h3>
+        <p style="font-size: 16px; opacity: 0.9;">Adicione modelos ao carrossel para que apareçam aqui!</p>
+      </div>
     </div>
-
-  </ngx-slick-carousel>
+  </ng-container>
 </div>
 
+<style>
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>

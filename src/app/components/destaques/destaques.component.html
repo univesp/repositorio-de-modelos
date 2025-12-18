@@ -1,7 +1,20 @@
+<!-- destaques.component.html -->
 <div class="destaques-container">
   <h1>Destaques</h1>
 
-  <div class="modelos-grid">
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Carregando destaques...</p>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!isLoading && modelosDestaque.length === 0" class="empty-container">
+    <p>Nenhum destaque disponível no momento.</p>
+  </div>
+
+  <!-- Grid de destaques -->
+  <div *ngIf="!isLoading && modelosDestaque.length > 0" class="modelos-grid">
     <div *ngFor="let modelo of modelosDestaque" 
          class="modelo-card"
          (click)="redirectModeloPage(modelo.id)">
@@ -31,8 +44,9 @@
         <h2>{{ modelo.titulo }}</h2>
       </div>
 
+      <!-- USA O MÉTODO IGUAL AO CAROUSEL -->
       <div class="modelo-imagem">
-        <img src="{{ modelo.img_lg }}" alt="{{ modelo.titulo }}">
+        <img [src]="obterImagemParaModelo(modelo)" [alt]="modelo.titulo">
       </div>
 
       <div class="modelo-tags">

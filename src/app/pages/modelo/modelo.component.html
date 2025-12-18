@@ -42,24 +42,38 @@
               </button>
               
               <button class="opcao-menu" 
-                      (click)="adicionarAoTopo()"
+                      (click)="alternarNoTopo()"
                       *ngIf="isAdmin">
-                <mat-icon>view_carousel</mat-icon>
-                <span>Adicionar ao Topo</span>
+                <!-- Ícone muda baseado no status -->
+                <mat-icon [style.color]="estaNoCarrossel ? '#f44336' : 'inherit'">
+                  {{ estaNoCarrossel ? 'remove_circle' : 'view_carousel' }}
+                </mat-icon>
+                
+                <!-- Texto muda baseado no status -->
+                <span [style.color]="estaNoCarrossel ? '#f44336' : 'inherit'"
+                      [title]="estaNoCarrossel ? 'Remover do Carrossel' : 'Adicionar ao Carrossel'">
+                  {{ estaNoCarrossel ? 'Remover do Carrossel' : 'Adicionar ao Carrossel' }}
+                </span>
               </button>
               
               <button class="opcao-menu" 
-                      (click)="adicionarAosDestaques()"
+                      [class.remover]="estaNosDestaques"
+                      (click)="alternarNosDestaques()"
                       *ngIf="isAdmin">
-                <mat-icon>star</mat-icon>
-                <span>Adicionar aos Destaques</span>
+                <mat-icon [style.color]="estaNosDestaques ? '#f44336' : 'inherit'">
+                  {{ estaNosDestaques ? 'remove_circle' : 'star' }}
+                </mat-icon>
+                <span [style.color]="estaNosDestaques ? '#f44336' : 'inherit'"
+                      [title]="estaNosDestaques ? 'Remover dos Destaques' : 'Adicionar aos Destaques'">
+                  {{ estaNosDestaques ? 'Remover dos Destaques' : 'Adicionar aos Destaques' }}
+                </span>
               </button>
               
               <button class="opcao-menu opcao-excluir" 
                       (click)="excluirModelo()"
                       *ngIf="isAdmin">
                 <mat-icon>delete</mat-icon>
-                <span>Excluir Modelo</span>
+                <span title="Excluir Modelo">Excluir Modelo</span>
               </button>
             </div>
           </div>

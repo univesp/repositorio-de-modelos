@@ -130,40 +130,131 @@
   </mat-tab>
 
   <!-- ABA MEUS MODELOS -->
-  <mat-tab label="Meus Modelos"> 
-    <div class="tab-content">
-      <h1 class="tab-title">MEUS MODELOS</h1>
+<mat-tab label="Meus Modelos"> 
+  <div class="tab-content">
+    <h1 class="tab-title">MEUS MODELOS</h1>
 
-      <div class="modelos-list">
-        <!-- Conteúdo dos Meus Modelos (por enquanto estático) -->
-        <div class="modelo-card">
-          <div class="modelo-header">
-            <h2 class="modelo-titulo">Matris auctor pharetra cursus et</h2>
-          </div>
+    <div class="filtros-container" *ngIf="!isLoadingCriados">
+      <!-- Campo de Busca -->
+      <div class="filtro-item">
+        <input 
+          type="text"
+          [(ngModel)]="filtroTextoCriados"
+          (input)="aplicarFiltrosCriados()"
+          placeholder="Buscar por título..."
+          class="filtro-input">
+      </div>
 
+      <!-- Select de ordenação -->
+      <div class="filtro-item">
+        <select 
+          [(ngModel)]="ordenacaoSelecionadaCriados"
+          (change)="aplicarFiltrosCriados()"
+          class="filtro-select">
+          
+          <option value="">Ordenar por:</option>
+          <option value="criados-recentes">Criados mais recentes</option>
+          <option value="criados-antigos">Criados mais antigos</option>
+          <option value="alfabetica">Ordem Alfabética</option>
+          <option value="mais-recentes">Mais Recentes (data)</option>
+          <option value="mais-antigos">Mais Antigos (data)</option>
+        </select>
+      </div>
+
+      <!-- Contador de resultados -->
+      <div class="filtro-item resultado-contador">
+        <span>Exibindo {{ modelosCriadosPaginados.length }} de {{ modelosCriadosFiltrados.length }} modelo(s)</span>
+        <span>Página {{ paginaAtualCriados }} de {{ totalPaginasCriados }}</span>
+      </div>
+    </div>
+
+    <div class="modelos-list">
+      <!-- Loading state -->
+      <div *ngIf="isLoadingCriados" class="loading-state">
+        <p>Carregando meus modelos...</p>
+      </div>
+
+      <!-- Modelos Criados Paginados -->
+      <div class="modelo-card" *ngFor="let modelo of modelosCriadosPaginados">
+        
+        <div class="modelo-imagem">
+          <img [src]="obterImagemParaModelo(modelo)" [alt]="modelo.titulo">
+        </div>
+
+        <div class="modelo-header">
+          <h2 class="modelo-titulo">{{ modelo.titulo }}</h2>
           <p class="modelo-descricao">
-            Condimentum enim praesent tincidunt nunc euismod. Sit scelerisque...
+            {{ modelo.descricao }}
           </p>
-
           <div class="modelo-actions">
-            <button class="btn-info">
+            <button class="btn-info" (click)="verMaisInformacoes(modelo.id)">
               <mat-icon>info</mat-icon>
               Mais Informações
             </button>
-            <button class="btn-material">
+            <button class="btn-material" (click)="irParaMaterial(modelo.link)">
               <mat-icon>open_in_new</mat-icon>
               Ir para o Material
             </button>
           </div>
         </div>
+        
+        <div class="modelo-salvos-right-container">
+          <!-- Para modelos criados, pode mostrar um ícone de edição -->
+          <button 
+            class="btn-remover" 
+            (click)="editarModelo(modelo.id, $event)"
+            matTooltip="Editar modelo"
+            *ngIf="authService.isSignedIn()"
+            title="Editar Modelo">
+            <mat-icon class="icon-edit">edit</mat-icon>
+          </button>
 
-        <!-- Empty state para Meus Modelos -->
-        <div class="empty-state" *ngIf="false">
-          <mat-icon>add_circle_outline</mat-icon>
-          <p>Nenhum modelo criado ainda</p>
-          <p class="empty-subtitle">Os modelos que você criar aparecerão aqui</p>
+          <span>{{ modelo.date }}</span>
         </div>
       </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="!isLoadingCriados && modelosCriadosFiltrados.length === 0">
+        <mat-icon>add_circle_outline</mat-icon>
+        <p *ngIf="filtroTextoCriados">Nenhum modelo encontrado para "{{ filtroTextoCriados }}"</p>
+        <p *ngIf="!filtroTextoCriados">Nenhum modelo criado ainda</p>
+        <p class="empty-subtitle" *ngIf="filtroTextoCriados">Tente ajustar sua busca</p>
+        <p class="empty-subtitle" *ngIf="!filtroTextoCriados">Os modelos que você criar aparecerão aqui</p>
+      </div>
+
+      <!-- PAGINAÇÃO -->
+      <div class="paginacao" *ngIf="totalPaginasCriados > 1 && !isLoadingCriados">
+        <button class="paginacao-btn" 
+                (click)="irParaPrimeiraPaginaCriados()"
+                [disabled]="paginaAtualCriados === 1">
+            &lt;&lt;
+        </button>
+    
+        <button class="paginacao-btn" 
+                (click)="paginaAnteriorCriados()"
+                [disabled]="paginaAtualCriados === 1">
+            &lt; Anterior
+        </button>
+    
+        <span *ngFor="let pagina of paginasParaExibirCriados" 
+              class="paginacao-numero"
+              [class.paginacao-ativa]="pagina === paginaAtualCriados"
+              (click)="irParaPaginaCriados(pagina)">
+            {{ pagina }}
+        </span>
+    
+        <button class="paginacao-btn" 
+                (click)="proximaPaginaCriados()"
+                [disabled]="paginaAtualCriados === totalPaginasCriados">
+            Próxima &gt;
+        </button>
+    
+        <button class="paginacao-btn" 
+                (click)="irParaUltimaPaginaCriados()"
+                [disabled]="paginaAtualCriados === totalPaginasCriados">
+            &gt;&gt;
+        </button>
+      </div>
     </div>
-  </mat-tab>
-</mat-tab-group>
+  </div>
+</mat-tab>

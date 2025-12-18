@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Modelo } from '../../interfaces/modelo/modelo.interface';
 import { ModeloAPI } from '../../interfaces/modelo/modelo-api.interface';
 import { SalvosService } from '../../services/salvos.service';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, UserProfile } from '../../services/auth.service';
 import { PaginationService, PaginationConfig } from '../../services/pagination.service';
 import { ApiModelosService } from '../../services/api-modelos.service';
 import { ImagemDefaultUtils } from '../../utils/imagem-default.utils';
@@ -18,19 +18,32 @@ import { UploadImagemService } from '../../services/upload-imagem.service';
   styleUrls: ['./user-favourites.component.scss']
 })
 export class UserFavouritesComponent implements OnInit, OnDestroy {
-  // Arrays de dados
+  // Arrays de dados - SALVOS
   todosModelosDaAPI: Modelo[] = [];
   modelosSalvos: Modelo[] = [];
   modelosFiltrados: Modelo[] = [];
   modelosPaginados: Modelo[] = [];
 
-  // Filtros
+  // Arrays de dados - CRIADOS
+  modelosCriados: Modelo[] = [];
+  modelosCriadosFiltrados: Modelo[] = [];
+  modelosCriadosPaginados: Modelo[] = [];
+
+  // Filtros - SALVOS
   filtroTexto: string = '';
   ordenacaoSelecionada: string = 'salvos-recentes';
 
-  // Propriedades de paginação
+  // Filtros - CRIADOS
+  filtroTextoCriados: string = '';
+  ordenacaoSelecionadaCriados: string = 'criados-recentes';
+
+  // Propriedades de paginação - SALVOS
   paginationConfig!: PaginationConfig;
   isLoading = true;
+
+  // Propriedades de paginação - CRIADOS
+  paginationConfigCriados!: PaginationConfig;
+  isLoadingCriados = true;
 
   private destroy$ = new Subject<void>();
 
@@ -51,9 +64,31 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Inicializa a configuração de paginação
     this.paginationConfig = this.paginationService.inicializarPaginacao([], 5);
+    this.paginationConfigCriados = this.paginationService.inicializarPaginacao([], 5);
     
     // Carrega os modelos salvos
     this.carregarModelosSalvos();
+
+    // Observa mudanças no perfil do usuário para carregar modelos criados
+    this.authService.userProfile$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (profile) => {
+        if (profile && profile.criados && profile.criados.length > 0) {
+          this.carregarModelosCriados(profile);
+        } else if (profile) {
+          // Usuário logado mas não tem modelos criados
+          this.modelosCriados = [];
+          this.modelosCriadosFiltrados = [];
+          this.isLoadingCriados = false;
+          this.atualizarPaginacaoCriados();
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao observar perfil:', error);
+        this.isLoadingCriados = false;
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -66,6 +101,245 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
     });
     this.imagensCache.clear();
     this.carregandoImagens.clear();
+  }
+
+  /**
+   * CARREGA MODELOS CRIADOS PELO USUÁRIO
+   */
+  private carregarModelosCriados(profile: UserProfile): void {
+    this.isLoadingCriados = true;
+    
+    // Se já carregamos todos os modelos da API, usa os dados existentes
+    if (this.todosModelosDaAPI.length > 0) {
+      this.filtrarModelosCriados(profile);
+    } else {
+      // Primeiro carrega TODOS os modelos da API
+      this.apiModelosService.getModelosDaAPI()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (modelosAPI: ModeloAPI[]) => {
+            console.log('📦 Todos modelos carregados da API para criados:', modelosAPI.length);
+            
+            // Converte todos os modelos da API para o formato interno
+            this.todosModelosDaAPI = modelosAPI.map(apiModelo => 
+              this.converterAPIparaModelo(apiModelo)
+            );
+            
+            // Agora filtra apenas os modelos criados
+            this.filtrarModelosCriados(profile);
+          },
+          error: (error) => {
+            console.error('❌ Erro ao carregar modelos da API para criados:', error);
+            this.isLoadingCriados = false;
+            this.modelosCriados = [];
+            this.modelosCriadosFiltrados = [];
+            this.atualizarPaginacaoCriados();
+          }
+        });
+    }
+  }
+
+   /**
+   * FILTRA APENAS OS MODELOS CRIADOS
+   */
+   private filtrarModelosCriados(profile: UserProfile): void {
+    if (!profile.criados || profile.criados.length === 0) {
+      console.log('👤 Usuário não tem modelos criados');
+      this.modelosCriados = [];
+      this.modelosCriadosFiltrados = [];
+      this.isLoadingCriados = false;
+      this.atualizarPaginacaoCriados();
+      return;
+    }
+
+    console.log('🔍 Filtrando modelos criados entre:', this.todosModelosDaAPI.length, 'modelos');
+    
+    // Filtra apenas os modelos que estão na lista de criados do usuário
+    this.modelosCriados = this.todosModelosDaAPI.filter(modelo => 
+      profile.criados!.includes(modelo.id)
+    );
+
+    console.log('✅ Modelos criados encontrados:', this.modelosCriados.length);
+    
+    // Inicializa os modelos filtrados
+    this.modelosCriadosFiltrados = [...this.modelosCriados];
+    
+    // Aplica filtros iniciais
+    this.aplicarFiltrosCriados();
+    this.isLoadingCriados = false;
+  }
+
+   /**
+   * APLICA FILTROS E ORDENAÇÃO PARA MODELOS CRIADOS
+   */
+   aplicarFiltrosCriados(): void {
+    let modelosFiltrados = [...this.modelosCriados];
+
+    // Filtro por texto
+    if (this.filtroTextoCriados.trim()) {
+      const termo = this.filtroTextoCriados.toLowerCase().trim();
+      modelosFiltrados = modelosFiltrados.filter(modelo => 
+        modelo.titulo.toLowerCase().includes(termo) ||
+        (modelo.descricao && modelo.descricao.toLowerCase().includes(termo)) ||
+        (modelo.tags && modelo.tags.some(tag => tag.toLowerCase().includes(termo)))
+      );
+    }
+
+    // Aplica ordenação
+    modelosFiltrados = this.aplicarOrdenacaoCriados(modelosFiltrados);
+    this.modelosCriadosFiltrados = modelosFiltrados;
+
+    // Atualiza paginação
+    this.paginationConfigCriados = this.paginationService.irParaPagina(1, this.paginationConfigCriados);
+    this.atualizarPaginacaoCriados();
+  }
+
+  /**
+   * APLICA ORDENAÇÃO SELECIONADA PARA MODELOS CRIADOS
+   */
+  private aplicarOrdenacaoCriados(modelos: Modelo[]): Modelo[] {
+    const userProfile = this.authService.getCurrentUserProfile();
+    const criadosIds = userProfile?.criados || [];
+
+    const ordenacao = this.ordenacaoSelecionadaCriados || 'criados-recentes';
+    const modelosOrdenados = [...modelos];
+
+    switch (ordenacao) {
+      case 'criados-recentes':
+        return modelosOrdenados.sort((a, b) => {
+          const indexA = criadosIds.indexOf(a.id);
+          const indexB = criadosIds.indexOf(b.id);
+          
+          if (indexA === -1) return 1;
+          if (indexB === -1) return -1;
+          
+          return indexB - indexA; // Mais recentes primeiro
+        });
+
+      case 'criados-antigos':
+        return modelosOrdenados.sort((a, b) => {
+          const indexA = criadosIds.indexOf(a.id);
+          const indexB = criadosIds.indexOf(b.id);
+          
+          if (indexA === -1) return 1;
+          if (indexB === -1) return -1;
+          
+          return indexA - indexB; // Mais antigos primeiro
+        });
+
+      case 'alfabetica':
+        return modelosOrdenados.sort((a, b) => 
+          a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' })
+        );
+
+      case 'mais-recentes':
+        return modelosOrdenados.sort((a, b) => {
+          const dateA = this.converterDataParaTimestamp(a.date);
+          const dateB = this.converterDataParaTimestamp(b.date);
+          
+          if (dateB === dateA) {
+            return a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' });
+          }
+          
+          return dateB - dateA;
+        });
+
+      case 'mais-antigos':
+        return modelosOrdenados.sort((a, b) => {
+          const dateA = this.converterDataParaTimestamp(a.date);
+          const dateB = this.converterDataParaTimestamp(b.date);
+          
+          if (dateA === dateB) {
+            return a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' });
+          }
+          
+          return dateA - dateB;
+        });
+
+      default:
+        return modelosOrdenados;
+    }
+  }
+
+   /**
+   * NAVEGAÇÃO ENTRE PÁGINAS - CRIADOS
+   */
+   irParaPaginaCriados(pagina: number): void {
+    this.paginationConfigCriados = this.paginationService.irParaPagina(pagina, this.paginationConfigCriados);
+    this.atualizarModelosCriadosPaginados();
+    this.rolarParaTopo();
+  }
+
+  proximaPaginaCriados(): void {
+    this.paginationConfigCriados = this.paginationService.proximaPagina(this.paginationConfigCriados);
+    this.atualizarModelosCriadosPaginados();
+    this.rolarParaTopo();
+  }
+
+  paginaAnteriorCriados(): void {
+    this.paginationConfigCriados = this.paginationService.paginaAnterior(this.paginationConfigCriados);
+    this.atualizarModelosCriadosPaginados();
+    this.rolarParaTopo();
+  }
+
+  irParaPrimeiraPaginaCriados(): void {
+    this.paginationConfigCriados = this.paginationService.irParaPrimeiraPagina(this.paginationConfigCriados);
+    this.atualizarModelosCriadosPaginados();
+    this.rolarParaTopo();
+  }
+
+  irParaUltimaPaginaCriados(): void {
+    this.paginationConfigCriados = this.paginationService.irParaUltimaPagina(this.paginationConfigCriados);
+    this.atualizarModelosCriadosPaginados();
+    this.rolarParaTopo();
+  }
+
+  /**
+   * ATUALIZA MODELOS CRIADOS PAGINADOS
+   */
+  private atualizarModelosCriadosPaginados(): void {
+    this.modelosCriadosPaginados = this.paginationService.obterItensPaginados(
+      this.modelosCriadosFiltrados, 
+      this.paginationConfigCriados
+    );
+  }
+
+  /**
+   * ATUALIZA PAGINAÇÃO CRIADOS
+   */
+  private atualizarPaginacaoCriados(): void {
+    this.paginationConfigCriados = this.paginationService.atualizarPaginacaoComNovosItens(
+      this.modelosCriadosFiltrados, 
+      this.paginationConfigCriados
+    );
+    this.modelosCriadosPaginados = this.paginationService.obterItensPaginados(
+      this.modelosCriadosFiltrados, 
+      this.paginationConfigCriados
+    );
+  }
+
+  /**
+   * GETTERS PARA O TEMPLATE - CRIADOS
+   */
+  get paginaAtualCriados(): number {
+    return this.paginationConfigCriados.paginaAtual;
+  }
+
+  get totalPaginasCriados(): number {
+    return this.paginationConfigCriados.totalPaginas;
+  }
+
+  get paginasParaExibirCriados(): number[] {
+    return this.paginationConfigCriados.paginasParaExibir;
+  }
+
+  /**
+   * EDITA MODELO (envia para página do modelo para edição)
+   */
+  editarModelo(modeloId: string, event: Event): void {
+    event.stopPropagation();
+    //console.log('Editar modelo:', modeloId);
+    this.router.navigate(['/modelo', modeloId]);
   }
 
   /**

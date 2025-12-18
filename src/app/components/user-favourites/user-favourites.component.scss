@@ -38,6 +38,8 @@
 }
 
 .modelo-header {
+  flex: 1;
+  min-width: 0;
   margin-bottom: 12px;
 }
 
@@ -55,11 +57,11 @@
   line-height: 1.5;
   margin-bottom: 16px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 
-  width: 90%;
+  width: 100%;
   flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 1; // NÚMERO DE LINHAS
@@ -153,18 +155,20 @@
 }
 
 .modelo-imagem {
-  width: 350px;
+  width: 220px;
+  flex-shrink: 0;
 }
 
 .modelo-imagem > img {
   width: 100%;
+  height: 115px;
+  object-fit: cover;
 }
 
 .modelo-salvos-right-container {
   display: flex;
   align-items: center;
   gap: 0 15px;
-  width: 50%;
   justify-content: end;
 }
 
@@ -303,15 +307,17 @@
   }
   
   .modelo-imagem {
-    width: 300px;
+    width: 200px; // Ajustado para manter proporção (220px -> 200px)
+  }
+  
+  .modelo-imagem > img {
+    height: 105px; // Ajustado proporcionalmente (115px -> 105px)
   }
   
   .modelo-salvos-right-container {
-    width: 45%;
+    width: auto; // Remove width fixo que estava atrapalhando
   }
 }
-
-
 
 /* <991px */
 @media (max-width: 991px) {
@@ -326,11 +332,12 @@
   }
   
   .modelo-imagem {
-    width: 220px;
+    width: 180px; // Ajustado (220px -> 180px)
   }
   
   .modelo-imagem > img {
-    max-height: 130px;
+    height: 94px; // Ajustado proporcionalmente (115px -> 94px)
+    max-height: none; // Remove limitação de altura máxima
   }
   
   .modelo-titulo {
@@ -339,7 +346,7 @@
   
   .modelo-descricao {
     font-size: 14px;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 3; // Restaurado para 3 linhas (igual ao default)
     width: 100%;
   }
   
@@ -410,12 +417,13 @@
   }
   
   .modelo-imagem {
-    width: 180px;
+    width: 200px; // Aumentado (estava 180px)
     order: 1;
   }
   
   .modelo-imagem > img {
-    max-height: 120px;
+    height: 105px; // Proporcional ao width 200px
+    max-height: none;
   }
   
   .modelo-header {
@@ -448,7 +456,7 @@
   
   .modelo-descricao {
     font-size: 13px;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 3; // Restaurado para 3 linhas
   }
   
   .modelo-actions {
@@ -505,7 +513,7 @@
   }
 }
 
-/* <576px  */
+/* <576px */
 @media (max-width: 575px) {
   .tab-content {
     padding: 14px;
@@ -537,16 +545,16 @@
   }
   
   .modelo-imagem {
-    width: 100px; /* MENOR MAS MANTÉM */
+    width: 140px; // Aumentado (estava 100px)
     flex-shrink: 0;
     order: 1;
   }
   
   .modelo-imagem > img {
     width: 100%;
-    height: auto;
-    max-height: 80px;
+    height: 73px; // Proporcional ao width 140px
     object-fit: cover;
+    max-height: none;
   }
   
   .modelo-header {
@@ -563,7 +571,7 @@
   
   .modelo-descricao {
     font-size: 12px;
-    -webkit-line-clamp: 1; 
+    -webkit-line-clamp: 2; // Ajustado para 2 linhas (era 1)
     line-height: 1.3;
     margin-bottom: 8px;
     width: 95%;
@@ -665,7 +673,7 @@
   }
 }
 
-/* <400px  */
+/* <400px */
 @media (max-width: 400px) {
   .modelo-card {
     gap: 0 8px;
@@ -673,11 +681,12 @@
   }
   
   .modelo-imagem {
-    width: 80px;
+    width: 120px; // Aumentado (estava 80px)
   }
   
   .modelo-imagem > img {
-    max-height: 70px;
+    height: 63px; // Proporcional ao width 120px
+    max-height: none;
   }
   
   .modelo-titulo {
@@ -686,19 +695,21 @@
   
   .modelo-descricao {
     font-size: 11px;
+    -webkit-line-clamp: 2; // Mantido 2 linhas
   }
   
   .modelo-actions {
-    flex-direction: column;
+    flex-direction: row; // Mantido horizontal (era column)
     gap: 5px;
   }
   
   .btn-info,
   .btn-material {
-    width: 100%;
+    width: auto;
     min-width: unset;
     padding: 4px 8px;
     font-size: 10px;
+    flex: 1;
     
     .mat-icon {
       font-size: 12px;
@@ -719,5 +730,45 @@
   .filtro-select {
     font-size: 12px;
     padding: 6px 8px;
+  }
+}
+
+/* <350px - Extra small */
+@media (max-width: 350px) {
+  .modelo-card {
+    gap: 0 6px;
+    padding: 8px;
+  }
+  
+  .modelo-imagem {
+    width: 100px;
+  }
+  
+  .modelo-imagem > img {
+    height: 52px; // Proporcional ao width 100px
+  }
+  
+  .modelo-titulo {
+    font-size: 12px;
+  }
+  
+  .modelo-descricao {
+    font-size: 10px;
+    -webkit-line-clamp: 1; // Reduzido para 1 linha em telas muito pequenas
+  }
+  
+  .btn-info,
+  .btn-material {
+    padding: 3px 6px;
+    font-size: 9px;
+    min-width: 100px;
+  }
+  
+  .modelo-salvos-right-container {
+    min-width: 60px;
+    
+    span {
+      font-size: 9px;
+    }
   }
 }

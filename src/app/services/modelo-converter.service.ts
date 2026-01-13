@@ -15,11 +15,14 @@ export class ModeloConverterService {
     const formatarData = (dataISO: string): string => {
       try {
         const date = new Date(dataISO);
-        return date.toLocaleDateString('pt-BR', { 
+        // Compensa o fuso horário
+        const dateCorrigido = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+        
+        return dateCorrigido.toLocaleDateString('pt-BR', { 
           month: 'short', 
           day: 'numeric', 
           year: 'numeric' 
-        }).replace(/ de /g, ' ');
+        });
       } catch {
         return 'Data não disponível';
       }

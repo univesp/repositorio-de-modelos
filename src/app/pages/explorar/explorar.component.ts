@@ -24,6 +24,7 @@ import { ImagemDefaultUtils } from '../../utils/imagem-default.utils';
 export class ExplorarComponent implements OnInit, OnDestroy {
 
   modelosExibidos: Modelo[] = [];
+  modelosOriginais: Modelo[] = []; // Armazena os modelos sem ordenação
   viewType: 'grid' | 'list' = 'grid';
   opacityClicked = 1;
   ordenacaoSelecionada: string = '';
@@ -75,7 +76,7 @@ export class ExplorarComponent implements OnInit, OnDestroy {
     this.apiModelosService.getModelosDaAPI().subscribe({
       next: (modelosAPI: ModeloAPI[]) => {
         if (modelosAPI.length > 0) {
-          console.log(`✅ Carregados ${modelosAPI.length} modelos da API`);
+          //console.log(`Carregados ${modelosAPI.length} modelos da API`);
           // CONVERTE API -> Modelo
           const modelosConvertidos = this.converterAPIparaModelo(modelosAPI);
           this.processarModelos(modelosConvertidos);
@@ -111,16 +112,19 @@ export class ExplorarComponent implements OnInit, OnDestroy {
    * Processa os modelos (aplica ordenação, etc)
    */
    private processarModelos(modelos: Modelo[]): void {
-    let modelosOrdenados = modelos;
+    // Salva os modelos originais
+    this.modelosOriginais = [...modelos];
+    
+    let modelosOrdenados = [...modelos];
     
     if (this.ordenacaoSelecionada) {
-      modelosOrdenados = this.aplicarOrdenacaoInterna(modelos);
+      modelosOrdenados = this.aplicarOrdenacaoInterna(modelosOrdenados);
     }
 
     this.modelosExibidos = modelosOrdenados;
     this.isLoading = false;
     
-    console.log(`📊 Exibindo ${this.modelosExibidos.length} modelos (${this.usandoAPI ? 'API' : 'LOCAL'})`);
+    //console.log(`Exibindo ${this.modelosExibidos.length} modelos (${this.usandoAPI ? 'API' : 'LOCAL'})`);
   }
 
   /**
@@ -132,7 +136,10 @@ export class ExplorarComponent implements OnInit, OnDestroy {
       const formatarData = (dataISO: string): string => {
         try {
           const date = new Date(dataISO);
-          return date.toLocaleDateString('pt-BR', { 
+          // Compensa o fuso horário
+          const dateCorrigido = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+          
+          return dateCorrigido.toLocaleDateString('pt-BR', { 
             month: 'short', 
             day: 'numeric', 
             year: 'numeric' 
@@ -196,37 +203,97 @@ export class ExplorarComponent implements OnInit, OnDestroy {
    * Aplica a ordenação quando o select é alterado
    */
   aplicarOrdenacao(): void {
-    if (this.usandoAPI) {
-      this.carregarModelosComFallback();
-    } else {
-      this.carregarModelosLocais();
-    }
+    if (!this.modelosOriginais.length) return;
+    
+    // Aplica a ordenação nos modelos originais
+    const modelosOrdenados = this.aplicarOrdenacaoInterna([...this.modelosOriginais]);
+    this.modelosExibidos = modelosOrdenados;
   }
 
   /**
    * Aplica a lógica de ordenação interna
    */
   private aplicarOrdenacaoInterna(modelos: Modelo[]): Modelo[] {
+    if (!modelos.length || !this.ordenacaoSelecionada) return [...modelos];
+    
+    const modelosCopia = [...modelos];
+    
     switch (this.ordenacaoSelecionada) {
       case 'alfabetica':
-        return [...modelos].sort((a, b) => 
+        return modelosCopia.sort((a, b) => 
           a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' })
         );
       
       case 'recentes':
-        return [...modelos].sort((a, b) => {
-          try {
-            const dataA = new Date(a.date).getTime();
-            const dataB = new Date(b.date).getTime();
-            return dataB - dataA;
-          } catch (e) {
-            console.warn('Erro ao ordenar por data:', e);
-            return 0;
-          }
+        // Ordena do MAIS RECENTE para o MAIS ANTIGO
+        return modelosCopia.sort((a, b) => {
+          const dataA = this.converterStringParaDate(a.date);
+          const dataB = this.converterStringParaDate(b.date);
+          
+          // Mais recente primeiro (data B - data A)
+          return dataB.getTime() - dataA.getTime();
+        });
+      
+      case 'antigos':
+        // Ordena do MAIS ANTIGO para o MAIS RECENTE
+        return modelosCopia.sort((a, b) => {
+          const dataA = this.converterStringParaDate(a.date);
+          const dataB = this.converterStringParaDate(b.date);
+          
+          // Mais antigo primeiro (data A - data B)
+          return dataA.getTime() - dataB.getTime();
         });
       
       default:
-        return modelos;
+        return modelosCopia;
+    }
+  }
+
+  /**
+   * Converte string de data para objeto Date - CORRIGIDO PARA FUSO HORÁRIO
+  */
+  private converterStringParaDate(dataStr: string): Date {
+    if (!dataStr || dataStr === 'Data não disponível') {
+      return new Date(0);
+    }
+    
+    try {
+      // Se a data já estiver no formato ISO (vindo da API)
+      if (dataStr.includes('T') && dataStr.includes('-')) {
+        // Para datas ISO, já corrige o fuso
+        const date = new Date(dataStr);
+        // Compensa o fuso horário para mostrar a data correta
+        return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+      }
+      
+      // Regex melhorada (lida com ponto ou não)
+      const dataLimpa = dataStr.toLowerCase().replace(/\./g, '');
+      const match = dataLimpa.match(/(\d+)\s+de\s+(\w+)\s+de\s+(\d+)/i);
+      
+      if (match) {
+        const dia = parseInt(match[1], 10);
+        const mesStr = match[2].toLowerCase().substring(0, 3);
+        const ano = parseInt(match[3], 10);
+        
+        // Mapeia meses abreviados
+        const meses: {[key: string]: number} = {
+          'jan': 0, 'fev': 1, 'mar': 2, 'abr': 3, 'mai': 4, 'jun': 5,
+          'jul': 6, 'ago': 7, 'set': 8, 'out': 9, 'nov': 10, 'dez': 11
+        };
+        
+        const mes = meses[mesStr] || 0;
+        
+        
+        return new Date(ano, mes, dia, 12, 0, 0);
+      }
+      
+      // Tenta parsear de outras formas
+      const date = new Date(dataStr);
+      return new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+      
+    } catch (e) {
+      console.warn('Erro ao converter data:', dataStr);
+      return new Date(0);
     }
   }
 

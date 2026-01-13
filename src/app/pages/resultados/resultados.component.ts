@@ -224,7 +224,8 @@ export class ResultadosComponent implements OnInit, OnDestroy {
       'tipo': 'Tipo',
       'tecnologia': 'Tecnologia',
       'acessibilidade': 'Acessibilidade',
-      'formato': 'Formato'
+      'formato': 'Formato',
+      'data': 'Data'
     };
   
     Object.entries(params).forEach(([chave, valor]) => {

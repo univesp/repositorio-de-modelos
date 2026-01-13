@@ -114,11 +114,13 @@ export class AuthService {
     const now = Date.now() / 1000;
     const isExpired = payload.exp < now;
     
+    /*
     console.log('🔐 Verificação token expirado:', {
       expirado: isExpired,
       expiraEm: new Date(payload.exp * 1000),
       agora: new Date()
     });
+    */
     
     return isExpired;
   }
@@ -276,7 +278,7 @@ export class AuthService {
   private checkAuthConsistency(): void {
     // ⚠️ NÃO VERIFICA CONSISTÊNCIA EM ROTAS DE MODELO
     if (window.location.pathname.includes('/modelo/')) {
-        console.log('🚫 Ignorando verificação de consistência na rota de modelo');
+        //console.log('🚫 Ignorando verificação de consistência na rota de modelo');
         return;
     }
     

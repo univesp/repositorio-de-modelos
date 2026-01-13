@@ -213,17 +213,70 @@
             <div class="modelo-other-info-item">
               <span class="other-info-title">Código-fonte disponível?</span>
               <span class="other-info-content"> {{ currentModelo.hasCodigo ? 'Sim' : 'Não' }} </span>
-              <div class="github-info" *ngIf="currentModelo.hasCodigo && currentModelo.github">
-                <span class="other-info-title">Link: </span>
-                <span class="other-info-content"> 
-                  <a class="link-codigo" target="_blank" [href]="currentModelo.github">
-                    {{ currentModelo.github }}
-                  </a> 
-                </span>
-              </div>
+
+              <!-- Container para ações do código-fonte -->
+              <div class="codigo-acoes-container" *ngIf="currentModelo.hasCodigo">
+                <div class="github-info" *ngIf="currentModelo.hasCodigo && currentModelo.github">
+                  <span class="other-info-title">Link: </span>
+                  <span class="other-info-content"> 
+                    <a class="link-codigo" target="_blank" [href]="currentModelo.github">
+                      {{ currentModelo.github }}
+                    </a> 
+                  </span>
+                </div>
+
+                <!-- Seção de arquivo ZIP -->
+                <div class="codigo-zip-section">
+
+                  <!-- Botão de download (se tiver ZIP) -->
+                  <button *ngIf="currentModelo.temCodigoZip"
+                  class="btn-download-zip"
+                  (click)="baixarCodigoZip()"
+                  [disabled]="baixandoZip"
+                  matTooltip="Baixar código-fonte (ZIP)">
+                    <mat-icon *ngIf="!baixandoZip">download</mat-icon>
+                    <mat-spinner *ngIf="baixandoZip" diameter="18"></mat-spinner>
+                    <span>Baixar ZIP</span>
+                    <span class="nome-arquivo-zip" *ngIf="nomeArquivoZip && !baixandoZip">
+                      ({{ nomeArquivoZip }})
+                  </span>
+                  </button>
+
+                  <!-- Botões de gerenciamento (apenas para admins/criadores) -->
+                  <div class="codigo-acoes" *ngIf="podeGerenciarModelo">
+
+                    <!-- Botão de upload -->
+                    <button class="btn-upload-zip"
+                    (click)="abrirSeletorZip()"
+                    [disabled]="uploadingZip"
+                    matTooltip="Enviar/Substituir arquivo ZIP">
+                      <mat-icon *ngIf="!uploadingZip">attach_file</mat-icon>
+                      <mat-spinner *ngIf="uploadingZip" diameter="18"></mat-spinner>
+                      <span>{{ currentModelo.temCodigoZip ? 'Substituir arquivo (.zip)' : 'Enviar código-fonte: arquivo (.zip)' }}</span>
+                    </button>
+
+                    <!-- Botão de remover (apenas se tiver ZIP) -->
+                    <button *ngIf="currentModelo.temCodigoZip"
+                    class="btn-remover-zip"
+                    (click)="removerCodigoZip()"
+                    [disabled]="removendoZip"
+                    matTooltip="Remover arquivo ZIP">
+                      <mat-icon *ngIf="!removendoZip">delete</mat-icon>
+                      <mat-spinner *ngIf="removendoZip" diameter="18"></mat-spinner>
+                      <span>Remover arquivo (.zip)</span>
+                    </button>
+                  </div>
+                </div>
+              </div>              
             </div>
 
-            <div class="modelo-other-info-item">
+            <!-- Input de arquivo ZIP escondido -->
+            <input type="file" #zipInput 
+              (change)="onZipSelected($event)"
+              accept=".zip,application/zip"
+              style="display: none;">
+
+            <div class="modelo-other-info-item" style="margin-top: 10px;">
               <span class="other-info-title">Enviado por:</span>
               <span class="other-info-content"> {{ currentModelo.autor }} </span>
             </div>

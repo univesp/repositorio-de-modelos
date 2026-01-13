@@ -18,6 +18,9 @@ export interface Modelo {
   acessibilidade?: string[];
   hasMobile: boolean;
   hasCodigo: boolean;
+  temCodigoZip?: any;
+  codigoZipFileId?: string | null;
+  codigoUrl?: string | null;
   isDestaque: boolean;
   hasEquipe: boolean;
   equipe?: {

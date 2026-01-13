@@ -32,6 +32,10 @@ export class ModeloConverterService {
 
     const imagemParaExibir = ImagemDefaultUtils.getImagemParaExibicao(apiModelo);
 
+    // VERIFICA SE TEM CÓDIGO ZIP DISPONÍVEL
+    // Tem código ZIP se tem codigoZipFileId OU codigoUrl
+    const temCodigoZip = !!(apiModelo.codigoZipFileId || apiModelo.codigoUrl);
+
     return {
       id: apiModelo.id,
       titulo: apiModelo.titulo,
@@ -52,6 +56,9 @@ export class ModeloConverterService {
       acessibilidade: apiModelo.acessibilidade || [],
       hasMobile: false,
       hasCodigo: apiModelo.hasCodigo || false,
+      temCodigoZip: temCodigoZip,
+      codigoZipFileId: apiModelo.codigoZipFileId || null,
+      codigoUrl: apiModelo.codigoUrl || null,
       isDestaque: apiModelo.destaque || false,
       hasEquipe: apiModelo.hasEquipe || false,
       equipe: apiModelo.equipe ? {
@@ -67,7 +74,7 @@ export class ModeloConverterService {
       github: apiModelo.codigoLink || undefined,
       isSalvo: false, // Será atualizado pelo BookmarkService
       licenca: apiModelo.licenca?.join(', ') || 'Não especificada',
-      carousel: apiModelo.carousel || false
+      carousel: apiModelo.carousel || false,
     };
   }
 

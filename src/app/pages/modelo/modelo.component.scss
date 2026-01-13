@@ -1424,6 +1424,112 @@
   cursor: not-allowed;
 }
 
+
+// Código Zip
+.codigo-acoes-container {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.codigo-zip-section {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  
+  .other-info-title {
+    font-weight: 500;
+    color: #666;
+    margin-right: 8px;
+  }
+}
+
+.btn-download-zip {
+  mat-icon {
+    font-size: 20px !important; 
+  }
+}
+
+.btn-download-zip,
+.btn-upload-zip,
+.btn-remover-zip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-download-zip {
+  background-color: transparent !important;
+  color: #333;
+  font-size: 18px;
+  
+}
+
+.btn-upload-zip {
+  background-color: #7155d8;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: darken(#7155d8, 10%);
+  }
+}
+
+.btn-remover-zip {
+  background-color: #f44336;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background-color: darken(#f44336, 10%);
+  }
+}
+
+.codigo-acoes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 5px;
+}
+
+.aviso-sem-zip {
+  color: #f57c00;
+  font-style: italic;
+  font-size: 13px;
+  margin-left: 8px;
+}
+
+.github-info {
+  margin-bottom: 10px;
+}
+
+.link-codigo {
+  color: #7155d8;
+  text-decoration: none;
+  word-break: break-all;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 /* ============ RESPONSIVIDADE ============ */
 @media (max-width: 767px) {
   .badge-imagem-acoes {

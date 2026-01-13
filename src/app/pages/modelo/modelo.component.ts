@@ -12,6 +12,7 @@ import { ExcluirModeloService } from '../../services/excluir-modelo.service';
 import { ModeloConverterService } from '../../services/modelo-converter.service';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-modelo',
@@ -44,6 +45,14 @@ export class ModeloComponent implements OnInit, OnDestroy {
     isAdmin: boolean = false;
     isCriadorDoModelo: boolean = false;
 
+    // Propriedades para o Código Zip
+    @ViewChild('zipInput') zipInput!: ElementRef<HTMLInputElement>;
+    temCodigoZip: boolean = false;
+    baixandoZip: boolean = false;
+    uploadingZip: boolean = false;
+    removendoZip: boolean = false;
+    nomeArquivoZip: string = '';
+
     // Referência para o input de arquivo
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
     
@@ -57,7 +66,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
         private modeloConverterService: ModeloConverterService,
         private excluirModeloService: ExcluirModeloService,
         private atualizarModeloService: AtualizarModeloService,
-        private uploadImagemService: UploadImagemService
+        private uploadImagemService: UploadImagemService,
     ) {
         // Escuta mudanças de rota
         this.router.events
@@ -87,7 +96,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
             this.userProfile = profile;
             this.isAdmin = profile?.role === 'ADMIN';
             this.verificarSeECriadorDoModelo();
-        })
+        });
 
         setTimeout(() => {
             this.carregarModeloCompleto();
@@ -100,78 +109,256 @@ export class ModeloComponent implements OnInit, OnDestroy {
             return;
         }
         
-        // Verifica se o usuário logado é o criador do modelo
         const criadorDoModelo = this.currentModeloAPI.createdBy;
         const usuarioLogadoEmail = this.userProfile.email;
         
         this.isCriadorDoModelo = criadorDoModelo === usuarioLogadoEmail;
     }
 
-
     private carregarImagemCustomizada(modeloId: string): void {
-    if (!modeloId) return;
+        if (!modeloId) return;
 
-    this.imagemCarregando = true;
-    
-    // Tenta buscar imagem customizada
-    this.uploadImagemService.getImagemModelo(modeloId)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-        next: (blob) => {
-            // Cria URL do blob
-            this.imagemCustomizadaUrl = URL.createObjectURL(blob);
-            console.log('✅ Imagem customizada carregada');
-            this.imagemCarregando = false;
-        },
-        error: (error) => {
-            this.imagemCustomizadaUrl = null;
-            this.imagemCarregando = false; // Termina loading mesmo com erro
-        }
-        });
-    }
-
-    /**
-    * Obtém imagem para modelos similares
-    */
-    obterImagemParaModeloSimilar(modelo: Modelo): string {
-        const modeloId = modelo.id;
-        
-        // 1. Se já tem no cache, retorna
-        if (this.imagensSimilaresCache.has(modeloId)) {
-        return this.imagensSimilaresCache.get(modeloId)!;
-        }
-        
-        // 2. Se não está carregando, inicia o carregamento
-        if (!this.carregandoImagensSimilares.has(modeloId)) {
-        this.carregandoImagensSimilares.add(modeloId);
+        this.imagemCarregando = true;
         
         this.uploadImagemService.getImagemModelo(modeloId)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
             next: (blob) => {
-                // Cria URL e salva no cache
-                const url = URL.createObjectURL(blob);
-                this.imagensSimilaresCache.set(modeloId, url);
-                this.carregandoImagensSimilares.delete(modeloId);
+                this.imagemCustomizadaUrl = URL.createObjectURL(blob);
+                this.imagemCarregando = false;
             },
             error: (error) => {
-                // Se erro, remove do set de carregamento
-                this.carregandoImagensSimilares.delete(modeloId);
+                this.imagemCustomizadaUrl = null;
+                this.imagemCarregando = false;
             }
             });
+    }
+
+    obterImagemParaModeloSimilar(modelo: Modelo): string {
+        const modeloId = modelo.id;
+        
+        if (this.imagensSimilaresCache.has(modeloId)) {
+            return this.imagensSimilaresCache.get(modeloId)!;
         }
         
-        // 3. Enquanto carrega ou se der erro, retorna a imagem padrão
+        if (!this.carregandoImagensSimilares.has(modeloId)) {
+            this.carregandoImagensSimilares.add(modeloId);
+            
+            this.uploadImagemService.getImagemModelo(modeloId)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                next: (blob) => {
+                    const url = URL.createObjectURL(blob);
+                    this.imagensSimilaresCache.set(modeloId, url);
+                    this.carregandoImagensSimilares.delete(modeloId);
+                },
+                error: (error) => {
+                    this.carregandoImagensSimilares.delete(modeloId);
+                }
+                });
+        }
+        
         return modelo.img_lg || 'assets/images/placeholder-modelo.svg';
     }
 
-    /**
-     * CARREGA MODELO + TODOS OS MODELOS DA API
-     */
-    private carregarModeloCompleto(): void {
-        if (this.estaCarregando) {
-            return;
+    // ========== MÉTODOS DO CÓDIGO ZIP (FETCH DIRETO) ==========
+
+    abrirSeletorZip(): void {
+        if (!this.podeGerenciarModelo) return;
+        this.zipInput.nativeElement.click();
+    }
+
+    async onZipSelected(event: any): Promise<void> {
+        const arquivo: File = event.target.files[0];
+        if (!arquivo || !this.currentModelo) return;
+
+        // SALVA O NOME DO ARQUIVO!
+        this.nomeArquivoZip = arquivo.name;
+        
+        this.uploadingZip = true;
+        
+        // SOLUÇÃO QUE FUNCIONA!
+        const token = this.authService.getToken();
+        const formData = new FormData();
+        formData.append('file', arquivo, arquivo.name);
+
+        try {
+            const response = await fetch(`/api/modelos/${this.currentModelo.id}/codigo`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                console.log('✅ Upload funcionou!');
+                this.temCodigoZip = true;
+                if (this.currentModelo) {
+                    this.currentModelo.temCodigoZip = true;
+                }
+                
+                Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Código-fonte enviado com sucesso',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+                
+            } else {
+                console.log('❌ Falhou:', response.status);
+                Swal.fire({
+                    title: 'Erro!',
+                    text: `Erro ${response.status} ao enviar arquivo`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+            
+        } catch (error) {
+            console.error('💥 Erro:', error);
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Erro ao enviar arquivo',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        } finally {
+            this.uploadingZip = false;
+            this.limparSelecaoZip();
         }
+    }
+
+    async baixarCodigoZip(): Promise<void> {
+        if (!this.currentModelo || this.baixandoZip) return;
+        
+        this.baixandoZip = true;
+        
+        const token = this.authService.getToken();
+
+        try {
+            const response = await fetch(`/api/modelos/${this.currentModelo.id}/codigo`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `codigo-fonte_${this.currentModelo.titulo.replace(/[^a-z0-9]/gi, '_')}.zip`;
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                window.URL.revokeObjectURL(url);
+                
+                console.log('✅ Download funcionou!');
+                
+            } else {
+                console.log('❌ Falhou download:', response.status);
+                Swal.fire({
+                    title: 'Erro!',
+                    text: `Arquivo não encontrado (${response.status})`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+            
+        } catch (error) {
+            console.error('💥 Erro download:', error);
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Erro ao baixar arquivo',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        } finally {
+            this.baixandoZip = false;
+        }
+    }
+
+    async removerCodigoZip(): Promise<void> {
+        if (!this.currentModelo || this.removendoZip) return;
+        
+        const result = await Swal.fire({
+            title: 'Remover código-fonte?',
+            text: `Tem certeza que deseja remover o arquivo ZIP de "${this.currentModelo.titulo}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sim, remover!',
+            cancelButtonText: 'Cancelar'
+        });
+        
+        if (!result.isConfirmed) return;
+        
+        this.removendoZip = true;
+        
+        const token = this.authService.getToken();
+
+        try {
+            const response = await fetch(`/api/modelos/${this.currentModelo.id}/codigo`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                console.log('✅ Remoção funcionou!');
+                this.temCodigoZip = false;
+                if (this.currentModelo) {
+                    this.currentModelo.temCodigoZip = false;
+                }
+                
+                Swal.fire({
+                    title: 'Removido!',
+                    text: 'Código-fonte removido com sucesso',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+                
+            } else {
+                console.log('❌ Falhou remoção:', response.status);
+                Swal.fire({
+                    title: 'Erro!',
+                    text: `Erro ${response.status} ao remover arquivo`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+            
+        } catch (error) {
+            console.error('💥 Erro remoção:', error);
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Erro ao remover arquivo',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        } finally {
+            this.removendoZip = false;
+        }
+    }
+
+    private limparSelecaoZip(): void {
+        if (this.zipInput?.nativeElement) {
+            this.zipInput.nativeElement.value = '';
+        }
+    }
+
+    // ========== FIM DOS MÉTODOS DO CÓDIGO ZIP ==========
+
+    private carregarModeloCompleto(): void {
+        if (this.estaCarregando) return;
         
         this.estaCarregando = true;
         window.scrollTo(0, 0);
@@ -189,7 +376,6 @@ export class ModeloComponent implements OnInit, OnDestroy {
         this.modelosSimilares = [];
         this.todosModelosDaAPI = [];
     
-        // 1. BUSCA APENAS O MODELO PRINCIPAL
         this.apiModelosService.getModeloPorIdDaAPI(id).subscribe({
             next: (modeloAPI) => {
                 if (!modeloAPI) {
@@ -198,18 +384,13 @@ export class ModeloComponent implements OnInit, OnDestroy {
                     return;
                 }
     
-                // Modelo encontrado!
                 this.currentModelo = this.modeloConverterService.converterAPIparaModelo(modeloAPI);
                 this.currentModeloAPI = modeloAPI;
                 this.currentModelo.isSalvo = this.bookmarkService.isSalvo(this.currentModelo.id);
 
-                // VERIFICA SE É O CRIADOR DO MODELO
                 this.verificarSeECriadorDoModelo();
-
-                // TENTA CARREGAR IMAGEM CUSTOMIZADA
                 this.carregarImagemCustomizada(id);
                 
-                // 2. BUSCA MODELOS SIMILARES
                 this.apiModelosService.getModelosDaAPI().subscribe({
                     next: (todosModelosAPI) => {
                         if (todosModelosAPI.length > 0) {
@@ -232,22 +413,13 @@ export class ModeloComponent implements OnInit, OnDestroy {
                 });
             },
             error: (error) => {
-                if (error.status === 404) {
-                    this.isLoading = false;
-                    this.currentModelo = null;
-                } else {
-                    this.isLoading = false;
-                    this.currentModelo = null;
-                }
-                
+                this.isLoading = false;
+                this.currentModelo = null;
                 this.estaCarregando = false;
             }
         });
     }
 
-    /**
-     * FINALIZA O CARREGAMENTO
-     */
     private finalizarCarregamento(id: string): void {
         if (!this.currentModelo) {
             this.isLoading = false;
@@ -261,11 +433,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
         this.isLoading = false;
     }
 
-    // getter para verificar se pode editar imagem:
     get podeGerenciarModelo(): boolean {
-        // Retorna true se:
-        // 1. Usuário está logado
-        // 2. E (é ADMIN OU é o criador do modelo)
         return this.isLoggedIn && (this.isAdmin || this.isCriadorDoModelo);
     }
 
@@ -273,9 +441,6 @@ export class ModeloComponent implements OnInit, OnDestroy {
         return this.podeGerenciarModelo && this.mostrarBotoesImagem;
     }
 
-    /**
-     * CARREGA MODELOS SIMILARES
-     */
     private carregarModelosSimilares(): void {
         if (!this.currentModelo || this.todosModelosDaAPI.length === 0) {
             this.modelosSimilares = [];
@@ -358,16 +523,12 @@ export class ModeloComponent implements OnInit, OnDestroy {
         );
     }
 
-    /**
-     * Abre o seletor de arquivos
-     */
+    // ========== MÉTODOS DA IMAGEM ==========
+
     abrirSeletorImagem(): void {
         this.fileInput.nativeElement.click();
     }
 
-    /**
-     * Quando um arquivo é selecionado (UPLOAD DIRETO)
-     */
     async onFileSelected(event: any): Promise<void> {
         const arquivo: File = event.target.files[0];
         
@@ -375,56 +536,47 @@ export class ModeloComponent implements OnInit, OnDestroy {
         
         const validacao = this.uploadImagemService.validarArquivo(arquivo);
         if (!validacao.valido) {
-          this.uploadImagemService.mostrarErro(validacao.mensagem!);
-          this.limparSelecao();
-          return;
+            this.uploadImagemService.mostrarErro(validacao.mensagem!);
+            this.limparSelecao();
+            return;
         }
-      
+    
         this.isUploading = true;
         
         try {
-          const sucesso = await this.uploadImagemService.executarUpload(
-            this.currentModelo!.id.toString(),
-            this.currentModelo!.titulo,
-            arquivo
-          );
-          
-          if (sucesso) {
-            // APÓS UPLOAD BEM-SUCEDIDO, RECARREGA A IMAGEM CUSTOMIZADA
-            this.carregarImagemCustomizada(this.currentModelo!.id.toString());
-          }
-          
-          this.limparSelecao();
-          
+            const sucesso = await this.uploadImagemService.executarUpload(
+                this.currentModelo!.id.toString(),
+                this.currentModelo!.titulo,
+                arquivo
+            );
+            
+            if (sucesso) {
+                this.carregarImagemCustomizada(this.currentModelo!.id.toString());
+            }
+            
+            this.limparSelecao();
+            
         } catch (error) {
-          console.error('Erro no upload:', error);
+            console.error('Erro no upload:', error);
         } finally {
-          this.isUploading = false;
+            this.isUploading = false;
         }
-      }
+    }
 
-    /**
-     * Remove a imagem
-     */
     async removerImagem(): Promise<void> {
         if (!this.currentModelo) return;
 
         if (!this.temImagemCustomizada) {
-            // Se já não tem imagem customizada, mostra mensagem e não faz nada
             this.uploadImagemService.mostrarSucesso('Já está usando imagem padrão');
             return;
         }
 
-        // Agora usa o novo método que já tem SweetAlert e recarregamento
         await this.uploadImagemService.executarRemocaoImagem(
             this.currentModelo.id.toString(),
             this.currentModelo.titulo
         );
     }
 
-    /**
-     * Limpa a seleção atual
-     */
     private limparSelecao(): void {
         this.arquivoSelecionado = null;
         this.previewImagem = null;
@@ -434,29 +586,23 @@ export class ModeloComponent implements OnInit, OnDestroy {
     }
 
     get imagemParaExibir(): string {
-        // 1. Se tem imagem customizada, usa ela
         if (this.imagemCustomizadaUrl) {
-          return this.imagemCustomizadaUrl;
+            return this.imagemCustomizadaUrl;
         }
         
-        // 2. Se não, usa a imagem padrão do modelo
         if (this.currentModelo?.img_lg) {
-          return this.currentModelo.img_lg;
+            return this.currentModelo.img_lg;
         }
         
-        // 3. Fallback
         return 'assets/images/placeholder-modelo.svg';
-      }
+    }
 
-    /**
-     * Verifica se o modelo tem imagem customizada
-     */
     get temImagemCustomizada(): boolean {
-        // Verifica se tem imagem customizada carregada
         return !!this.imagemCustomizadaUrl;
-      }
+    }
 
-    // MÉTODOS PÚBLICOS PARA O TEMPLATE
+    // ========== MÉTODOS GERAIS ==========
+
     isCodePenUrl(url: string | undefined): boolean {
         return !!url && url.includes('codepen.io');
     }
@@ -510,95 +656,71 @@ export class ModeloComponent implements OnInit, OnDestroy {
         this.menuOpcoesAberto = false;
         this.mostrarBotoesImagem = true;
 
-        // Opcional: Esconde os botões automaticamente após 5 segundos
         setTimeout(() => {
             this.mostrarBotoesImagem = false;
         }, 5000);
     }
 
-    // método para esconder os botões:
     esconderBotoesImagem(): void {
         this.mostrarBotoesImagem = false;
     }
 
-    /**
-     * Verifica se o modelo está no carrossel (topo)
-     */
     get estaNoCarrossel(): boolean {
         return this.currentModeloAPI?.carousel === true;
     }
 
-    /**
-     * Alterna entre adicionar/remover do topo (carrossel)
-     */
     alternarNoTopo(): void {
         this.menuOpcoesAberto = false;
         
-        if (!this.currentModelo || !this.currentModeloAPI) {
-        return;
-        }
+        if (!this.currentModelo || !this.currentModeloAPI) return;
         
         if (this.estaNoCarrossel) {
-        // Se já está no topo, remove
-        this.atualizarModeloService.removerDoTopo(
-            this.currentModeloAPI,
-            this.currentModelo.id.toString(),
-            this.currentModelo.titulo
-        );
+            this.atualizarModeloService.removerDoTopo(
+                this.currentModeloAPI,
+                this.currentModelo.id.toString(),
+                this.currentModelo.titulo
+            );
         } else {
-        // Se não está no topo, adiciona
-        this.atualizarModeloService.executarAdicionarAoTopo(
-            this.currentModeloAPI,
-            this.currentModelo.id.toString(),
-            this.currentModelo.titulo
-        );
+            this.atualizarModeloService.executarAdicionarAoTopo(
+                this.currentModeloAPI,
+                this.currentModelo.id.toString(),
+                this.currentModelo.titulo
+            );
         }
     }
 
-    /**
-     * Verifica se o modelo está nos destaques
-     */
     get estaNosDestaques(): boolean {
         return this.currentModeloAPI?.destaque === true;
     }
 
-    /**
-     * Alterna entre adicionar/remover dos destaques
-     */
     alternarNosDestaques(): void {
         this.menuOpcoesAberto = false;
         
-        if (!this.currentModelo || !this.currentModeloAPI) {
-        return;
-        }
+        if (!this.currentModelo || !this.currentModeloAPI) return;
         
         if (this.estaNosDestaques) {
-        // Se já está nos destaques, remove
-        this.atualizarModeloService.removerDosDestaques(
-            this.currentModeloAPI,
-            this.currentModelo.id.toString(),
-            this.currentModelo.titulo
-        );
+            this.atualizarModeloService.removerDosDestaques(
+                this.currentModeloAPI,
+                this.currentModelo.id.toString(),
+                this.currentModelo.titulo
+            );
         } else {
-        // Se não está nos destaques, adiciona
-        this.atualizarModeloService.adicionarAosDestaques(
-            this.currentModeloAPI,
-            this.currentModelo.id.toString(),
-            this.currentModelo.titulo
-        );
+            this.atualizarModeloService.adicionarAosDestaques(
+                this.currentModeloAPI,
+                this.currentModelo.id.toString(),
+                this.currentModelo.titulo
+            );
         }
     }
 
     excluirModelo(): void {
         this.menuOpcoesAberto = false;
         
-        if (!this.currentModelo) {
-          return;
-        }
+        if (!this.currentModelo) return;
         
         this.excluirModeloService.executarExclusao(
-          this.currentModelo.id.toString(),
-          this.currentModelo.titulo
+            this.currentModelo.id.toString(),
+            this.currentModelo.titulo
         );
     }
 
@@ -622,12 +744,10 @@ export class ModeloComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        // Libera a URL do blob da memória
         if (this.imagemCustomizadaUrl) {
-          URL.revokeObjectURL(this.imagemCustomizadaUrl);
+            URL.revokeObjectURL(this.imagemCustomizadaUrl);
         }
 
-        // LIMPA CACHE DOS MODELOS SIMILARES
         this.imagensSimilaresCache.forEach(url => {
             URL.revokeObjectURL(url);
         });
@@ -636,5 +756,5 @@ export class ModeloComponent implements OnInit, OnDestroy {
         
         this.destroy$.next();
         this.destroy$.complete();
-      }
+    }
 }

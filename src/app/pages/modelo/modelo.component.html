@@ -82,16 +82,36 @@
 
       <!-- Seção da Imagem com Upload -->
       <div class="modelo__galeriaImagens">
-        <div class="imagem-container">
+        <div class="imagem-container"
+          (mouseenter)="mostrarBotaoEdicao = true"
+          (mouseleave)="mostrarBotaoEdicao = false">
           <!-- Loading overlay para imagem -->
           <div class="imagem-loading-overlay" *ngIf="imagemCarregando">
             <div class="loading-spinner small"></div>
             <span>Carregando imagem...</span>
           </div>
 
+          <!-- Botão para mostrar opções de edição da imagem -->
+          <button class="btn-editar-imagem" 
+            *ngIf="podeGerenciarModelo && !mostrarBotoesImagem && mostrarBotaoEdicao"
+            (click)="mostrarBotoesImagem = true"
+            matTooltip="Editar imagem"
+            matTooltipPosition="above"
+            (touchstart)="mostrarBotoesImagem = true; $event.preventDefault()"
+            title="adicionar/substituir imagem">
+            <mat-icon>edit</mat-icon>
+          </button>
+
           <!-- USA imagemParaExibir que verifica customizada primeiro -->
-          <img [src]="imagemParaExibir" [alt]="currentModelo.titulo"
-               (click)="abrirModalImagem(imagemParaExibir)">
+          <div class="imagem-wrapper">
+            <!-- Overlay que escurece APENAS a imagem -->
+            <div class="imagem-overlay" *ngIf="mostrarBotoesImagem"></div>
+            
+            <!-- Imagem principal -->
+            <img [src]="imagemParaExibir" [alt]="currentModelo.titulo"
+                 [class.imagem-escurecida]="mostrarBotoesImagem"
+                 (click)="abrirModalImagem(imagemParaExibir)">
+          </div>
           
           <!-- Botões de ação flutuantes -->
           <div class="badge-imagem-acoes" 
@@ -285,7 +305,7 @@
               <span class="modelo-equipe-title">Equipe</span>
               <hr>
               <br>
-              <div class="modelo-equipe-responsavel-item">
+              <div class="modelo-equipe-responsavel-item" *ngIf="currentModelo.equipe.docente !== ''">
                 <span class="other-info-title">Docente:</span>
                 <span class="other-info-content"> {{ currentModelo.equipe.docente || 'Não informado' }} </span>
               </div>
@@ -352,6 +372,14 @@
       </div>
     </div>
   </div>
+
+  <app-editar-modelo-modal
+    *ngIf="currentModeloAPI"
+    [modelo]="currentModeloAPI"
+    [isOpen]="modalEdicaoAberto"
+    (closed)="fecharModalEdicao()"
+    (saved)="salvarEdicao($event)">
+  </app-editar-modelo-modal>
 
   <!-- ERRO (se não encontrar modelo) -->
   <div *ngIf="!isLoading && !currentModelo" class="modelo-error">

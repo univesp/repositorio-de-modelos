@@ -10,6 +10,8 @@ import { AtualizarModeloService } from '../../services/atualizar-modelo.service'
 import { UploadImagemService } from '../../services/upload-imagem.service';
 import { ExcluirModeloService } from '../../services/excluir-modelo.service';
 import { ModeloConverterService } from '../../services/modelo-converter.service';
+import { ModeloService } from '../../services/modelo.service';
+import { ModeloCadastroRequest } from '../../interfaces/modelo/modelo-create-request.interface';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -37,6 +39,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
     imagemCustomizadaUrl: string | null = null;
     imagemCarregando: boolean = false;
     mostrarBotoesImagem: boolean = false;
+    mostrarBotaoEdicao: boolean = false;
 
     private imagensSimilaresCache = new Map<string, string>();
     private carregandoImagensSimilares = new Set<string>();
@@ -55,6 +58,9 @@ export class ModeloComponent implements OnInit, OnDestroy {
 
     // Referência para o input de arquivo
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
+    //edição do modelo
+    modalEdicaoAberto: boolean = false;
     
     constructor(
         private router: Router,
@@ -67,6 +73,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
         private excluirModeloService: ExcluirModeloService,
         private atualizarModeloService: AtualizarModeloService,
         private uploadImagemService: UploadImagemService,
+        private modeloService: ModeloService,
     ) {
         // Escuta mudanças de rota
         this.router.events
@@ -654,16 +661,87 @@ export class ModeloComponent implements OnInit, OnDestroy {
 
     editarModelo(): void {
         this.menuOpcoesAberto = false;
-        this.mostrarBotoesImagem = true;
-
-        setTimeout(() => {
-            this.mostrarBotoesImagem = false;
-        }, 5000);
+        this.modalEdicaoAberto = true;
     }
+
+    fecharModalEdicao(): void {
+        this.modalEdicaoAberto = false;
+    }
+
+    salvarEdicao(dadosEditados: ModeloCadastroRequest): void {
+        if (!this.currentModeloAPI) return;
+      
+        // Preparar os dados para envio
+        const dadosParaEnviar = {
+          ...dadosEditados,
+          // Garantir que campos obrigatórios da API estão presentes
+          ano: this.currentModeloAPI.ano,
+          mes: this.currentModeloAPI.mes,
+          dia: this.currentModeloAPI.dia,
+          date: this.currentModeloAPI.date,
+          autoria: this.currentModeloAPI.autoria,
+          carousel: this.currentModeloAPI.carousel,
+          destaque: this.currentModeloAPI.destaque,
+          // Tratar a equipe
+          equipe: dadosEditados.hasEquipe ? {
+            docente: dadosEditados.equipe?.docente || '',
+            coordenacao: dadosEditados.equipe?.coordenacao || '',
+            roteirizacao: dadosEditados.equipe?.roteirizacao || '',
+            layout: dadosEditados.equipe?.layout || '',
+            ilustracao: dadosEditados.equipe?.ilustracao || '',
+            programacao: dadosEditados.equipe?.programacao || ''
+          } : undefined
+        };
+      
+        this.modeloService.atualizarModelo(
+          this.currentModeloAPI.id,
+          dadosParaEnviar
+        ).subscribe({
+          next: (modeloAtualizado) => {
+            // Atualiza os dados locais
+            this.currentModeloAPI = modeloAtualizado;
+            this.currentModelo = this.modeloConverterService.converterAPIparaModelo(modeloAtualizado);
+            
+            // Fecha o modal
+            this.modalEdicaoAberto = false;
+            
+            // Mostra mensagem de sucesso
+            Swal.fire({
+              icon: 'success',
+              title: 'Sucesso!',
+              text: 'Modelo atualizado com sucesso',
+              confirmButtonColor: '#7155d8',
+              timer: 3000
+            });
+          },
+          error: (error) => {
+            console.error('Erro ao atualizar modelo:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Erro!',
+              text: 'Erro ao atualizar modelo. Tente novamente.',
+              confirmButtonColor: '#7155d8'
+            });
+          }
+        });
+      }
+    
 
     esconderBotoesImagem(): void {
         this.mostrarBotoesImagem = false;
+        this.mostrarBotaoEdicao = false;
     }
+
+    mostrarBotoesImagemTemporariamente(): void {
+        this.mostrarBotoesImagem = true;
+        
+        // Auto-esconder após 8 segundos
+        setTimeout(() => {
+          if (this.mostrarBotoesImagem) {
+            this.esconderBotoesImagem();
+          }
+        }, 8000);
+      }
 
     get estaNoCarrossel(): boolean {
         return this.currentModeloAPI?.carousel === true;

@@ -73,6 +73,41 @@
     }
 }
 
+.btn-editar-imagem {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  z-index: 10;
+  background: rgba(113, 85, 216, 0.9);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  
+  &:hover {
+    background: #7155d8;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
 .modelo-title-actionButton {
   display: flex;
   align-items: center;
@@ -1203,16 +1238,49 @@
   width: 100%;
 }
 
+.imagem-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 40%;
+  
+  img {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+    transition: filter 0.3s ease;
+  }
+}
+
+// Overlay escuro para a imagem
+.imagem-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1; // Entre a imagem (z-index: 0) e os botões (z-index: 10+)
+  border-radius: 8px;
+  pointer-events: none; // Permite clicar nos botões que estão acima
+}
+
+// Classe para escurecer a imagem
+.imagem-escurecida {
+  filter: brightness(0.6);
+  transition: filter 0.3s ease;
+}
+
 .badge-imagem-acoes {
   position: absolute;
-  top: 250px;
-  left: 475px;
+  top: 10px;
+  left: 5px;
   display: flex;
   gap: 8px;
   background: rgba(0, 0, 0, 0.7);
   padding: 6px;
   border-radius: 20px;
   backdrop-filter: blur(4px);
+  z-index: 20;
 
   /* ANIMAÇÃO DE ENTRADA */
   opacity: 0;
@@ -1531,11 +1599,34 @@
 }
 
 /* ============ RESPONSIVIDADE ============ */
+@media (max-width: 1300px) {
+  .imagem-wrapper {
+    width: 60%;
+  }
+}
+
+@media (max-width: 992px) {
+  .btn-editar-imagem {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .imagem-wrapper {
+    width: 50%;
+  }
+}
+
 @media (max-width: 767px) {
   .badge-imagem-acoes {
-    top: 250px;
+    top: 5px;
+    left: 5px;
     gap: 6px;
     padding: 4px;
+  }
+
+  .btn-editar-imagem {
+    top: -5px;
+    left: -5px;
   }
   
   .btn-acao-imagem {
@@ -1565,6 +1656,10 @@
       height: 100px;
     }
   }
+
+  .imagem-wrapper {
+    width: 60%;
+  }
   
   .preview-details {
     text-align: center;
@@ -1587,14 +1682,23 @@
     width: 85%;
   }
 
+  .imagem-wrapper {
+    width: 90%;
+  }
+
   .badge-imagem-acoes {
     position: absolute;
-    top: 215px;
-    left: 405px;
+    top: 5px;
+    left: 5px;
     margin-bottom: 10px;
     justify-content: center;
     background: transparent;
     backdrop-filter: none;
+  }
+
+  .btn-editar-imagem {
+    top: -5px;
+    left: -5px;
   }
   
   .badge-imagem-default {

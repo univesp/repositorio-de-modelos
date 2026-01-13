@@ -22,6 +22,7 @@ import { UserFavouritesComponent } from './user-favourites/user-favourites.compo
 import { CriarUsuarioComponent } from './criar-usuario/criar-usuario.component';
 import { VisualizarUsuariosComponent } from './visualizar-usuarios/visualizar-usuarios.component';
 import { CodePenViewerComponent } from './code-pen-viewer/code-pen-viewer.component';
+import { EditarModeloModalComponent } from './editar-modelo-modal/editar-modelo-modal.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { CodePenViewerComponent } from './code-pen-viewer/code-pen-viewer.compon
     CriarUsuarioComponent,
     VisualizarUsuariosComponent,
     CodePenViewerComponent,
+    EditarModeloModalComponent,
   ],
   imports: [
     CommonModule,
@@ -65,6 +67,7 @@ import { CodePenViewerComponent } from './code-pen-viewer/code-pen-viewer.compon
     CriarUsuarioComponent,
     VisualizarUsuariosComponent,
     CodePenViewerComponent,
+    EditarModeloModalComponent,
   ]
 })
 export class ComponentsModule { }

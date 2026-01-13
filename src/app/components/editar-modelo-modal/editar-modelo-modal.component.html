@@ -1,0 +1,156 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="close()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h2>Editar Modelo</h2>
+      <button class="close-button" (click)="close()">×</button>
+    </div>
+
+    <div class="modal-content">
+      <form class="editar-modelo-form">
+        
+        <!-- Título -->
+        <div class="form-group">
+          <label>Título *</label>
+          <input type="text" [(ngModel)]="titulo" name="titulo" 
+                 class="form-control" required>
+        </div>
+
+        <!-- Descrição -->
+        <div class="form-group">
+          <label>Descrição *</label>
+          <textarea [(ngModel)]="descricao" name="descricao" 
+                    class="form-control" rows="4" required></textarea>
+        </div>
+
+        <!-- Link -->
+        <div class="form-group">
+          <label>URL *</label>
+          <input type="url" [(ngModel)]="link" name="link" 
+                 class="form-control" required>
+        </div>
+
+        <!-- Formato -->
+        <div class="form-group">
+          <label>Formato *</label>
+          <div class="radio-group">
+            <label>
+              <input type="radio" [(ngModel)]="formato" name="formato" value="REA Univesp">
+              REA Univesp
+            </label>
+            <label>
+              <input type="radio" [(ngModel)]="formato" name="formato" value="Jogo">
+              Jogo
+            </label>
+            <label>
+              <input type="radio" [(ngModel)]="formato" name="formato" value="Recurso de Programação">
+              Recurso de Programação
+            </label>
+            <label>
+              <input type="radio" [(ngModel)]="formato" name="formato" value="Site">
+              Site
+            </label>
+            <label>
+              <input type="radio" [(ngModel)]="formato" name="formato" value="Novotec">
+              Novotec
+            </label>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div class="form-group">
+          <label>Tags ({{tags.length}}/{{maxTags}})</label>
+          <div class="tags-container">
+            <div *ngFor="let tag of tags" class="tag">
+              {{tag}}
+              <button type="button" (click)="removeTag(tag)">×</button>
+            </div>
+            <input type="text" [(ngModel)]="currentTagInput" name="tagInput"
+                   (keyup)="onTagKeyUp($event)" 
+                   placeholder="Adicionar tag" 
+                   [disabled]="tags.length >= maxTags">
+          </div>
+        </div>
+
+        <!-- Selects -->
+        <div *ngFor="let selectConfig of selectsConfig">
+          <app-custom-select
+            [label]="selectConfig.label"
+            [options]="selectConfig.opcoes"
+            [initialSelection]="selectedValues[selectConfig.key]"
+            (selectionChange)="onSelectChange(selectConfig.key, $event)"
+            [maxSelecoes]="selectConfig.maxSelecoes">
+          </app-custom-select>
+        </div>
+
+        <!-- Código-fonte -->
+        <div class="form-group">
+          <label>Código-fonte disponível?</label>
+          <div class="radio-group">
+            <label>
+              <input type="radio" [(ngModel)]="hasCodigo" [value]="true" name="hasCodigo">
+              Sim
+            </label>
+            <label>
+              <input type="radio" [(ngModel)]="hasCodigo" [value]="false" name="hasCodigo">
+              Não
+            </label>
+          </div>
+          
+          <div *ngIf="hasCodigo" class="mt-2">
+            <label>Link do código-fonte:</label>
+            <input type="text" [(ngModel)]="codigoLink" name="codigoLink" class="form-control">
+          </div>
+        </div>
+
+        <!-- Equipe (apenas se for REA Univesp, Jogo ou Novotec) -->
+        <div *ngIf="['REA Univesp', 'Jogo', 'Novotec'].includes(formato)" class="form-group">
+          <label>Informações da Equipe</label>
+          
+          <div class="equipe-grid">
+            <div>
+              <label>Docente Responsável</label>
+              <input type="text" [(ngModel)]="equipeDocente" name="equipeDocente" class="form-control">
+            </div>
+            
+            <div>
+              <label>Coordenação</label>
+              <input type="text" [(ngModel)]="equipeCoordenacao" name="equipeCoordenacao" class="form-control">
+            </div>
+            
+            <div>
+              <label>Roteirização</label>
+              <input type="text" [(ngModel)]="equipeRoteirizacao" name="equipeRoteirizacao" class="form-control">
+            </div>
+            
+            <div>
+              <label>Layout</label>
+              <input type="text" [(ngModel)]="equipeLayout" name="equipeLayout" class="form-control">
+            </div>
+            
+            <div>
+              <label>Ilustração</label>
+              <input type="text" [(ngModel)]="equipeIlustracao" name="equipeIlustracao" class="form-control">
+            </div>
+            
+            <div>
+              <label>Programação</label>
+              <input type="text" [(ngModel)]="equipeProgramacao" name="equipeProgramacao" class="form-control">
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="form-actions">
+          <button type="button" (click)="close()" [disabled]="isLoading">
+            Cancelar
+          </button>
+          <button type="button" (click)="save()" [disabled]="isLoading">
+            {{ isLoading ? 'Salvando...' : 'Salvar Alterações' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

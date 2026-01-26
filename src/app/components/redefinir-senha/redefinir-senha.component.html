@@ -1,0 +1,93 @@
+<div class="container-redefinicao">
+  <div class="card-redefinicao">
+    <div class="card-header">
+      <h2>Redefinir Senha</h2>
+      <p *ngIf="!tokenInvalido">Digite sua nova senha abaixo</p>
+      <p *ngIf="tokenInvalido" class="texto-erro">
+        Link inválido ou expirado
+      </p>
+    </div>
+
+    <div class="card-body" *ngIf="!tokenInvalido">
+      <form [formGroup]="formularioRedefinicao" (ngSubmit)="onSubmit()">
+        
+        <div class="grupo-formulario">
+          <label for="senha">Nova Senha</label>
+          <input
+            type="password"
+            id="senha"
+            formControlName="senha"
+            class="controle-formulario"
+            placeholder="Mínimo 6 caracteres"
+            [class.invalido]="formularioRedefinicao.get('senha')?.invalid && formularioRedefinicao.get('senha')?.touched"
+          >
+          <div class="feedback-invalido" *ngIf="formularioRedefinicao.get('senha')?.errors?.['required']">
+            Senha é obrigatória
+          </div>
+          <div class="feedback-invalido" *ngIf="formularioRedefinicao.get('senha')?.errors?.['minlength']">
+            Mínimo 6 caracteres
+          </div>
+          <div class="feedback-invalido" *ngIf="formularioRedefinicao.get('senha')?.errors?.['pattern']">
+            Deve conter letras e números
+          </div>
+        </div>
+
+        <div class="grupo-formulario">
+          <label for="confirmarSenha">Confirmar Nova Senha</label>
+          <input
+            type="password"
+            id="confirmarSenha"
+            formControlName="confirmarSenha"
+            class="controle-formulario"
+            placeholder="Digite a senha novamente"
+            [class.invalido]="(formularioRedefinicao.get('confirmarSenha')?.invalid || formularioRedefinicao.errors?.['senhasDiferentes']) && formularioRedefinicao.get('confirmarSenha')?.touched"
+          >
+          <div class="feedback-invalido" *ngIf="formularioRedefinicao.get('confirmarSenha')?.errors?.['required']">
+            Confirmação é obrigatória
+          </div>
+          <div class="feedback-invalido" *ngIf="formularioRedefinicao.errors?.['senhasDiferentes']">
+            As senhas não coincidem
+          </div>
+        </div>
+
+        <div class="card-rodape">
+          <button
+            type="button"
+            class="botao botao-secundario"
+            (click)="voltarParaLogin()"
+            [disabled]="carregando"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="botao botao-primario"
+            [disabled]="formularioRedefinicao.invalid || carregando"
+          >
+            <span *ngIf="!carregando">Redefinir Senha</span>
+            <span *ngIf="carregando">
+              <i class="spinner-border spinner-border-sm me-2"></i>
+              Processando...
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card-body" *ngIf="tokenInvalido">
+      <div class="mensagem-erro">
+        <p>O link de redefinição está inválido ou expirou.</p>
+        <p>Solicite um novo link na página de login.</p>
+      </div>
+      <div class="card-rodape">
+        <button
+          type="button"
+          class="botao botao-primario"
+          (click)="voltarParaLogin()"
+        >
+          Voltar para Login
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

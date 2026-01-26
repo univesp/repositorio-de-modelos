@@ -11,6 +11,7 @@ import { ExplorarComponent } from './pages/explorar/explorar.component';
 import { CadastroModeloComponent } from './pages/cadastro-modelo/cadastro-modelo.component'; 
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { TagsComponent } from './pages/tags/tags.component';
+import { NovaSenhaComponent } from './pages/nova-senha/nova-senha.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component'; 
 
 const routes: Routes = [
@@ -21,6 +22,7 @@ const routes: Routes = [
   {path: 'cadastro-novo-modelo', component: CadastroModeloComponent},
   {path: 'perfil', component: PerfilComponent},
   {path: 'tags', component: TagsComponent},
+  {path: 'forms/nova-senha', component: NovaSenhaComponent},
 
   {
     path: 'resultados', 

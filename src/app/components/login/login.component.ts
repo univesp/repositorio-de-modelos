@@ -12,6 +12,7 @@ export class LoginComponent {
   isLoading = false;
 
   @Output('onLogin') onLoginEmitt = new EventEmitter<{ email: string; password: string }>();
+  @Output() onEsqueciSenha = new EventEmitter<void>();
 
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
@@ -69,6 +70,11 @@ export class LoginComponent {
       return { required: true };
     }
     return null;
+  }
+
+  clicouEsqueciSenha(event: Event): void {
+    event.preventDefault();
+    this.onEsqueciSenha.emit();
   }
 
   onLogin() {

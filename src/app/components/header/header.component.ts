@@ -281,7 +281,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   isnoBreadCrumbsPath(): boolean {
-    const noBreadCrumbsPath = ['/login', '/404'];
+    const noBreadCrumbsPath = ['/login', '/404', '/forms/nova-senha'];
     return noBreadCrumbsPath.some(path => this.router.url.startsWith(path));
   }
 

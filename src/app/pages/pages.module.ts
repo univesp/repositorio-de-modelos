@@ -16,7 +16,8 @@ import { ExplorarComponent } from './explorar/explorar.component';
 import { CadastroModeloComponent } from './cadastro-modelo/cadastro-modelo.component';
 import { QuillModule } from 'ngx-quill';
 import { PerfilComponent } from './perfil/perfil.component';
-import { TagsComponent } from './tags/tags.component'; 
+import { TagsComponent } from './tags/tags.component';
+import { NovaSenhaComponent } from './nova-senha/nova-senha.component'; 
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { TagsComponent } from './tags/tags.component';
     ExplorarComponent,
     CadastroModeloComponent,
     PerfilComponent,
-    TagsComponent
+    TagsComponent,
+    NovaSenhaComponent
   ],
   imports: [
     ComponentsModule,
@@ -48,7 +50,8 @@ import { TagsComponent } from './tags/tags.component';
     ExplorarComponent,
     CadastroModeloComponent,
     PerfilComponent,
-    TagsComponent
+    TagsComponent,
+    NovaSenhaComponent
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })

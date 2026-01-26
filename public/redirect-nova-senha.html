@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecionando para redefinição de senha</title>
+    <script>
+        // Função para extrair token da URL
+        function extrairTokenDaUrl() {
+            const url = window.location.href;
+            const match = url.match(/[?&]token=([^&]+)/);
+            return match ? decodeURIComponent(match[1]) : null;
+        }
+
+        // Redireciona para o localhost com o token
+        function redirecionarParaLocalhost() {
+            const token = extrairTokenDaUrl();
+            
+            if (token) {
+                // Redireciona para sua aplicação Angular em localhost
+                window.location.href = `http://localhost:4200/forms/nova-senha?token=${token}`;
+            } else {
+                document.getElementById('mensagem').innerHTML = 
+                    '<p style="color: red;">Token não encontrado no link.</p>' +
+                    '<p>Certifique-se de clicar no link completo do email.</p>';
+            }
+        }
+
+        // Executa quando a página carrega
+        window.onload = redirecionarParaLocalhost;
+    </script>
+</head>
+<body>
+    <div style="text-align: center; margin-top: 50px;">
+        <h2>Redirecionando para redefinição de senha...</h2>
+        <div id="mensagem">
+            <p>Aguarde enquanto redirecionamos para o ambiente de desenvolvimento.</p>
+            <p>Se o redirecionamento não acontecer automaticamente, <a href="#" onclick="redirecionarParaLocalhost()">clique aqui</a>.</p>
+        </div>
+    </div>
+</body>
+</html>

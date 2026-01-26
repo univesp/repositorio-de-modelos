@@ -23,6 +23,8 @@ import { CriarUsuarioComponent } from './criar-usuario/criar-usuario.component';
 import { VisualizarUsuariosComponent } from './visualizar-usuarios/visualizar-usuarios.component';
 import { CodePenViewerComponent } from './code-pen-viewer/code-pen-viewer.component';
 import { EditarModeloModalComponent } from './editar-modelo-modal/editar-modelo-modal.component';
+import { ModalRecuperacaoSenhaComponent } from './modal-recuperacao-senha/modal-recuperacao-senha.component';
+import { RedefinirSenhaComponent } from './redefinir-senha/redefinir-senha.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +44,8 @@ import { EditarModeloModalComponent } from './editar-modelo-modal/editar-modelo-
     VisualizarUsuariosComponent,
     CodePenViewerComponent,
     EditarModeloModalComponent,
+    ModalRecuperacaoSenhaComponent,
+    RedefinirSenhaComponent,
   ],
   imports: [
     CommonModule,
@@ -68,6 +72,8 @@ import { EditarModeloModalComponent } from './editar-modelo-modal/editar-modelo-
     VisualizarUsuariosComponent,
     CodePenViewerComponent,
     EditarModeloModalComponent,
+    ModalRecuperacaoSenhaComponent,
+    RedefinirSenhaComponent,
   ]
 })
 export class ComponentsModule { }

@@ -49,6 +49,23 @@ input[type='checkbox'] {
   transform: scale(1.1);
 }
 
+.link-esqueci-senha {
+  margin-top: 0px;
+  text-align: right;
+
+  a {
+    color: #FFF;
+    text-decoration: underline;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+
+    &:hover {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: underline;
+    }
+  }
+}
+
 
 // XS - <576px
 @media (max-width: 575px) {

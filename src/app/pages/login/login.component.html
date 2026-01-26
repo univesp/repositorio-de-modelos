@@ -1,5 +1,15 @@
 <div class="login">
   <div class="login__container">
-    <app-login-component (onLogin)="onLogin($event)"></app-login-component>
+    <app-login-component 
+      (onLogin)="onLogin($event)"
+      (onEsqueciSenha)="abrirModalRecuperacao()">
+    </app-login-component>
   </div>
+
+  <!-- Modal de recuperação de senha -->
+  <app-modal-recuperacao-senha 
+    *ngIf="mostrarModalRecuperacao"
+    (solicitarReset)="solicitarRecuperacaoSenha($event)"
+    (fecharModal)="fecharModalRecuperacao()">
+  </app-modal-recuperacao-senha>
 </div>

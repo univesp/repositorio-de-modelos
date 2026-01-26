@@ -581,8 +581,8 @@ export class CadastroModeloComponent implements OnInit {
       equipe: equipeData
     };
 
-    console.log('Modelo enviado:', modeloRequest);
-    console.log('Usuário logado:', this.currentUser);
+    //console.log('Modelo enviado:', modeloRequest);
+    //console.log('Usuário logado:', this.currentUser);
 
     // Envia para o banco de dados via API
     this.modeloService.criarModelo(modeloRequest).subscribe({
@@ -605,7 +605,7 @@ export class CadastroModeloComponent implements OnInit {
           }, 100);
         });
         
-        console.log('Modelo criado:', response);
+        //console.log('Modelo criado:', response);
       },
       error: (error) => {
         this.isLoading = false;

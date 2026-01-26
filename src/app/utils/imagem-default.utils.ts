@@ -52,7 +52,7 @@ export class ImagemDefaultUtils {
    * Método para debug/teste
    */
   static testarHash(): void {
-    console.log('Teste de hash para imagens default:');
+    //console.log('Teste de hash para imagens default:');
     const idsTeste = [
       '693b1a2bf3da525ae1908cfb',
       '1234567890abcdef',
@@ -63,7 +63,7 @@ export class ImagemDefaultUtils {
 
     idsTeste.forEach(id => {
       const imagem = this.getImagemDefault(id);
-      console.log(`${id.substring(0, 10)}... → ${imagem.substring(imagem.length - 15)}`);
+      //console.log(`${id.substring(0, 10)}... → ${imagem.substring(imagem.length - 15)}`);
     });
   }
 }

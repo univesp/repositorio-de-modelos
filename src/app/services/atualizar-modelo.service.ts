@@ -18,7 +18,7 @@ export class AtualizarModeloService {
   constructor(
     private http: HttpClient
   ) {
-    console.log('✅ AtualizarModeloService inicializado');
+    //console.log('AtualizarModeloService inicializado');
   }
 
   /**
@@ -135,7 +135,7 @@ export class AtualizarModeloService {
       return;
     }
 
-    console.log(`🔄 Verificando limite do carrossel para "${modeloNome}"...`);
+    //console.log(`Verificando limite do carrossel para "${modeloNome}"...`);
     
     // Primeiro verifica se pode adicionar
     this.podeAdicionarAoCarrrossel().pipe(
@@ -146,7 +146,7 @@ export class AtualizarModeloService {
         }
         
         // Se pode adicionar, prossegue com a atualização
-        console.log(`✅ Pode adicionar "${modeloNome}" ao carrossel`);
+        //console.log(`Pode adicionar "${modeloNome}" ao carrossel`);
         
         const modeloAtualizado: ModeloAPI = {
           ...modeloAtual,
@@ -157,7 +157,7 @@ export class AtualizarModeloService {
       })
     ).subscribe({
       next: (modeloAtualizado) => {
-        console.log('✅ Modelo atualizado com sucesso:', modeloAtualizado);
+        //console.log('Modelo atualizado com sucesso:', modeloAtualizado);
         this.mostrarSucesso(`"${modeloNome}" adicionado ao carrossel!`);
         
         // Atualiza o objeto local
@@ -168,7 +168,7 @@ export class AtualizarModeloService {
           return; // Já mostrou o SweetAlert, não precisa mostrar erro
         }
         
-        console.error('❌ Erro ao atualizar modelo:', error);
+        console.error('Erro ao atualizar modelo:', error);
         
         let mensagemErro = 'Erro ao adicionar ao carrossel';
         
@@ -195,7 +195,7 @@ export class AtualizarModeloService {
       return;
     }
 
-    console.log(`🔄 Removendo "${modeloNome}" do carrossel...`);
+    //console.log(`Removendo "${modeloNome}" do carrossel...`);
     
     // Cria cópia do modelo com carousel: false
     const modeloAtualizado: ModeloAPI = {
@@ -205,14 +205,14 @@ export class AtualizarModeloService {
     
     this.atualizarModelo(modeloId, modeloAtualizado).subscribe({
       next: (modeloAtualizado) => {
-        console.log('✅ Modelo atualizado com sucesso:', modeloAtualizado);
+        //console.log('Modelo atualizado com sucesso:', modeloAtualizado);
         this.mostrarSucesso(`"${modeloNome}" removido do carrossel!`);
         
         // Atualiza o objeto local
         Object.assign(modeloAtual, modeloAtualizado);
       },
       error: (error) => {
-        console.error('❌ Erro ao atualizar modelo:', error);
+        console.error('Erro ao atualizar modelo:', error);
         
         let mensagemErro = 'Erro ao remover do carrossel';
         
@@ -239,7 +239,7 @@ export class AtualizarModeloService {
       return;
     }
 
-    console.log(`🔄 Verificando limite dos destaques para "${modeloNome}"...`);
+    //console.log(`Verificando limite dos destaques para "${modeloNome}"...`);
     
     // Primeiro verifica se pode adicionar
     this.podeAdicionarAosDestaques().pipe(
@@ -250,7 +250,7 @@ export class AtualizarModeloService {
         }
         
         // Se pode adicionar, prossegue com a atualização
-        console.log(`✅ Pode adicionar "${modeloNome}" aos destaques`);
+        //console.log(`Pode adicionar "${modeloNome}" aos destaques`);
         
         const modeloAtualizado: ModeloAPI = {
           ...modeloAtual,
@@ -261,7 +261,7 @@ export class AtualizarModeloService {
       })
     ).subscribe({
       next: (modeloAtualizado) => {
-        console.log('✅ Modelo atualizado com sucesso:', modeloAtualizado);
+        //console.log('Modelo atualizado com sucesso:', modeloAtualizado);
         this.mostrarSucesso(`"${modeloNome}" adicionado aos destaques!`);
         
         // Atualiza o objeto local
@@ -272,7 +272,7 @@ export class AtualizarModeloService {
           return; // Já mostrou o SweetAlert, não precisa mostrar erro
         }
         
-        console.error('❌ Erro ao atualizar modelo:', error);
+        console.error('Erro ao atualizar modelo:', error);
         
         let mensagemErro = 'Erro ao adicionar aos destaques';
         
@@ -299,7 +299,7 @@ export class AtualizarModeloService {
       return;
     }
 
-    console.log(`🔄 Removendo "${modeloNome}" dos destaques...`);
+    //console.log(`Removendo "${modeloNome}" dos destaques...`);
     
     // Cria cópia do modelo com destaque: false
     const modeloAtualizado: ModeloAPI = {
@@ -309,14 +309,14 @@ export class AtualizarModeloService {
     
     this.atualizarModelo(modeloId, modeloAtualizado).subscribe({
       next: (modeloAtualizado) => {
-        console.log('✅ Modelo atualizado com sucesso:', modeloAtualizado);
+        //console.log('Modelo atualizado com sucesso:', modeloAtualizado);
         this.mostrarSucesso(`"${modeloNome}" removido dos destaques!`);
         
         // Atualiza o objeto local
         Object.assign(modeloAtual, modeloAtualizado);
       },
       error: (error) => {
-        console.error('❌ Erro ao atualizar modelo:', error);
+        console.error('Erro ao atualizar modelo:', error);
         
         let mensagemErro = 'Erro ao remover dos destaques';
         

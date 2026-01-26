@@ -115,7 +115,7 @@ export class AuthService {
     const isExpired = payload.exp < now;
     
     /*
-    console.log('🔐 Verificação token expirado:', {
+    console.log('Verificação token expirado:', {
       expirado: isExpired,
       expiraEm: new Date(payload.exp * 1000),
       agora: new Date()
@@ -144,7 +144,7 @@ export class AuthService {
     if (this.warningShown) return;
     
     this.warningShown = true;
-    console.log('⚠️ Token expirado - Mostrando aviso SweetAlert2');
+    //console.log('Token expirado - Mostrando aviso SweetAlert2');
 
     Swal.fire({
       icon: 'warning',
@@ -188,11 +188,11 @@ export class AuthService {
   }
 
    /**
-   * ✅ NOVO MÉTODO: FAZ LOGOUT E REDIRECIONA PARA LOGIN
+   * FAZ LOGOUT E REDIRECIONA PARA LOGIN
    */
    private redirectToLoginWithLogout(): void {
     const currentUrl = this.router.url;
-    console.log('🔀 Redirecionando para login com logout, voltará para:', currentUrl);
+    //console.log('Redirecionando para login com logout, voltará para:', currentUrl);
     
     // Faz logout para limpar tudo
     this.logout();
@@ -207,7 +207,7 @@ export class AuthService {
    * SÓ DESLOGA QUANDO A API REJEITAR (401)
    */
   handleTokenExpired(): void {
-    console.log('🔐 API rejeitou token expirado, fazendo logout...');
+    //console.log('API rejeitou token expirado, fazendo logout...');
     
     this.logout();
     this.snackBar.open('Sessão expirada. Faça login novamente.', 'OK', {
@@ -219,7 +219,7 @@ export class AuthService {
   }
 
    /**
-   * ✅ DETECÇÃO ROBUSTA DE SUSPENSÃO/RETORNO
+   * DETECÇÃO DE SUSPENSÃO/RETORNO
    */
    private setupResumeDetection(): void {
     let suspendTime: number | null = null;
@@ -278,22 +278,24 @@ export class AuthService {
   private checkAuthConsistency(): void {
     // ⚠️ NÃO VERIFICA CONSISTÊNCIA EM ROTAS DE MODELO
     if (window.location.pathname.includes('/modelo/')) {
-        //console.log('🚫 Ignorando verificação de consistência na rota de modelo');
+        //console.log('Ignorando verificação de consistência na rota de modelo');
         return;
     }
     
     const hasToken = this.isSignedIn();
     const hasProfile = this.userProfileSubject.value !== null;
     
-    console.log('🔍 Verificação de consistência Auth:', {
+    /*
+    console.log('Verificação de consistência Auth:', {
         hasToken,
         hasProfile,
         url: window.location.pathname
     });
+    */
 
-    // ⚠️ COMENTE A RECARGA
+    // COMENTE A RECARGA
     if (hasToken && !hasProfile) {
-        console.log('⚠️ Estado inconsistente: tem token mas não tem perfil');
+        //console.log('Estado inconsistente: tem token mas não tem perfil');
         // Não recarrega
     }
 
@@ -341,7 +343,7 @@ export class AuthService {
 
     // Recarrega após um pequeno delay para o usuário ver a mensagem
     setTimeout(() => {
-      //console.log('🔄 Recarregando página...');
+      //console.log('Recarregando página...');
       window.location.reload();
     }, 1000);
   }
@@ -358,7 +360,7 @@ export class AuthService {
     return this.http.post<LoginApiResponse>(this.apiUrl, credentials, { headers })
       .pipe(
         tap(response => {
-         // console.log('✅ Login bem-sucedido! API retornou:', response);
+         // console.log('Login bem-sucedido! API retornou:', response);
           
           // ABORDAGEM LIMPA: Extrai APENAS o que precisamos salvar
           const tokenData: LoginResponse = {
@@ -368,13 +370,13 @@ export class AuthService {
           
           this.setAuthData(tokenData);
           this.setAuthentication(true);
-         // console.log('💾 Salvo no localStorage:', tokenData);
+         // console.log('Salvo no localStorage:', tokenData);
 
          // CORREÇÃO: Carrega o perfil automaticamente após login
-       // console.log('🔐 Login bem-sucedido, carregando perfil...');
+       // console.log('Login bem-sucedido, carregando perfil...');
         this.getUserProfile().subscribe(); // Dispara o carregamento do perfil
         
-        // ✅ RESETA aviso ao fazer novo login
+        // RESETA aviso ao fazer novo login
         this.warningShown = false;
         })
       );
@@ -391,7 +393,7 @@ export class AuthService {
 
   // Buscar imagem como blob
   getProfileImage(mongoId: string): Observable<Blob> {
-   // console.log('🖼️ Buscando imagem do perfil para:', mongoId);
+   // console.log('Buscando imagem do perfil para:', mongoId);
     return this.http.get(`/api/usuarios/${mongoId}/imagem`, { responseType: 'blob' });
   }
 
@@ -405,7 +407,7 @@ export class AuthService {
     const formData = new FormData();
     formData.append('file', imageFile);
 
-   // console.log('📤 Upload de imagem para usuário:', mongoId);
+   // console.log('Upload de imagem para usuário:', mongoId);
     
     return this.http.put<ImageResponse>(`/api/usuarios/${mongoId}/imagem`, formData).pipe(
       tap(response => {
@@ -436,7 +438,7 @@ export class AuthService {
 
   // Remover imagem de perfil do usuário + atualização automática
   removeProfileImage(mongoId: string): Observable<ImageResponse> {
-   // console.log('🗑️ Removendo imagem do usuário:', mongoId);
+   // console.log('Removendo imagem do usuário:', mongoId);
     
     return this.http.delete<ImageResponse>(`/api/usuarios/${mongoId}/imagem`).pipe(
       tap(response => {
@@ -451,7 +453,7 @@ export class AuthService {
 
   // MÉTODOS DE AUTENTICAÇÃO
   logout(): void {
-    //console.log('🚪 AuthService: Fazendo logout...');
+    //console.log('AuthService: Fazendo logout...');
     
     // 1. PRIMEIRO limpa o perfil do usuário
     this.userProfileSubject.next(null);

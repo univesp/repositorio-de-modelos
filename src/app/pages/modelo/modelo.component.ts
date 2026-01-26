@@ -199,7 +199,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
             });
 
             if (response.ok) {
-                console.log('✅ Upload funcionou!');
+                //console.log('Upload funcionou!');
                 this.temCodigoZip = true;
                 if (this.currentModelo) {
                     this.currentModelo.temCodigoZip = true;
@@ -213,7 +213,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
                 });
                 
             } else {
-                console.log('❌ Falhou:', response.status);
+                //console.log('Falhou:', response.status);
                 Swal.fire({
                     title: 'Erro!',
                     text: `Erro ${response.status} ao enviar arquivo`,
@@ -265,10 +265,10 @@ export class ModeloComponent implements OnInit, OnDestroy {
                 
                 window.URL.revokeObjectURL(url);
                 
-                console.log('✅ Download funcionou!');
+                //console.log('Download funcionou!');
                 
             } else {
-                console.log('❌ Falhou download:', response.status);
+                //console.log('Falhou download:', response.status);
                 Swal.fire({
                     title: 'Erro!',
                     text: `Arquivo não encontrado (${response.status})`,
@@ -320,7 +320,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
             });
 
             if (response.ok) {
-                console.log('✅ Remoção funcionou!');
+                //console.log('Remoção funcionou!');
                 this.temCodigoZip = false;
                 if (this.currentModelo) {
                     this.currentModelo.temCodigoZip = false;
@@ -334,7 +334,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
                 });
                 
             } else {
-                console.log('❌ Falhou remoção:', response.status);
+                //console.log('Falhou remoção:', response.status);
                 Swal.fire({
                     title: 'Erro!',
                     text: `Erro ${response.status} ao remover arquivo`,
@@ -344,7 +344,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
             }
             
         } catch (error) {
-            console.error('💥 Erro remoção:', error);
+            console.error('Erro remoção:', error);
             Swal.fire({
                 title: 'Erro!',
                 text: 'Erro ao remover arquivo',

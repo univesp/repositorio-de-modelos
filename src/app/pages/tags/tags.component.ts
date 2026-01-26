@@ -48,7 +48,7 @@ export class TagsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (modelosAPI) => {
-          console.log('📦 Modelos carregados para tags:', modelosAPI.length);
+          //console.log('Modelos carregados para tags:', modelosAPI.length);
           this.processarTagsDosModelos(modelosAPI);
           this.isLoading = false;
         },
@@ -89,7 +89,7 @@ export class TagsComponent implements OnInit, OnDestroy {
       }));
 
     this.totalTags = this.todasAsTags.length;
-    console.log(`🏷️ ${this.totalTags} tags encontradas`);
+    //console.log(`${this.totalTags} tags encontradas`);
     
     this.filtrarTags();
   }

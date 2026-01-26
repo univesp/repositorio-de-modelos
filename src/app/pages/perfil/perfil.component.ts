@@ -57,7 +57,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
     this.userProfileSubscription = this.authService.userProfile$.subscribe(profile => {
       if (profile) {
         this.userData = profile;
-       // console.log('🔄 Perfil atualizado via Subject');
+       // console.log('Perfil atualizado via Subject');
         
         // Recarrega a imagem se necessário
         if (this.userHasImage()) {
@@ -117,7 +117,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
     this.cleanupImageResources();
 
     if (this.userData?.mongoId && this.userHasImage()) {
-      //console.log('📸 Carregando imagem...');
+      //console.log('Carregando imagem...');
 
       // Inicia o loading da imagem
       this.isImageLoading = true;
@@ -127,7 +127,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
         next: (secureUrl) => {
           this.imageBlobUrl = secureUrl;
           this.isImageLoading = false;
-        //  console.log('✅ Imagem carregada com sucesso');
+        //  console.log('Imagem carregada com sucesso');
         },
         error: (error) => {
           console.error('❌ Erro ao carregar imagem:', error);
@@ -136,7 +136,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
           this.hasImageError = true;
 
           if (error.status === 404) {
-          //  console.log('ℹ️ Imagem não encontrada no servidor');
+          //  console.log('ℹImagem não encontrada no servidor');
           }
         }
       });
@@ -195,7 +195,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
     
     this.authService.uploadProfileImage(this.userData.mongoId, this.selectedFile).subscribe({
       next: (response) => {
-       // console.log('✅ Imagem uploadada com sucesso');
+       // console.log('Imagem uploadada com sucesso');
         
         // O AuthService já atualizou automaticamente o userData via Subject
         // Só precisamos recarregar a imagem visual
@@ -233,7 +233,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
     
     this.authService.removeProfileImage(this.userData.mongoId).subscribe({
       next: (response) => {
-       // console.log('✅ Imagem removida com sucesso');
+       // console.log('Imagem removida com sucesso');
         
         // O AuthService já atualizou automaticamente o userData via Subject
         // Só precisamos remover a imagem visual

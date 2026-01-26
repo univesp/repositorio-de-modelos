@@ -63,8 +63,8 @@ export class UsuariosService {
     return this.http.post<Usuario>(this.apiUrl, usuario, { headers }).pipe(
       tap({
         next: (response) => {
-          console.log('✅ USUÁRIO CRIADO COM SUCESSO!');
-          console.log('Resposta:', response);
+          //console.log('USUÁRIO CRIADO COM SUCESSO!');
+          //console.log('Resposta:', response);
         },
         error: (error) => {
           console.error('❌ Erro:', error);

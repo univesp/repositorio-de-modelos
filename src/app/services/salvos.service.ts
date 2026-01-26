@@ -37,11 +37,11 @@ export class SalvosService {
       return of(null);
     }
 
-    console.log(`💾 Salvando modelo ${modeloId} para usuário ${userProfile.mongoId}`);
+    //console.log(`Salvando modelo ${modeloId} para usuário ${userProfile.mongoId}`);
 
     return this.http.post(`/api/usuarios/${userProfile.mongoId}/salvos?modeloId=${modeloId}`, {}).pipe(
       tap(() => {
-        console.log('✅ Modelo salvo na API');
+        //console.log('Modelo salvo na API');
         
         // Atualiza localmente
         const salvosAtuais = userProfile.salvos || [];
@@ -72,7 +72,7 @@ export class SalvosService {
       return of(null);
     }
 
-    console.log(`🗑️ Removendo modelo ${modeloId} dos salvos do usuário ${userProfile.mongoId}`);
+    //console.log(`Removendo modelo ${modeloId} dos salvos do usuário ${userProfile.mongoId}`);
 
     // Salva para possível desfazer
     this.ultimoModeloRemovido = {
@@ -82,7 +82,7 @@ export class SalvosService {
 
     return this.http.delete(`/api/usuarios/${userProfile.mongoId}/salvos/${modeloId}`).pipe(
       tap(() => {
-        console.log('✅ Modelo removido da API');
+        //console.log('Modelo removido da API');
         
         // Atualiza localmente
         const salvosAtuais = userProfile.salvos || [];
@@ -112,11 +112,11 @@ export class SalvosService {
 
     const { modeloId, userProfile } = this.ultimoModeloRemovido;
     
-    console.log(`↩️ Desfazendo remoção do modelo ${modeloId}`);
+    //console.log(`Desfazendo remoção do modelo ${modeloId}`);
 
     return this.http.post(`/api/usuarios/${userProfile.mongoId}/salvos?modeloId=${modeloId}`, {}).pipe(
       tap(() => {
-        console.log('✅ Remoção desfeita');
+        //console.log('Remoção desfeita');
         
         const salvosAtuais = userProfile.salvos || [];
         const novosSalvos = [...salvosAtuais, modeloId];
@@ -148,7 +148,7 @@ export class SalvosService {
     });
 
     snackBarRef.onAction().subscribe(() => {
-      console.log('🔄 Usuário clicou em Desfazer');
+      //console.log('Usuário clicou em Desfazer');
       this.desfazerRemocao().subscribe();
     });
 

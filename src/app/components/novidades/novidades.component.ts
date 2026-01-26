@@ -56,7 +56,7 @@ export class NovidadesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (modelosAPI) => {
-          console.log('📦 Total de modelos da API:', modelosAPI.length);
+          //console.log('Total de modelos da API:', modelosAPI.length);
           
           if (modelosAPI.length > 0) {
             // 1. Pega os 5 últimos modelos (mais recentes)

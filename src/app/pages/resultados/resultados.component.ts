@@ -67,7 +67,7 @@ export class ResultadosComponent implements OnInit, OnDestroy {
     this.route.queryParams
       .pipe(takeUntil(this.destroy$))
       .subscribe((params: Params) => {
-        console.log('🔍 Parâmetros da URL:', params);
+        //console.log('Parâmetros da URL:', params);
         this.aplicarFiltrosViaUrl(params);
       });
 

@@ -82,14 +82,14 @@ export class ExplorarComponent implements OnInit, OnDestroy {
           this.processarModelos(modelosConvertidos);
         } else {
           // API retornou vazio ou erro, usa dados locais
-          console.log('⚠️ API vazia ou com erro, usando dados locais');
+          //console.log('API vazia ou com erro, usando dados locais');
           this.usandoAPI = false;
           this.carregarModelosLocais();
         }
       },
       error: (error) => {
         // Erro na requisição, usa dados locais
-        console.error('❌ Erro na requisição API, usando dados locais:', error);
+        console.error('Erro na requisição API, usando dados locais:', error);
         this.usandoAPI = false;
         this.carregarModelosLocais();
       }

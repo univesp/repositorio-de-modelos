@@ -24,19 +24,19 @@ export class ApiHealthService {
   checkHealth(): Observable<any> {
     // VERIFICAR SE TOKEN ESTÁ EXPIRADO ANTES DE FAZER HEALTH CHECK
     if (this.authService.isTokenExpired()) {
-      console.log('🔐 Health check ignorado - token expirado');
+      //console.log('Health check ignorado - token expirado');
       return of(true);
     }
 
     return this.http.get(this.healthUrl, { responseType: 'text' }).pipe(
       tap(() => {
-        console.log('✅ API Health: Online');
+        //console.log('API Health: Online');
         this.isApiHealthySubject.next(true);
         this.lastError = '';
         this.hasCheckedInitially = true;
       }),
       catchError(error => {
-        console.log('❌ API Health: Offline -', error.status);
+        //console.log('API Health: Offline -', error.status);
         this.isApiHealthySubject.next(false);
         this.lastError = this.getErrorMessage(error);
         this.hasCheckedInitially = true;

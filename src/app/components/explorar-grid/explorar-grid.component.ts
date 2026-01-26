@@ -106,11 +106,11 @@ export class ExplorarGridComponent implements OnInit {
     if (largura < 1400 && largura >= 992) {
       // 2 cards por linha (992px-1399px) -> 8 itens por página
       this.itensPorPagina = 8;
-      console.log('2 cards por linha - 8 itens por página');
+      //console.log('2 cards por linha - 8 itens por página');
     } else {
       // 3 cards por linha (≥1400px) -> 9 itens por página
       this.itensPorPagina = 9;
-      console.log('3 cards por linha - 9 itens por página');
+      //console.log('3 cards por linha - 9 itens por página');
     }
   }
 
@@ -336,7 +336,7 @@ export class ExplorarGridComponent implements OnInit {
     event.stopPropagation();
     
     if (!this.isLoggedIn) {
-      console.log('Usuário precisa estar logado para salvar modelos');
+      //console.log('Usuário precisa estar logado para salvar modelos');
       return;
     }
   

@@ -8,10 +8,10 @@ export const authFunctionalInterceptor: HttpInterceptorFn = (req, next) => {
   
   const authData = authService.getAuthData();
   
-  //console.log('🔄 Interceptor executado para:', req.url);
-  //console.log('📦 Token existe:', !!authData?.token);
-  //console.log('📝 Method:', req.method);
-  //console.log('🔤 Content-Type:', req.headers.get('Content-Type'));
+  //console.log('Interceptor executado para:', req.url);
+  //console.log('Token existe:', !!authData?.token);
+  //console.log('Method:', req.method);
+  //console.log('Content-Type:', req.headers.get('Content-Type'));
   
   if (authData && authData.token) {
     // CLONE CORRETO - mantém os headers existentes e adiciona Authorization
@@ -19,8 +19,8 @@ export const authFunctionalInterceptor: HttpInterceptorFn = (req, next) => {
       headers: req.headers.set('Authorization', `${authData.type} ${authData.token}`)
     });
     
-   // console.log('🔐 Header Authorization adicionado');
-   // console.log('📋 Headers finais:', authReq.headers.keys());
+   // console.log('Header Authorization adicionado');
+   // console.log('Headers finais:', authReq.headers.keys());
     return next(authReq);
   }
 

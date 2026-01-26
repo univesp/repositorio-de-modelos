@@ -73,7 +73,7 @@ export class DestaquesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (modelosAPI) => {
-          console.log('🌟 Modelos em destaque da API:', modelosAPI.length);
+          //console.log('Modelos em destaque da API:', modelosAPI.length);
           
           if (modelosAPI.length > 0) {
             // CONVERTE usando o mesmo service do carousel
@@ -85,16 +85,16 @@ export class DestaquesComponent implements OnInit, OnDestroy {
             // Sincroniza bookmarks após carregar
             this.sincronizarBookmarksInicial();
             
-            console.log('✅ Destaques carregados:', this.modelosDestaque.map(m => m.titulo));
+            //console.log('Destaques carregados:', this.modelosDestaque.map(m => m.titulo));
           } else {
             this.modelosDestaque = [];
-            console.log('ℹ️ Nenhum modelo em destaque');
+            //console.log('ℹNenhum modelo em destaque');
           }
           
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('❌ Erro ao carregar destaques:', error);
+          console.error('Erro ao carregar destaques:', error);
           this.modelosDestaque = [];
           this.isLoading = false;
         }

@@ -118,7 +118,7 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (modelosAPI: ModeloAPI[]) => {
-            console.log('📦 Todos modelos carregados da API para criados:', modelosAPI.length);
+            //console.log('Todos modelos carregados da API para criados:', modelosAPI.length);
             
             // Converte todos os modelos da API para o formato interno
             this.todosModelosDaAPI = modelosAPI.map(apiModelo => 
@@ -129,7 +129,7 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
             this.filtrarModelosCriados(profile);
           },
           error: (error) => {
-            console.error('❌ Erro ao carregar modelos da API para criados:', error);
+            console.error('Erro ao carregar modelos da API para criados:', error);
             this.isLoadingCriados = false;
             this.modelosCriados = [];
             this.modelosCriadosFiltrados = [];
@@ -144,7 +144,7 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
    */
    private filtrarModelosCriados(profile: UserProfile): void {
     if (!profile.criados || profile.criados.length === 0) {
-      console.log('👤 Usuário não tem modelos criados');
+      //console.log('Usuário não tem modelos criados');
       this.modelosCriados = [];
       this.modelosCriadosFiltrados = [];
       this.isLoadingCriados = false;
@@ -152,14 +152,14 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('🔍 Filtrando modelos criados entre:', this.todosModelosDaAPI.length, 'modelos');
+    //console.log('Filtrando modelos criados entre:', this.todosModelosDaAPI.length, 'modelos');
     
     // Filtra apenas os modelos que estão na lista de criados do usuário
     this.modelosCriados = this.todosModelosDaAPI.filter(modelo => 
       profile.criados!.includes(modelo.id)
     );
 
-    console.log('✅ Modelos criados encontrados:', this.modelosCriados.length);
+    //console.log('Modelos criados encontrados:', this.modelosCriados.length);
     
     // Inicializa os modelos filtrados
     this.modelosCriadosFiltrados = [...this.modelosCriados];
@@ -386,7 +386,7 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (modelosAPI: ModeloAPI[]) => {
-          console.log('📦 Todos modelos carregados da API:', modelosAPI.length);
+          //console.log('Todos modelos carregados da API:', modelosAPI.length);
           
           // Converte todos os modelos da API para o formato interno
           this.todosModelosDaAPI = modelosAPI.map(apiModelo => 
@@ -397,7 +397,7 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
           this.filtrarModelosSalvos();
         },
         error: (error) => {
-          console.error('❌ Erro ao carregar modelos da API:', error);
+          console.error('Erro ao carregar modelos da API:', error);
           this.isLoading = false;
           this.modelosSalvos = [];
           this.modelosFiltrados = [];
@@ -413,7 +413,7 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
     const userProfile = this.authService.getCurrentUserProfile();
     
     if (!userProfile || !userProfile.salvos || userProfile.salvos.length === 0) {
-      console.log('👤 Usuário não tem modelos salvos');
+      //console.log('Usuário não tem modelos salvos');
       this.modelosSalvos = [];
       this.modelosFiltrados = [];
       this.isLoading = false;
@@ -421,14 +421,14 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('🔍 Filtrando modelos salvos entre:', this.todosModelosDaAPI.length, 'modelos');
+    //console.log('Filtrando modelos salvos entre:', this.todosModelosDaAPI.length, 'modelos');
     
     // Filtra apenas os modelos que estão na lista de salvos do usuário
     this.modelosSalvos = this.todosModelosDaAPI.filter(modelo => 
       userProfile.salvos!.includes(modelo.id)
     );
 
-    console.log('✅ Modelos salvos encontrados:', this.modelosSalvos.length);
+    //console.log('Modelos salvos encontrados:', this.modelosSalvos.length);
     
     // Inicializa os modelos filtrados
     this.modelosFiltrados = [...this.modelosSalvos];
@@ -707,12 +707,12 @@ export class UserFavouritesComponent implements OnInit, OnDestroy {
     
     this.salvosService.removerDosSalvos(modeloId).subscribe({
       next: () => {
-        console.log('✅ Modelo removido dos salvos');
+        //console.log('Modelo removido dos salvos');
         // Atualiza a lista após remoção
         this.atualizarListaAposRemocao(modeloId);
       },
       error: (error) => {
-        console.error('❌ Erro ao remover dos salvos:', error);
+        console.error('Erro ao remover dos salvos:', error);
       }
     });
   }

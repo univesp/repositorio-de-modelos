@@ -60,7 +60,7 @@ export class CarouselComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (modelosAPI) => {
-          console.log('🎠 Modelos do carrossel da API:', modelosAPI.length);
+          //console.log('Modelos do carrossel da API:', modelosAPI.length);
           
           if (modelosAPI.length > 0) {
             // Converte para o formato interno
@@ -74,16 +74,16 @@ export class CarouselComponent implements OnInit, OnDestroy {
             // PRÉ-CARREGA IMAGENS DOS SLIDES
             this.preCarregarImagens(this.slides);
             
-            console.log('✅ Carrossel carregado:', this.slides.map(s => s.titulo));
+            //console.log('Carrossel carregado:', this.slides.map(s => s.titulo));
           } else {
             this.slides = [];
-            console.log('ℹ️ Nenhum modelo no carrossel');
+            //console.log('ℹNenhum modelo no carrossel');
           }
           
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('❌ Erro ao carregar carrossel:', error);
+          //console.error('Erro ao carregar carrossel:', error);
           this.slides = [];
           this.isLoading = false;
         }

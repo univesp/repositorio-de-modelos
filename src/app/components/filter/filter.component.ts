@@ -153,10 +153,10 @@ export class FilterComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (modelosAPI) => {
           this.qtdeModelos = modelosAPI.length;
-          console.log(`📊 ${this.qtdeModelos} modelos carregados da API`);
+          //console.log(`${this.qtdeModelos} modelos carregados da API`);
         },
         error: (error) => {
-          console.error('❌ Erro ao carregar quantidade de modelos:', error);
+          console.error('Erro ao carregar quantidade de modelos:', error);
           this.qtdeModelos = 0;
         }
       });

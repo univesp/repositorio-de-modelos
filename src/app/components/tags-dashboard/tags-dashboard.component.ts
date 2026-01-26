@@ -40,12 +40,12 @@ export class TagsDashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (modelosAPI) => {
-          console.log('📦 Modelos carregados para tags populares:', modelosAPI.length);
+          //console.log('Modelos carregados para tags populares:', modelosAPI.length);
           this.processarTagsPopulares(modelosAPI);
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('❌ Erro ao carregar tags populares:', error);
+          console.error('Erro ao carregar tags populares:', error);
           this.tagsPopulares = [];
           this.isLoading = false;
         }
@@ -82,7 +82,7 @@ export class TagsDashboardComponent implements OnInit, OnDestroy {
       .slice(0, 10); // Top 10 mais populares
 
     this.tagsPopulares = tagsArray;
-    console.log(`🏆 ${this.tagsPopulares.length} tags populares carregadas`);
+    //console.log(`${this.tagsPopulares.length} tags populares carregadas`);
   }
 
   /**

@@ -70,7 +70,7 @@ export class ApiModelosService {
    * Obtém UM modelo específico por ID da API
    */
   getModeloPorIdDaAPI(id: string): Observable<ModeloAPI | null> {
-    console.log(`🔍 Buscando modelo ${id} SEM INTERCEPTORS`);
+    //console.log(`Buscando modelo ${id} SEM INTERCEPTORS`);
     
     return this.httpWithoutInterceptors.get<ModeloAPI>(`/api/modelos/${id}`)
       .pipe(
@@ -78,7 +78,7 @@ export class ApiModelosService {
           console.error(`ERRO ao buscar modelo ${id}:`, error.status);
           
           if (error.status === 404) {
-            console.log(`📭 Modelo ${id} não existe`);
+            //console.log(`Modelo ${id} não existe`);
             // ⚠️ LANÇA O ERRO PARA O COMPONENTE CAPTURAR
             return throwError(() => ({ 
               status: 404, 
@@ -99,7 +99,7 @@ export class ApiModelosService {
   getModelosCarouselDaAPI(): Observable<ModeloAPI[]> {
     return this.http.get<ModeloAPI[]>(`/api/modelos/list?carousel=true`).pipe(
       catchError(error => {
-        console.error('❌ Erro ao buscar modelos do carrossel:', error);
+        console.error('Erro ao buscar modelos do carrossel:', error);
         return of([]);
       })
     );
@@ -111,7 +111,7 @@ export class ApiModelosService {
   getModelosDestaqueDaAPI(): Observable<ModeloAPI[]> {
     return this.http.get<ModeloAPI[]>(`/api/modelos/list?destaque=true`).pipe(
       catchError(error => {
-        console.error('❌ Erro ao buscar modelos em destaque:', error);
+        console.error('Erro ao buscar modelos em destaque:', error);
         return of([]);
       })
     );

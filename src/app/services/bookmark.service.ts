@@ -18,7 +18,7 @@ export class BookmarkService {
 
   toggle(id: string): void {
     if (!this.authService.isSignedIn()) {
-      console.log('⚠️ Usuário precisa estar logado para salvar modelos');
+      //console.log('Usuário precisa estar logado para salvar modelos');
       return;
     }
 

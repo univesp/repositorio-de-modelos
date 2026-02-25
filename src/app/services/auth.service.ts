@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import Swal from 'sweetalert2';
+import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
   email: string;
@@ -60,8 +61,9 @@ export interface ImageResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = '/api/auth/login';
-  private userApiUrl = '/api/usuarios/me';
+  private baseUrl = environment.apiBaseUrl;
+  private apiUrl = `${this.baseUrl}/auth/login`;
+  private userApiUrl = `${this.baseUrl}/usuarios/me`;
 
   // SUBJECT para gerenciar o estado do usuário
   private userProfileSubject = new BehaviorSubject<UserProfile | null>(null);

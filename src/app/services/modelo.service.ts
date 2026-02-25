@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { map, catchError } from 'rxjs/operators';
 import { ModeloAPI } from '../interfaces/modelo/modelo-api.interface';
 import { ModeloCadastroRequest } from '../interfaces/modelo/modelo-create-request.interface';
+import { environment } from '../../environments/environment';
 
 export interface ModeloCreateRequest {
   ano: number;
@@ -39,8 +40,8 @@ export interface ModeloCreateRequest {
   providedIn: 'root'
 })
 export class ModeloService {
-  private apiUrl = '/api/modelos';
-  private BASEURL = 'https://apps.univesp.br/repositorio-modelos';
+  private baseUrl = environment.apiBaseUrl;
+  private apiUrl = `${this.baseUrl}/modelos`;
 
   constructor(
     private http: HttpClient,
@@ -63,7 +64,7 @@ export class ModeloService {
   }
 
   verificarTituloExistente(titulo: string): Observable<boolean> {
-    return this.http.get<any[]>(`${this.BASEURL}/modelos/list`).pipe(
+    return this.http.get<any[]>(`${this.baseUrl}/modelos/list`).pipe(
       map(modelos => {
         const tituloNormalizado = titulo.toLowerCase().trim();
         return modelos.some(modelo => 

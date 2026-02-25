@@ -15,6 +15,7 @@ import { ModeloCadastroRequest } from '../../interfaces/modelo/modelo-create-req
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import Swal from 'sweetalert2';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-modelo',
@@ -40,6 +41,8 @@ export class ModeloComponent implements OnInit, OnDestroy {
     imagemCarregando: boolean = false;
     mostrarBotoesImagem: boolean = false;
     mostrarBotaoEdicao: boolean = false;
+
+    private baseUrl = environment.apiBaseUrl;
 
     private imagensSimilaresCache = new Map<string, string>();
     private carregandoImagensSimilares = new Set<string>();
@@ -168,7 +171,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
         return modelo.img_lg || 'assets/images/placeholder-modelo.svg';
     }
 
-    // ========== MÉTODOS DO CÓDIGO ZIP (FETCH DIRETO) ==========
+    // ========== MÉTODOS DO CÓDIGO ZIP (COM ENVIRONMENT) ==========
 
     abrirSeletorZip(): void {
         if (!this.podeGerenciarModelo) return;
@@ -184,13 +187,15 @@ export class ModeloComponent implements OnInit, OnDestroy {
         
         this.uploadingZip = true;
         
-        // SOLUÇÃO QUE FUNCIONA!
+        // USA A BASE URL DO ENVIRONMENT
         const token = this.authService.getToken();
         const formData = new FormData();
         formData.append('file', arquivo, arquivo.name);
 
+        const url = `${this.baseUrl}/modelos/${this.currentModelo.id}/codigo`;
+
         try {
-            const response = await fetch(`/api/modelos/${this.currentModelo.id}/codigo`, {
+            const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -223,7 +228,7 @@ export class ModeloComponent implements OnInit, OnDestroy {
             }
             
         } catch (error) {
-            console.error('💥 Erro:', error);
+            console.error('Erro:', error);
             Swal.fire({
                 title: 'Erro!',
                 text: 'Erro ao enviar arquivo',
@@ -243,8 +248,10 @@ export class ModeloComponent implements OnInit, OnDestroy {
         
         const token = this.authService.getToken();
 
+        const url = `${this.baseUrl}/modelos/${this.currentModelo.id}/codigo`;
+
         try {
-            const response = await fetch(`/api/modelos/${this.currentModelo.id}/codigo`, {
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -310,8 +317,10 @@ export class ModeloComponent implements OnInit, OnDestroy {
         
         const token = this.authService.getToken();
 
+        const url = `${this.baseUrl}/modelos/${this.currentModelo.id}/codigo`;
+
         try {
-            const response = await fetch(`/api/modelos/${this.currentModelo.id}/codigo`, {
+            const response = await fetch(url, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

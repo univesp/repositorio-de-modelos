@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UploadImagemService {
-  private apiUrl = '/api';
+  private baseUrl = environment.apiBaseUrl;
 
   // Tipos de imagem permitidos
   private readonly TIPOS_PERMITIDOS = [
@@ -35,7 +36,7 @@ export class UploadImagemService {
    * Retorna como Blob para criar URL
    */
   getImagemModelo(modeloId: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/modelos/${modeloId}/imagem`, {
+    return this.http.get(`${this.baseUrl}/modelos/${modeloId}/imagem`, {
       responseType: 'blob',
       headers: new HttpHeaders({
         'Accept': 'image/*'
@@ -64,14 +65,14 @@ export class UploadImagemService {
     const formData = new FormData();
     formData.append('file', arquivoImagem);
     
-    return this.http.put(`${this.apiUrl}/modelos/${modeloId}/imagem`, formData);
+    return this.http.put(`${this.baseUrl}/modelos/${modeloId}/imagem`, formData);
   }
 
   /**
    * Remove a imagem de um modelo
    */
   removerImagemModelo(modeloId: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/modelos/${modeloId}/imagem`);
+    return this.http.delete(`${this.baseUrl}/modelos/${modeloId}/imagem`);
   }
 
   /**

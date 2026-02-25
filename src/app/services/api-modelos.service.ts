@@ -7,10 +7,13 @@ import { Router } from '@angular/router';
 import { ModeloAPI } from '../interfaces/modelo/modelo-api.interface';
 import { ImagemDefaultUtils } from '../utils/imagem-default.utils';
 
+import { environment } from '../../environments/environment';
+
 @Injectable({ providedIn: 'root' })
 export class ApiModelosService {
 
   private httpWithoutInterceptors: HttpClient;
+  private baseUrl = environment.apiBaseUrl;
   
   constructor(
     private http: HttpClient,
@@ -24,7 +27,7 @@ export class ApiModelosService {
    * Obtém modelos da API - RETORNA ModeloAPI[] DIRETO
    */
   getModelosDaAPI(): Observable<ModeloAPI[]> {
-    return this.http.get<ModeloAPI[]>('/api/modelos/list')
+    return this.http.get<ModeloAPI[]>(`${this.baseUrl}/modelos/list`)
       .pipe(
         catchError(error => {
           console.error('ERRO NA API:', error);
@@ -37,7 +40,7 @@ export class ApiModelosService {
    * Método adicional: Retorna já convertido com imagens default
    */
   getModelosConvertidos(): Observable<any[]> {
-    return this.http.get<ModeloAPI[]>('/api/modelos/list')
+    return this.http.get<ModeloAPI[]>(`${this.baseUrl}/modelos/list`)
       .pipe(
         map(apiModelos => this.converterComImagensDefault(apiModelos)),
         catchError(error => {
@@ -72,7 +75,7 @@ export class ApiModelosService {
   getModeloPorIdDaAPI(id: string): Observable<ModeloAPI | null> {
     //console.log(`Buscando modelo ${id} SEM INTERCEPTORS`);
     
-    return this.httpWithoutInterceptors.get<ModeloAPI>(`/api/modelos/${id}`)
+    return this.httpWithoutInterceptors.get<ModeloAPI>(`${this.baseUrl}/modelos/${id}`)
       .pipe(
         catchError(error => {
           console.error(`ERRO ao buscar modelo ${id}:`, error.status);
@@ -97,7 +100,7 @@ export class ApiModelosService {
    * Busca modelos com carousel=true da API
    */
   getModelosCarouselDaAPI(): Observable<ModeloAPI[]> {
-    return this.http.get<ModeloAPI[]>(`/api/modelos/list?carousel=true`).pipe(
+    return this.http.get<ModeloAPI[]>(`${this.baseUrl}/modelos/list?carousel=true`).pipe(
       catchError(error => {
         console.error('Erro ao buscar modelos do carrossel:', error);
         return of([]);
@@ -109,7 +112,7 @@ export class ApiModelosService {
    * Busca modelos com destaque=true da API
    */
   getModelosDestaqueDaAPI(): Observable<ModeloAPI[]> {
-    return this.http.get<ModeloAPI[]>(`/api/modelos/list?destaque=true`).pipe(
+    return this.http.get<ModeloAPI[]>(`${this.baseUrl}/modelos/list?destaque=true`).pipe(
       catchError(error => {
         console.error('Erro ao buscar modelos em destaque:', error);
         return of([]);

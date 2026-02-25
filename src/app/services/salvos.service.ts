@@ -1,15 +1,17 @@
-// services/salvos.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { AuthService, UserProfile } from './auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SalvosService {
+  private baseUrl = environment.apiBaseUrl;
+
   private ultimoModeloRemovido: { modeloId: string, userProfile: UserProfile } | null = null;
 
   constructor(
@@ -39,7 +41,7 @@ export class SalvosService {
 
     //console.log(`Salvando modelo ${modeloId} para usuário ${userProfile.mongoId}`);
 
-    return this.http.post(`/api/usuarios/${userProfile.mongoId}/salvos?modeloId=${modeloId}`, {}).pipe(
+    return this.http.post(`${this.baseUrl}/usuarios/${userProfile.mongoId}/salvos?modeloId=${modeloId}`, {}).pipe(
       tap(() => {
         //console.log('Modelo salvo na API');
         
@@ -80,7 +82,7 @@ export class SalvosService {
       userProfile: { ...userProfile }
     };
 
-    return this.http.delete(`/api/usuarios/${userProfile.mongoId}/salvos/${modeloId}`).pipe(
+    return this.http.delete(`${this.baseUrl}/usuarios/${userProfile.mongoId}/salvos/${modeloId}`).pipe(
       tap(() => {
         //console.log('Modelo removido da API');
         
@@ -114,7 +116,7 @@ export class SalvosService {
     
     //console.log(`Desfazendo remoção do modelo ${modeloId}`);
 
-    return this.http.post(`/api/usuarios/${userProfile.mongoId}/salvos?modeloId=${modeloId}`, {}).pipe(
+    return this.http.post(`${this.baseUrl}/usuarios/${userProfile.mongoId}/salvos?modeloId=${modeloId}`, {}).pipe(
       tap(() => {
         //console.log('Remoção desfeita');
         

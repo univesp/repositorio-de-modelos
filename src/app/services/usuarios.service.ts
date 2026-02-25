@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface NovoUsuario {
   firstname: string;
@@ -48,7 +49,8 @@ export interface AtualizarUsuario {
   providedIn: 'root'
 })
 export class UsuariosService {
-  private apiUrl = '/api/usuarios';
+  private baseUrl = environment.apiBaseUrl;
+  private apiUrl = `${this.baseUrl}/usuarios`;
 
   constructor(
     private http: HttpClient,

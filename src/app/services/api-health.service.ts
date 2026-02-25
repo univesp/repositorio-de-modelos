@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiHealthService {
-  private healthUrl = '/api/auth/health';
+  private healthUrl = `${environment.apiBaseUrl}/auth/health`;
   
   private isApiHealthySubject = new BehaviorSubject<boolean>(true);
   public isApiHealthy$ = this.isApiHealthySubject.asObservable();

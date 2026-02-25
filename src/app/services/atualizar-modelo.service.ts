@@ -4,12 +4,13 @@ import { Observable, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ModeloAPI } from '../interfaces/modelo/modelo-api.interface';
 import Swal from 'sweetalert2';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AtualizarModeloService {
-  private apiUrl = '/api';
+  private baseUrl = environment.apiBaseUrl;
   
   // Limites máximos
   private readonly MAX_CAROUSEL = 5;
@@ -25,14 +26,14 @@ export class AtualizarModeloService {
    * Obtém modelos com carousel=true
    */
   private getModelosCarousel(): Observable<ModeloAPI[]> {
-    return this.http.get<ModeloAPI[]>(`${this.apiUrl}/modelos/list?carousel=true`);
+    return this.http.get<ModeloAPI[]>(`${this.baseUrl}/modelos/list?carousel=true`);
   }
 
   /**
    * Obtém modelos com destaque=true
    */
   private getModelosDestaque(): Observable<ModeloAPI[]> {
-    return this.http.get<ModeloAPI[]>(`${this.apiUrl}/modelos/list?destaque=true`);
+    return this.http.get<ModeloAPI[]>(`${this.baseUrl}/modelos/list?destaque=true`);
   }
 
   /**
@@ -57,7 +58,7 @@ export class AtualizarModeloService {
    * Atualiza um modelo (PUT completo)
    */
   atualizarModelo(id: string, modeloData: ModeloAPI): Observable<ModeloAPI> {
-    return this.http.put<ModeloAPI>(`${this.apiUrl}/modelos/${id}`, modeloData);
+    return this.http.put<ModeloAPI>(`${this.baseUrl}/modelos/${id}`, modeloData);
   }
 
   /**

@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExcluirModeloService {
-  private apiUrl = '/api'; // Usa o proxy configurado
+  private baseUrl = environment.apiBaseUrl;
 
   constructor(
     private http: HttpClient,
@@ -19,7 +20,7 @@ export class ExcluirModeloService {
    * Exclui um modelo pelo ID
    */
   excluirModelo(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/modelos/${id}`);
+    return this.http.delete(`${this.baseUrl}/modelos/${id}`);
   }
 
   /**

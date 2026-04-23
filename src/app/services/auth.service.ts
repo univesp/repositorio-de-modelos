@@ -312,11 +312,9 @@ export class AuthService {
   private checkForPageErrors(): void {
     // Verifica se há mensagens de erro comuns
     const errorSelectors = [
-      '.error-message',
-      '.loading-error',
-      '[class*="error"]',
-      '[class*="fail"]',
-      'mat-error'
+      '.global-error',
+      '.api-error',
+      'critical-error',
     ];
 
     const hasVisibleErrors = errorSelectors.some(selector => {

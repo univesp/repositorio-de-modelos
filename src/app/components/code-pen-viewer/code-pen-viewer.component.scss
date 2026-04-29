@@ -535,8 +535,26 @@
    MODO EXPANDIDO (OCUPA A TELA TODA)
    ============================================ */
 
+   @media (max-width: 869px) {
+    .footer-note2 > span {
+      display: none;
+    }
+   }
+
    .fullscreen-btn {
     cursor: pointer;
+   }
+
+   .footer-note2 {
+    display: flex;
+    align-items: center;
+    gap: 0 8px;
+   }
+
+   .footer-note2 > span {
+    font-size: 12px;
+    font-weight: light;
+    color: #666;
    }
 
    .expanded-mode {

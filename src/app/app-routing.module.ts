@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes, mapToCanActivate } from '@angular/router';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common'; // 👈 ADICIONE ESTA LINHA
 import { ResultadosGuard } from './guards/resultados.guard'; 
 
 /* IMPORTANDO NOSSAS PÁGINAS */
@@ -36,7 +37,10 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [  // 👈 ADICIONE ESTA PARTE
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
+  ]
 })
 
 export class AppRoutingModule { }

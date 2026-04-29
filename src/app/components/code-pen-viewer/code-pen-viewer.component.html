@@ -1,25 +1,28 @@
-<div class="code-pen-viewer">
+<!-- Container normal -->
+<div class="code-pen-viewer" *ngIf="!isFullscreen">
   <div class="viewer-header">
-    <h2 class="viewer-title">
-      <mat-icon class="title-icon">code</mat-icon>
-      Visualização do Código
-    </h2>
+    <div class="header-left">
+      <h2 class="viewer-title">
+        <mat-icon class="title-icon">code</mat-icon>
+        Visualização do Código
+      </h2>
+    </div>
     
-    <button class="open-external-btn" (click)="openInCodePen()" matTooltip="Abrir no CodePen">
-      <mat-icon>open_in_new</mat-icon>
-      Abrir no CodePen
-    </button>
+    <div class="header-actions">
+      <button class="open-external-btn" (click)="openInCodePen()" matTooltip="Abrir no CodePen">
+        <mat-icon>open_in_new</mat-icon>
+        Abrir no CodePen
+      </button>
+    </div>
   </div>
 
   <div class="viewer-container">
-    <!-- Loading State -->
     <div *ngIf="isLoading" class="loading-state">
       <div class="loading-spinner"></div>
       <p>Carregando CodePen...</p>
       <small>Isso pode levar alguns segundos</small>
     </div>
 
-    <!-- Error State MELHORADO -->
     <div *ngIf="hasError && !isLoading" class="error-state">
       <mat-icon class="error-icon">error_outline</mat-icon>
       <h3>Não foi possível carregar o CodePen</h3>
@@ -47,7 +50,6 @@
       </div>
     </div>
 
-    <!-- CodePen Embed -->
     <div *ngIf="embedUrl && !hasError" class="embed-wrapper">
       <iframe 
         [src]="embedUrl"
@@ -68,5 +70,43 @@
       <mat-icon>info</mat-icon>
       Esta é uma visualização embedada do CodePen. Para editar o código, clique em "Abrir no CodePen".
     </p>
+
+    <button class="fullscreen-btn" (click)="toggleFullscreen()" matTooltip="Expandir">
+      <mat-icon>fullscreen</mat-icon>
+    </button>
+  </div>
+</div>
+
+<!-- Modo Expandido (tela toda, sem ser fullscreen nativo) -->
+<div *ngIf="isFullscreen" class="expanded-mode">
+  <!-- Botão de fechar -->
+  <button class="close-expanded-btn" (click)="exitFullscreen()" matTooltip="Fechar (ESC)">
+    <mat-icon>close</mat-icon>
+    Fechar
+  </button>
+  
+  <!-- Iframe ocupando 100% da tela -->
+  <div class="expanded-iframe-wrapper">
+    <iframe 
+      *ngIf="embedUrl && !hasError"
+      [src]="embedUrl"
+      class="expanded-iframe"
+      frameborder="0"
+      allowfullscreen="true"
+      title="CodePen Expandido">
+    </iframe>
+    
+    <div *ngIf="isLoading" class="expanded-loading">
+      <div class="loading-spinner"></div>
+      <p>Carregando...</p>
+    </div>
+    
+    <div *ngIf="hasError && !isLoading" class="expanded-error">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3>Erro ao carregar</h3>
+      <button class="retry-btn" (click)="loadCodePenEmbed()">
+        Tentar Novamente
+      </button>
+    </div>
   </div>
 </div>

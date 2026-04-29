@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, HostListener, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
@@ -9,21 +9,34 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class CodePenViewerComponent implements OnInit, OnDestroy {
   @Input() codepenId!: string;
   @Input() codepenUser!: string;
+  @ViewChild('viewerContainer') viewerContainer!: ElementRef;
 
   embedUrl: SafeResourceUrl | null = null;
   isLoading = true;
   hasError = false;
   errorMessage = '';
+  isFullscreen = false;
 
   private readonly embedHeight = 400;
   private readonly embedTheme = 'dark';
   private readonly defaultTab = 'result';
   private loadTimeout: any;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(
+    private sanitizer: DomSanitizer,
+    private renderer: Renderer2
+  ) {}
 
   ngOnInit(): void {
     this.loadCodePenEmbed();
+  }
+
+  // ESC apenas para fechar o modo de tela cheia (opcional)
+  @HostListener('document:keydown.escape')
+  handleEscapeKey() {
+    if (this.isFullscreen) {
+      this.exitFullscreen();
+    }
   }
 
   loadCodePenEmbed(): void {
@@ -32,7 +45,6 @@ export class CodePenViewerComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Reset states
     this.isLoading = true;
     this.hasError = false;
     this.errorMessage = '';
@@ -40,7 +52,6 @@ export class CodePenViewerComponent implements OnInit, OnDestroy {
     const embedUrl = `https://codepen.io/${this.codepenUser}/embed/${this.codepenId}?height=${this.embedHeight}&theme-id=${this.embedTheme}&default-tab=${this.defaultTab}`;
     this.embedUrl = this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
 
-    //TIMEOUT de segurança - se demorar mais de 10 segundos, considera erro
     this.loadTimeout = setTimeout(() => {
       if (this.isLoading) {
         this.handleError('Tempo limite excedido. O CodePen pode estar indisponível.');
@@ -49,22 +60,18 @@ export class CodePenViewerComponent implements OnInit, OnDestroy {
   }
 
   onIframeLoad(): void {
-    // Limpa o timeout
     if (this.loadTimeout) {
       clearTimeout(this.loadTimeout);
       this.loadTimeout = null;
     }
-    
     this.isLoading = false;
   }
 
   onIframeError(): void {
-    // Limpa o timeout
     if (this.loadTimeout) {
       clearTimeout(this.loadTimeout);
       this.loadTimeout = null;
     }
-    
     this.handleError('Erro ao carregar o CodePen. Verifique se a URL está correta e se o CodePen está disponível.');
   }
 
@@ -79,15 +86,36 @@ export class CodePenViewerComponent implements OnInit, OnDestroy {
     window.open(`https://codepen.io/${this.codepenUser}/pen/${this.codepenId}`, '_blank');
   }
 
-  // 👇 NOVO MÉTODO: Tentar carregar em uma nova aba para verificar
   testInNewTab(): void {
     window.open(`https://codepen.io/${this.codepenUser}/pen/${this.codepenId}`, '_blank');
   }
 
+  toggleFullscreen(): void {
+    if (this.isFullscreen) {
+      this.exitFullscreen();
+    } else {
+      this.enterFullscreen();
+    }
+  }
+
+  enterFullscreen(): void {
+    this.isFullscreen = true;
+    // Apenas bloqueia o scroll do body, sem API nativa
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
+  }
+
+  exitFullscreen(): void {
+    this.isFullscreen = false;
+    // Restaura o scroll do body
+    this.renderer.removeStyle(document.body, 'overflow');
+  }
+
   ngOnDestroy(): void {
-    // Cleanup
     if (this.loadTimeout) {
       clearTimeout(this.loadTimeout);
+    }
+    if (this.isFullscreen) {
+      this.exitFullscreen();
     }
   }
 }

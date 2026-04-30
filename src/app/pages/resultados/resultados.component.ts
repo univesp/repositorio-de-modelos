@@ -25,7 +25,7 @@ export class ResultadosComponent implements OnInit, OnDestroy {
   modelosOriginais: Modelo[] = []; // Armazena modelos filtrados sem ordenação
   viewType: 'grid' | 'list' = 'grid';
   opacityClicked = 1;
-  ordenacaoSelecionada: string = '';
+  ordenacaoSelecionada: string = 'recentes';
   filtrosAtivos: string[] = [];
   
   isLoading = true;

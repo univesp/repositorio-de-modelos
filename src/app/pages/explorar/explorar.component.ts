@@ -27,7 +27,7 @@ export class ExplorarComponent implements OnInit, OnDestroy {
   modelosOriginais: Modelo[] = []; // Armazena os modelos sem ordenação
   viewType: 'grid' | 'list' = 'grid';
   opacityClicked = 1;
-  ordenacaoSelecionada: string = '';
+  ordenacaoSelecionada: string = 'recentes';
 
   paginaAtual: number = 1;
   totalPaginas: number = 1;

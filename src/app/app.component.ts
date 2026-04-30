@@ -3,8 +3,7 @@ import { IFooter } from './interfaces/footer/footer.interface';
 import { UserFooter } from './data/footer-list'; 
 import { validUrls } from './utils/valid-urls';
 import { ApiHealthService } from './services/api-health.service';
-import { Router, NavigationEnd } from '@angular/router';
-import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -16,28 +15,30 @@ export class AppComponent implements OnInit {
 
   constructor(
     private apiHealthService: ApiHealthService,
-    private router: Router,     
-    private location: Location  
+    private router: Router
   ) {}
 
   ngOnInit() {
-    // INICIA VERIFICAÇÃO quando app carrega
     this.apiHealthService.initializeHealthCheck();
 
-    // Garante que as URLs sejam navegáveis mesmo sem hash (apenas para usuários que digitam URL sem #)
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        const url = event.urlAfterRedirects;
-        // Se a URL não tem hash e não está vazia, redireciona para a versão com hash
-        if (!url.startsWith('/#') && url !== '/' && url !== '' && url !== '/?') {
-          // Usa setTimeout para evitar conflitos de navegação
-          setTimeout(() => {
-            if (this.location.path() === url && !window.location.hash) {
-              this.router.navigateByUrl('/#' + url, { skipLocationChange: false });
-            }
-          }, 0);
-        }
-      }
-    });
+    // verifica e corrige a URL atual
+    const currentUrl = window.location.href;
+    const hashIndex = currentUrl.indexOf('#');
+    
+    // Se não tem # e não é a raiz
+    if (hashIndex === -1 && !currentUrl.endsWith('/')) {
+      // Pega o caminho atual
+      const path = window.location.pathname;
+      const basePath = '/_testes/repositorio-de-modelos';
+      
+      // Extrai a rota (ex: /login, /explorar)
+      let route = path.replace(basePath, '');
+      if (route === '') route = '/';
+      
+      // Redireciona para a versão com #
+      const newUrl = `${window.location.origin}${basePath}/#${route}`;
+      console.log('Redirecionando para:', newUrl);
+      window.location.href = newUrl;
+    }
   }
 }

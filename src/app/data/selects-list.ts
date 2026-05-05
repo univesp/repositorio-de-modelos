@@ -4,7 +4,7 @@ export const SelectsList: Selects[] = [
   { 
     key: 'curso', 
     label: 'Curso',  
-    opcoes: ['Administração', 'Ciência de Dados', 'Engenharia de Computação', 'Engenharia de Produção', 'Habil. em Língua Portuguesa', 'Matemática', 'Pedagogia', 'Projeto Integrador', 'Tecnologia da Informação', 'Tec. em Processos Gerenciais', 'Acessibilidade'],
+    opcoes: ['Administração', 'Ciência de Dados', 'Engenharia de Computação', 'Engenharia de Produção', 'Habil. em Língua Portuguesa', 'Inteligência Artificial', 'Matemática', 'Pedagogia', 'Projeto Integrador', 'Tecnologia da Informação', 'Tec. em Processos Gerenciais', 'Acessibilidade'],
     obrigatorio: false,
     maxSelecoes: 3
   },

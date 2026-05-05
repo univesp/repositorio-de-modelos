@@ -25,9 +25,11 @@
 .explorar-tags > span:nth-child(3) {
   font-weight: bold;
   cursor: pointer;
+  text-decoration: underline;
+  transition: transform 0.3s ease;
 
   &:hover {
-    text-decoration: underline;
+    transform: scale(1.05);
   }
 }
 

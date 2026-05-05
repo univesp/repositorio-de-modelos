@@ -1,5 +1,5 @@
 .dashboard {
-  width: 90%;
+  width: 100%;
   /*height: 260vh;*/
   color: #000;
   display: flex;
@@ -21,8 +21,8 @@
   }
 
   &__novidades, &__tags {
-    width: 100%;
-    margin-top: 50px;
+    width: 90%;
+    margin: 50px auto 0 auto;
   }
 
   &__tags {
@@ -31,8 +31,8 @@
   }
 
   &__destaques {
-    width: 100%;
-    margin-top: 80px;
+    width: 90%;
+    margin: 80px auto 0 auto;
    /* margin-top: -120px; */
   }
 }
